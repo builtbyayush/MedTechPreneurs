@@ -1,0 +1,12 @@
+---
+description: Splice project context — stack, models, and phase plan
+alwaysApply: true
+---
+This is Splice, a Next.js 14 (App Router) + MongoDB (Mongoose) + Tailwind CSS
+swipe-matching app for MedTechPreneurs ("Tinder for Co-Founders" in Indian
+healthcare/MedTech). Full spec — data models, API routes, brand tokens, and
+the build phase plan — lives in SPLICE_DEV_REFERENCE.md at the project root.
+Read that file before implementing anything. Follow the phase order defined
+there (Scaffold → Auth/Onboarding → Profile/Verification → Discovery/Swipe →
+Matching Algorithm → Match/Chat → Toolkit → Polish/Deploy) — do not build
+ahead of the phase I explicitly ask for.
