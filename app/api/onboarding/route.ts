@@ -1,84 +1,81 @@
-import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 
+import { auth } from "@/auth";
 import { connectDB } from "@/lib/db";
-import { onboardingSchema } from "@/lib/validations/onboarding";
+import {
+  mapFounderRoleToCategory,
+  mapLookingForRolesToCategories,
+} from "@/lib/onboarding/mappers";
+import { completeOnboardingSchema } from "@/lib/validations/onboarding";
 import { User } from "@/models/User";
 
-export async function POST(request: Request) {
+export async function PATCH(request: Request) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
-    const parsed = onboardingSchema.safeParse(body);
+    const parsed = completeOnboardingSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
         {
           error: "Validation failed",
-          details: parsed.error.flatten(),
+          message: parsed.error.issues[0]?.message ?? "Invalid onboarding data",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const data = parsed.data;
-
-    // Enforce lookingFor excludes own category at the API layer
-    if (data.lookingFor.includes(data.category)) {
-      return NextResponse.json(
-        {
-          error: "lookingFor cannot include your own category",
-        },
-        { status: 400 }
-      );
-    }
-
-    const uniqueLookingFor = [...new Set(data.lookingFor)];
+    const country = data.country?.trim() || undefined;
+    const city = data.city?.trim() || undefined;
+    const uniqueLookingForRoles = [...new Set(data.lookingForRoles)];
+    const legacyCategory = mapFounderRoleToCategory(data.founderRole);
+    const mappedLookingFor = mapLookingForRolesToCategories(uniqueLookingForRoles);
+    const legacyLookingFor = mappedLookingFor.filter(
+      (category) => category !== legacyCategory,
+    );
 
     await connectDB();
 
-    const existing = await User.findOne({
-      email: data.email.toLowerCase(),
-    }).lean();
+    const user = await User.findByIdAndUpdate(
+      session.user.id,
+      {
+        founderRole: data.founderRole,
+        buildingFocus: data.buildingFocus,
+        currentStage: data.currentStage,
+        lookingForRoles: uniqueLookingForRoles,
+        country,
+        city,
+        category: legacyCategory,
+        lookingFor:
+          legacyLookingFor.length > 0 ? legacyLookingFor : mappedLookingFor,
+        onboardingCompleted: true,
+        onboardingCompletedAt: new Date(),
+      },
+      { returnDocument: "after" },
+    ).select("onboardingCompleted founderRole buildingFocus");
 
-    if (existing) {
-      return NextResponse.json(
-        { error: "An account with this email already exists" },
-        { status: 409 }
-      );
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const passwordHash = await hash(data.password, 12);
-
-    const user = await User.create({
-      name: data.name.trim(),
-      gender: data.gender,
-      email: data.email.toLowerCase(),
-      mobile: data.mobile.trim(),
-      age: data.age,
-      profession: data.profession.trim(),
-      specialisation: data.specialisation.trim(),
-      category: data.category,
-      lookingFor: uniqueLookingFor,
-      passwordHash,
-      authProvider: "credentials",
-    });
-
-    return NextResponse.json(
-      {
-        ok: true,
-        user: {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-        },
+    return NextResponse.json({
+      ok: true,
+      user: {
+        id: user._id.toString(),
+        onboardingCompleted: user.onboardingCompleted,
       },
-      { status: 201 }
-    );
+    });
   } catch (error) {
-    console.error("[onboarding]", error);
+    console.error("[onboarding/PATCH]", error);
     return NextResponse.json(
-      { error: "Unable to complete onboarding" },
-      { status: 500 }
+      { error: "Unable to save onboarding" },
+      { status: 500 },
     );
   }
 }

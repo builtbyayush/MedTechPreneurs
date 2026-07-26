@@ -24,6 +24,28 @@ export const springPress = {
   damping: 22,
 };
 
+/** Swipe card snap-back when release is below threshold */
+export const swipeSnapBack = {
+  type: "spring" as const,
+  stiffness: 520,
+  damping: 38,
+  mass: 0.8,
+};
+
+/** Swipe card exit off-screen */
+export const swipeExitSpring = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 30,
+  mass: 0.85,
+};
+
+/** Horizontal drag distance (px) required to commit pass/connect */
+export const SWIPE_COMMIT_THRESHOLD = 100;
+
+/** Max rotation (deg) at full drag */
+export const SWIPE_MAX_ROTATION = 12;
+
 /** Returns true when user prefers reduced motion — use to skip transforms. */
 export function getReducedMotion(): boolean {
   if (typeof window === "undefined") return false;

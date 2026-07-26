@@ -127,7 +127,7 @@ export function LandingHero() {
             transition={{ type: "spring", stiffness: 420, damping: 22 }}
           >
             <Link
-              href="/onboarding"
+              href="/register"
               className="inline-flex h-12 items-center justify-center rounded-lg bg-coral px-7 font-heading text-sm font-extrabold tracking-wide text-ink shadow-brutal-coral-lg transition-colors hover:bg-[#ff7f72]"
             >
               Get Started
