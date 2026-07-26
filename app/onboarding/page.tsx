@@ -1,30 +1,26 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { SplicePlusLogo } from "@/components/features/brand/splice-plus-logo";
-import { OnboardingWizard } from "@/components/features/onboarding/onboarding-wizard";
+import { auth } from "@/auth";
+import { OnboardingFlow } from "@/components/features/onboarding/onboarding-flow";
+import { ROUTES } from "@/constants/routes";
+import { getUserOnboardingStatus } from "@/lib/onboarding/queries";
 
 export const metadata = {
-  title: "Get started | Splice+",
+  title: "Onboarding",
 };
 
-export default function OnboardingPage() {
-  return (
-    <main className="flex min-h-full flex-1 flex-col items-center justify-center bg-bg-light px-4 py-10">
-      <div className="mb-8 text-center">
-        <Link href="/" className="inline-block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal">
-          <SplicePlusLogo className="text-2xl" />
-        </Link>
-        <p className="mt-2 text-sm text-deep-blue/70">
-          Find your MedTech co-founder
-        </p>
-      </div>
-      <OnboardingWizard />
-      <p className="mt-6 text-sm text-muted-foreground">
-        Already have an account?{" "}
-        <Link href="/login" className="font-medium text-teal hover:underline">
-          Log in
-        </Link>
-      </p>
-    </main>
-  );
+export default async function OnboardingPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect(ROUTES.login);
+  }
+
+  const onboarding = await getUserOnboardingStatus(session.user.id);
+
+  if (onboarding?.onboardingCompleted) {
+    redirect(ROUTES.app.home);
+  }
+
+  return <OnboardingFlow userName={session.user.name} />;
 }

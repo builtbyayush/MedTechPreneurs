@@ -6,7 +6,6 @@ interface MongooseCache {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var mongooseCache: MongooseCache | undefined;
 }
 
@@ -19,18 +18,25 @@ if (!global.mongooseCache) {
   global.mongooseCache = cached;
 }
 
-/**
- * Connect to MongoDB with a cached connection for Next.js hot reload.
- * Call this from API routes / server code — not imported by the homepage yet.
- */
-export async function connectDB(): Promise<typeof mongoose> {
+function getMongoConfig(): { uri: string; dbName: string } {
   const uri = process.env.MONGODB_URI;
+  const dbName = process.env.DATABASE_NAME ?? "splice";
 
   if (!uri) {
     throw new Error(
-      "Missing MONGODB_URI. Add it to .env.local (see .env.local.example)."
+      "Missing MONGODB_URI. Add it to .env.local (see .env.local.example).",
     );
   }
+
+  return { uri, dbName };
+}
+
+/**
+ * Connect to MongoDB with a cached connection for Next.js hot reload.
+ * Call this from server actions, API routes, and other server code.
+ */
+export async function connectDB(): Promise<typeof mongoose> {
+  const { uri, dbName } = getMongoConfig();
 
   if (cached.conn) {
     return cached.conn;
@@ -38,10 +44,29 @@ export async function connectDB(): Promise<typeof mongoose> {
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(uri, {
+      dbName,
       bufferCommands: false,
     });
   }
 
   cached.conn = await cached.promise;
   return cached.conn;
+}
+
+/**
+ * Returns true when a MongoDB connection is currently cached.
+ */
+export function isDbConnected(): boolean {
+  return cached.conn?.connection.readyState === 1;
+}
+
+/**
+ * Disconnects the cached MongoDB connection. Intended for scripts and tests.
+ */
+export async function disconnectDB(): Promise<void> {
+  if (cached.conn) {
+    await cached.conn.disconnect();
+    cached.conn = null;
+    cached.promise = null;
+  }
 }

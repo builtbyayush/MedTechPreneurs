@@ -75,7 +75,7 @@ export function SceneOneProposition() {
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center lg:mt-14">
-                <LandingCtaPrimary href="/onboarding" size="lg" className="w-full sm:w-auto">
+                <LandingCtaPrimary href="/register" size="lg" className="w-full sm:w-auto">
                   Get started
                 </LandingCtaPrimary>
                 <LandingCtaLink href="/login" className="text-center sm:text-left">

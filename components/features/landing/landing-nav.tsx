@@ -64,7 +64,7 @@ export function LandingNav() {
             >
               Log in
             </LandingCtaLink>
-            <LandingCtaPrimary href="/onboarding" size="md">
+            <LandingCtaPrimary href="/register" size="md">
               Get started
             </LandingCtaPrimary>
           </div>
@@ -114,7 +114,7 @@ export function LandingNav() {
               </Link>
             </li>
             <li className="pt-2">
-              <LandingCtaPrimary href="/onboarding" size="md" className="w-full">
+              <LandingCtaPrimary href="/register" size="md" className="w-full">
                 Get started
               </LandingCtaPrimary>
             </li>

@@ -1,37 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Splice — MedTech Co-Founder Matching
+
+Splice is a Next.js PWA for MedTechPreneurs: a swipe-style co-founder discovery app for Indian healthcare and MedTech founders.
+
+See `SPLICE_DEV_REFERENCE.md` for the full product spec and build phases.
 
 ## Getting Started
 
-First, run the development server:
+1. Copy `.env.local.example` to `.env.local` and set `MONGODB_URI`, `AUTH_SECRET`, and related values.
+2. Install dependencies and run the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Development Seeding
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Seed realistic founders, discovery actions, and mutual matches for local testing:
+
+```bash
+npm run seed
+```
+
+Clear existing `@splice.dev` seed data first:
+
+```bash
+npm run seed -- --clear
+```
+
+The command is idempotent — re-running updates existing seed users instead of duplicating them.
+
+### Demo accounts
+
+All demo accounts use the password **`Password@123`**.
+
+| Email | Role | Notes |
+| --- | --- | --- |
+| `doctor@splice.dev` | Doctor | Matched with `engineer@splice.dev`; seeded chat thread |
+| `engineer@splice.dev` | Engineer | Matched with `doctor@splice.dev`; seeded chat thread |
+| `business@splice.dev` | Business | Matched with `researcher@splice.dev` |
+| `researcher@splice.dev` | Researcher | Matched with `business@splice.dev` |
+| `investor@splice.dev` | Investor | One-sided connect to `doctor@splice.dev` |
+
+After seeding, log in as any demo account to browse Discover, view Matches, or open **Messages** for seeded conversations.
+
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run seed` | Seed development data |
+
+## Deployment (Hostinger / VPS)
+
+- **Do not set `NODE_ENV` in your hosting env panel or `.env` files.** If it is set to `development` during `npm run build`, the build fails with `Cannot read properties of null (reading 'useContext')` while prerendering pages.
+- Remove `NODE_ENV` from Hostinger environment variables if present; `npm run build` forces `production` for the build step.
+- Set production values for `MONGODB_URI`, `AUTH_SECRET` (32+ characters), `AUTH_URL`, and `NEXT_PUBLIC_APP_URL` before deploying.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# MedTechPreneurs
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Splice Dev Reference](./SPLICE_DEV_REFERENCE.md)

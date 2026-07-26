@@ -1,0 +1,178 @@
+export type SeedMessageTurn = {
+  from: "a" | "b";
+  content: string;
+  minutesAgo: number;
+};
+
+export type SeedMessageThread = {
+  participantA: string;
+  participantB: string;
+  messages: SeedMessageTurn[];
+};
+
+export const SEED_MESSAGE_THREADS: SeedMessageThread[] = [
+  {
+    participantA: "doctor@splice.dev",
+    participantB: "engineer@splice.dev",
+    messages: [
+      { from: "a", content: "Hi Rohan — great to match. I'm building point-of-care cardiac screening for tier-2 clinics.", minutesAgo: 720 },
+      { from: "b", content: "Hey Ananya! CardioSense is focused on low-power wearable monitoring. Your clinical workflow angle is exactly what I was hoping to find.", minutesAgo: 705 },
+      { from: "a", content: "Perfect. Our MVP needs reliable vitals capture without burdening nursing staff.", minutesAgo: 690 },
+      { from: "b", content: "We already have a firmware stack for continuous HR and SpO2 on a wrist form factor.", minutesAgo: 675 },
+      { from: "a", content: "How are you thinking about CDSCO pathway for a Class B device?", minutesAgo: 660 },
+      { from: "b", content: "We mapped preliminary testing to IEC 60601-1 and are budgeting for a local CRO in Pune.", minutesAgo: 645 },
+      { from: "a", content: "I can open doors at two district hospitals in Karnataka for pilot sites.", minutesAgo: 630 },
+      { from: "b", content: "That would accelerate validation. Could we sync on integration with existing EMR exports?", minutesAgo: 615 },
+      { from: "a", content: "Yes — most sites still use HL7 v2 dumps at end of day. Keep the first integration lightweight.", minutesAgo: 600 },
+      { from: "b", content: "Agreed. I'll share our technical architecture doc and a 90-day prototype roadmap.", minutesAgo: 585 },
+      { from: "a", content: "Let's also discuss equity split and founder roles before we go too deep on build.", minutesAgo: 570 },
+    ],
+  },
+  {
+    participantA: "business@splice.dev",
+    participantB: "researcher@splice.dev",
+    messages: [
+      { from: "a", content: "Arjun, your biomarker work for liver fibrosis is compelling. I'm Priya from ClinicFlow.", minutesAgo: 840 },
+      { from: "b", content: "Thanks Priya. We're still at idea stage but have strong preclinical signals.", minutesAgo: 825 },
+      { from: "a", content: "I can help with GTM into multi-specialty chains once the assay is clinic-ready.", minutesAgo: 810 },
+      { from: "b", content: "What we need most is someone who understands diagnostic franchise economics in India.", minutesAgo: 795 },
+      { from: "a", content: "I've scaled collection center networks before — unit economics live or die on sample logistics.", minutesAgo: 780 },
+      { from: "b", content: "We're estimating ₹800–₹1,200 per panel at scale. Does that fit outpatient pricing?", minutesAgo: 765 },
+      { from: "a", content: "If turnaround is under 48 hours and reporting is digital, yes for metro tier-1.", minutesAgo: 750 },
+      { from: "b", content: "Good to know. Our IP strategy is filing provisionals before we publish more data.", minutesAgo: 735 },
+      { from: "a", content: "Happy to intro two angel investors who focus on regulated diagnostics.", minutesAgo: 720 },
+      { from: "b", content: "That would help. Can we draft a joint 6-month validation plan next week?", minutesAgo: 705 },
+    ],
+  },
+  {
+    participantA: "kavya.iyer@splice.dev",
+    participantB: "vikram.singh@splice.dev",
+    messages: [
+      { from: "b", content: "Kavya, matching with someone building ED triage AI is timely — we see huge async derm volume too.", minutesAgo: 540 },
+      { from: "a", content: "Vikram, tele-derm workflows share a lot with triage prioritization logic.", minutesAgo: 525 },
+      { from: "b", content: "Exactly. Clinicians won't adopt black-box scores without clear escalation paths.", minutesAgo: 510 },
+      { from: "a", content: "We designed TriageMind as decision support, not autonomous diagnosis.", minutesAgo: 495 },
+      { from: "b", content: "Same for DermaReach — AI assists routing, doctors retain final call.", minutesAgo: 480 },
+      { from: "a", content: "Are your models validated on Indian skin tone diversity?", minutesAgo: 465 },
+      { from: "b", content: "We're expanding our validation set across North and South India this quarter.", minutesAgo: 450 },
+      { from: "a", content: "We should compare annotation guidelines — false positives destroy trust fast.", minutesAgo: 435 },
+      { from: "b", content: "Agreed. I'll share our clinician review SOP.", minutesAgo: 420 },
+      { from: "a", content: "Let's explore a shared data governance framework for consented images.", minutesAgo: 405 },
+    ],
+  },
+  {
+    participantA: "imran.shaikh@splice.dev",
+    participantB: "deepa.krishnan@splice.dev",
+    messages: [
+      { from: "a", content: "Dr. Krishnan, RadPriority flags critical chest X-ray findings for radiologist review.", minutesAgo: 960 },
+      { from: "b", content: "Imran, prioritization in high-volume centers is a real pain point for us.", minutesAgo: 945 },
+      { from: "a", content: "Our model focuses on pneumothorax, effusion, and mass-like opacities first.", minutesAgo: 930 },
+      { from: "b", content: "How do you handle integration with existing PACS at dialysis-heavy hospital groups?", minutesAgo: 915 },
+      { from: "a", content: "DICOM routing via edge gateway — minimal changes to radiologist workflow.", minutesAgo: 900 },
+      { from: "b", content: "DialysisOne EHR could expose worklist hooks if latency stays under 2 minutes.", minutesAgo: 885 },
+      { from: "a", content: "We benchmark at ~90 seconds median on-prem inference.", minutesAgo: 870 },
+      { from: "b", content: "Promising. Regulatory labeling as CADe would be my expectation.", minutesAgo: 855 },
+      { from: "a", content: "Yes, we're documenting clinician override rates for the submission dossier.", minutesAgo: 840 },
+      { from: "b", content: "Let's schedule a technical deep dive with our chief of radiology.", minutesAgo: 825 },
+      { from: "a", content: "I'll bring our clinical validation lead and deployment architecture.", minutesAgo: 810 },
+    ],
+  },
+  {
+    participantA: "amit.choudhury@splice.dev",
+    participantB: "tanya.bose@splice.dev",
+    messages: [
+      { from: "a", content: "Tanya, we're building affordable neonatal warmers for district hospitals with unstable power.", minutesAgo: 680 },
+      { from: "b", content: "Amit, surgical ergonomics and device usability overlap more than people think.", minutesAgo: 665 },
+      { from: "a", content: "Our biggest challenge is thermal consistency during voltage fluctuations.", minutesAgo: 650 },
+      { from: "b", content: "Have you run ethnographic sessions with nurses in rural NICUs?", minutesAgo: 635 },
+      { from: "a", content: "Two field trips in Odisha — alarm fatigue and cleaning protocols dominated feedback.", minutesAgo: 620 },
+      { from: "b", content: "I can help redesign the control panel for gloved one-hand operation.", minutesAgo: 605 },
+      { from: "a", content: "That would directly reduce setup errors during night shifts.", minutesAgo: 590 },
+      { from: "b", content: "Let's co-create a usability test script for the next prototype.", minutesAgo: 575 },
+      { from: "a", content: "I'll share CAD files and our BOM cost targets.", minutesAgo: 560 },
+      { from: "b", content: "Perfect — human factors should be locked before manufacturing scale.", minutesAgo: 545 },
+    ],
+  },
+  {
+    participantA: "dev.rastogi@splice.dev",
+    participantB: "harish.menon@splice.dev",
+    messages: [
+      { from: "a", content: "Harish, FlowDetect is a portable microfluidics platform for TB screening camps.", minutesAgo: 620 },
+      { from: "b", content: "Dev, genomics lab automation is different scale but sample prep pain is shared.", minutesAgo: 605 },
+      { from: "a", content: "We need help standardizing QC metrics across field deployments.", minutesAgo: 590 },
+      { from: "b", content: "OncoGenix built internal LIMS hooks — might adapt for your cartridge workflow.", minutesAgo: 575 },
+      { from: "a", content: "What's your view on central lab vs point-of-care for high-burden TB states?", minutesAgo: 560 },
+      { from: "b", content: "Hybrid model wins: POC screen, central lab confirm with sequencing backup.", minutesAgo: 545 },
+      { from: "a", content: "Aligned. We're pitching state NHM programs for camp-based screening.", minutesAgo: 530 },
+      { from: "b", content: "I can intro program officers we've worked with in Kerala.", minutesAgo: 515 },
+      { from: "a", content: "That would help our next grant application timeline.", minutesAgo: 500 },
+      { from: "b", content: "Send your validation dataset summary — I'll review this weekend.", minutesAgo: 485 },
+    ],
+  },
+  {
+    participantA: "neha.patel@splice.dev",
+    participantB: "aditya.joshi@splice.dev",
+    messages: [
+      { from: "b", content: "Neha, RehabPulse tracks post-intervention cardiac recovery remotely.", minutesAgo: 430 },
+      { from: "a", content: "Aditya, chronic care UX for elderly patients is my focus — happy to match.", minutesAgo: 415 },
+      { from: "b", content: "We're integrating consumer wearables but clinicians hate noisy dashboards.", minutesAgo: 400 },
+      { from: "a", content: "Progressive disclosure works — show alerts first, trends on drill-down.", minutesAgo: 385 },
+      { from: "b", content: "Exactly. Can you audit our current caregiver flow?", minutesAgo: 370 },
+      { from: "a", content: "Yes — I'll need access to your Figma and analytics on drop-off points.", minutesAgo: 355 },
+      { from: "b", content: "I'll invite you to our staging app and Mixpanel exports.", minutesAgo: 340 },
+      { from: "a", content: "Accessibility for low vision users should be in v1, not v3.", minutesAgo: 325 },
+      { from: "b", content: "Agreed. Our cardiologist advisors flagged font size issues last month.", minutesAgo: 310 },
+      { from: "a", content: "Let's run a 5-user moderated test before the next release.", minutesAgo: 295 },
+    ],
+  },
+  {
+    participantA: "karthik.reddy@splice.dev",
+    participantB: "pooja.saxena@splice.dev",
+    messages: [
+      { from: "a", content: "Pooja, InsulinPath is commercializing affordable delivery devices in South India.", minutesAgo: 780 },
+      { from: "b", content: "Karthik, HealMatrix works on biomaterials for chronic wound healing.", minutesAgo: 765 },
+      { from: "a", content: "Different verticals, but both need hospital procurement navigation.", minutesAgo: 750 },
+      { from: "b", content: "True — and both face long clinical validation cycles.", minutesAgo: 735 },
+      { from: "a", content: "I'm strong on distributor partnerships; weaker on preclinical study design.", minutesAgo: 720 },
+      { from: "b", content: "I can help map your device claims to endpoint selection for pilot studies.", minutesAgo: 705 },
+      { from: "a", content: "We're targeting endocrinology departments first — any KOL intros?", minutesAgo: 690 },
+      { from: "b", content: "Two advisors from Hyderabad diabetes centers could be open to conversations.", minutesAgo: 675 },
+      { from: "a", content: "Let's also discuss fundraising narrative — med device + biotech story is tricky.", minutesAgo: 660 },
+      { from: "b", content: "Keep it patient-outcome led, not technology led. Investors respond to that.", minutesAgo: 645 },
+      { from: "a", content: "Helpful framing. I'll rework our deck this week.", minutesAgo: 630 },
+    ],
+  },
+  {
+    participantA: "elena.varghese@splice.dev",
+    participantB: "ritu.malhotra@splice.dev",
+    messages: [
+      { from: "a", content: "Ritu, HealthBridge API connects consent-aware data exchange between health apps.", minutesAgo: 510 },
+      { from: "b", content: "Elena, LabReach runs franchise diagnostic collection — integrations are our bottleneck.", minutesAgo: 495 },
+      { from: "a", content: "We support FHIR-ish payloads with ABHA-aware consent logs.", minutesAgo: 480 },
+      { from: "b", content: "Franchise partners use 4–5 different LIS vendors — that's the fragmentation.", minutesAgo: 465 },
+      { from: "a", content: "Adapter pattern is our approach — one canonical event stream per partner.", minutesAgo: 450 },
+      { from: "b", content: "If you can cut partner onboarding from 6 weeks to 2, I'm interested.", minutesAgo: 435 },
+      { from: "a", content: "Pilot with 3 franchises in Rajasthan could prove that.", minutesAgo: 420 },
+      { from: "b", content: "I can sponsor two Jaipur locations for a controlled rollout.", minutesAgo: 405 },
+      { from: "a", content: "Let's define success metrics: sample tracking accuracy and TAT visibility.", minutesAgo: 390 },
+      { from: "b", content: "Also franchise NPS — ops managers hate opaque status pages.", minutesAgo: 375 },
+    ],
+  },
+  {
+    participantA: "sana.qureshi@splice.dev",
+    participantB: "sanjeet.bhatt@splice.dev",
+    messages: [
+      { from: "b", content: "Dr. Qureshi, PrimaryAI Care builds decision support for rural primary care workers.", minutesAgo: 890 },
+      { from: "a", content: "Sanjeet, orphan metabolic disorders are my research focus — interesting overlap on frontline triage.", minutesAgo: 875 },
+      { from: "b", content: "We need clinical protocols that don't overwhelm ASHA workers with alerts.", minutesAgo: 860 },
+      { from: "a", content: "Pediatric metabolic red flags could be a high-value module if kept to 5–7 rules.", minutesAgo: 845 },
+      { from: "b", content: "Regulatory-wise we're treating this as clinical decision support, not autonomous diagnosis.", minutesAgo: 830 },
+      { from: "a", content: "Smart. CDSCO and state programs scrutinize autonomous claims heavily.", minutesAgo: 815 },
+      { from: "b", content: "Can you review our draft protocol tree for hypoglycemia referrals?", minutesAgo: 800 },
+      { from: "a", content: "Yes — send it over. I'll annotate with public hospital referral realities.", minutesAgo: 785 },
+      { from: "b", content: "We also need funding for a 3-state validation study.", minutesAgo: 770 },
+      { from: "a", content: "I know two public health grants aligned with primary care AI pilots.", minutesAgo: 755 },
+      { from: "b", content: "Let's co-author the outcomes section for the grant application.", minutesAgo: 740 },
+    ],
+  },
+];

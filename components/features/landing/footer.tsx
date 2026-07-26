@@ -32,7 +32,7 @@ export function LandingFooter() {
         <Reveal delay={0.1}>
           <div className="flex flex-wrap gap-4 text-sm">
             <Link
-              href="/onboarding"
+              href="/register"
               className="font-heading font-bold text-coral hover:underline"
             >
               Get Started
