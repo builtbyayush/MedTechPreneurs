@@ -32,6 +32,20 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        /**
+         * Prevent proxies/browsers from caching HTML with stale `/_next/static`
+         * chunk hashes after redeploys (causes turbopack-*.js 404 loops).
+         */
+        source:
+          "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:js|css|png|jpg|jpeg|gif|webp|svg|ico|woff2?)$).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "private, no-cache, no-store, max-age=0, must-revalidate",
+          },
+        ],
+      },
     ];
   },
 };

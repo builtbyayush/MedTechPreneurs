@@ -1,4 +1,4 @@
-const CACHE_NAME = "splice-pwa-v2";
+const CACHE_NAME = "splice-pwa-v3";
 const OFFLINE_URL = "/offline";
 
 /** Only precache the offline shell — never precache app HTML (stale chunk refs after rebuild). */

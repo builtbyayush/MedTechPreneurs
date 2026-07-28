@@ -58,6 +58,29 @@ After seeding, log in as any demo account to browse Discover, view Matches, or o
 
 ## Deployment (Hostinger / VPS)
 
+**Run production mode only.** Never expose `npm run dev` on your public domain — dev/turbopack chunk names change between restarts, which causes `/_next/static/chunks/turbopack-*.js` 404 errors for anyone with cached HTML.
+
+Recommended deploy flow on the server:
+
+```bash
+git pull
+npm ci
+npm run build
+# restart the process manager running production (examples):
+pm2 restart splice
+# or: systemctl restart splice
+```
+
+The process must run **`npm run start`** (`next start`), not `npm run dev`.
+
+After each deploy:
+
+1. Restart the Node process so it serves the new `.next` build output.
+2. Upload/sync the full `.next` folder if you build elsewhere — missing static files also cause chunk 404s.
+3. If users still see a blank page, ask them to hard-refresh (Ctrl+Shift+R) or clear site data for the domain once.
+
+Environment notes:
+
 - **Do not set `NODE_ENV` in your hosting env panel or `.env` files.** If it is set to `development` during `npm run build`, the build fails with `Cannot read properties of null (reading 'useContext')` while prerendering pages.
 - Remove `NODE_ENV` from Hostinger environment variables if present; `npm run build` forces `production` for the build step.
 - Set production values for `MONGODB_URI`, `AUTH_SECRET` (32+ characters), `AUTH_URL`, and `NEXT_PUBLIC_APP_URL` before deploying.
