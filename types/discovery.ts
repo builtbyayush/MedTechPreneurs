@@ -33,6 +33,7 @@ export type DiscoveryFeedResponse = {
   status: DiscoveryFeedStatus;
   founder?: DiscoveryFounder;
   remainingCount?: number;
+  passedCount?: number;
 };
 
 export type DiscoveryActionResponse = {

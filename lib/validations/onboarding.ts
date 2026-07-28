@@ -28,7 +28,7 @@ export const currentStageStepSchema = z.object({
 export const lookingForStepSchema = z.object({
   lookingForRoles: z
     .array(z.enum(LOOKING_FOR_ROLES))
-    .min(1, "Select at least one co-founder type"),
+    .min(1, "Select at least one partnership type"),
 });
 
 export const locationStepSchema = z.object({

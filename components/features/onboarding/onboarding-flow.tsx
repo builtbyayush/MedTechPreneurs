@@ -68,7 +68,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
           eyebrow: "Welcome",
           title: firstName === "there" ? "Welcome to Splice+" : `Hi, ${firstName}`,
           description:
-            "We help healthcare founders find the right co-founders.",
+            "We help healthcare founders find the right partners.",
         },
         {
           eyebrow: "About you",
@@ -88,7 +88,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
         {
           eyebrow: "Matching",
           title: "Who are you looking for?",
-          description: "Select every co-founder type you'd consider.",
+          description: "Select every partnership type you'd consider.",
         },
         {
           eyebrow: "Location",

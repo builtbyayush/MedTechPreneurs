@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
-import { getMatchedFoundersForUser } from "@/lib/matching/queries";
+import {
+  getMatchedFoundersForUser,
+  getOutgoingConnectsForUser,
+} from "@/lib/matching/queries";
 
 export async function GET() {
   try {
@@ -11,9 +14,12 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const matches = await getMatchedFoundersForUser(session.user.id);
+    const [matches, outgoingConnects] = await Promise.all([
+      getMatchedFoundersForUser(session.user.id),
+      getOutgoingConnectsForUser(session.user.id),
+    ]);
 
-    return NextResponse.json({ matches });
+    return NextResponse.json({ matches, outgoingConnects });
   } catch (error) {
     console.error("[matches/GET]", error);
     return NextResponse.json(

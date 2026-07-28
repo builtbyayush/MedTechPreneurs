@@ -6,6 +6,7 @@ import { useRef } from "react";
 
 import { HeroAtmosphere } from "@/components/features/landing/hero-atmosphere";
 import { Kicker } from "@/components/features/landing/kicker";
+import { SceneOneHeadline } from "@/components/features/landing/scene-one-headline";
 import {
   LandingCtaLink,
   LandingCtaPrimary,
@@ -62,16 +63,12 @@ export function SceneOneProposition() {
             >
               <Kicker>By MedTechPreneurs</Kicker>
 
-              <h1
-                id="scene-one-heading"
-                className="mt-8 font-heading text-[2.5rem] leading-[1.05] font-black tracking-tight text-white sm:text-5xl lg:mt-10 lg:text-[3.25rem] xl:text-[3.75rem]"
-              >
-                Find the co-founder your MedTech idea is missing.
-              </h1>
+              <SceneOneHeadline id="scene-one-heading" />
 
               <p className="mt-6 max-w-[640px] text-lg leading-[1.65] text-white/75 lg:mt-8">
-                Ranked by complementarity — for clinicians, engineers, and
-                founders building in Indian MedTech.
+                Whether you are a Startup, Medical Institution, or an Investor
+                — Join us to help Bridge the Gap between Technology &amp;
+                Healthcare
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:mt-12 sm:flex-row sm:flex-wrap sm:items-center lg:mt-14">

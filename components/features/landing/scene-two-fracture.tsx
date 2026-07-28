@@ -64,11 +64,11 @@ export function SceneTwoFracture() {
           >
             <span className="block">
               <span className="text-white">Brilliant </span>
-              <span className="text-coral">alone.</span>
+              <span className="text-brand-red">alone.</span>
             </span>
             <span className="mt-1 block">
               <span className="text-white">Incomplete </span>
-              <span className="text-coral">apart.</span>
+              <span className="text-brand-red">apart.</span>
             </span>
           </motion.h2>
 
@@ -81,7 +81,7 @@ export function SceneTwoFracture() {
               Healthcare&apos;s biggest breakthroughs require clinical expertise,
               technical execution and business leadership.
             </p>
-            <p className="mt-12 font-[family-name:var(--font-display-serif)] text-[1.25rem] font-semibold leading-snug text-coral sm:mt-14 sm:text-[1.375rem]">
+            <p className="mt-12 font-[family-name:var(--font-display-serif)] text-[1.25rem] font-semibold leading-snug text-brand-red sm:mt-14 sm:text-[1.375rem]">
               Those people rarely begin at the same table.
             </p>
           </motion.div>

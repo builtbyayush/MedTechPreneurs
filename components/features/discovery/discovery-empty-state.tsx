@@ -9,6 +9,9 @@ type DiscoveryEmptyStateProps = {
   description: string;
   actionLabel?: string;
   onAction?: () => void;
+  secondaryActionLabel?: string;
+  onSecondaryAction?: () => void;
+  secondaryActionDisabled?: boolean;
   className?: string;
 };
 
@@ -18,6 +21,9 @@ export function DiscoveryEmptyState({
   description,
   actionLabel,
   onAction,
+  secondaryActionLabel,
+  onSecondaryAction,
+  secondaryActionDisabled = false,
   className,
 }: DiscoveryEmptyStateProps) {
   return (
@@ -46,6 +52,17 @@ export function DiscoveryEmptyState({
           onClick={onAction}
         >
           {actionLabel}
+        </Button>
+      ) : null}
+      {secondaryActionLabel && onSecondaryAction ? (
+        <Button
+          type="button"
+          variant="outline"
+          className="mt-3 h-11 border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06] hover:text-white"
+          disabled={secondaryActionDisabled}
+          onClick={onSecondaryAction}
+        >
+          {secondaryActionLabel}
         </Button>
       ) : null}
     </div>

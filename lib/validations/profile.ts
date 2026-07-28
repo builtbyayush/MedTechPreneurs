@@ -90,7 +90,7 @@ export const profileUpdateSchema = z.object({
   currentStage: z.enum(CURRENT_STAGES).optional(),
   lookingForRoles: z
     .array(z.enum(LOOKING_FOR_ROLES))
-    .min(1, "Select at least one co-founder type")
+    .min(1, "Select at least one partnership type")
     .optional(),
   country: z.string().trim().max(80).optional().or(z.literal("")),
   city: z.string().trim().max(80).optional().or(z.literal("")),

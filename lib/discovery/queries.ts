@@ -172,6 +172,26 @@ export function serializeDiscoveryFounder(user: {
   };
 }
 
+export async function getPassedFounderCount(viewerId: string): Promise<number> {
+  await connectDB();
+
+  return DiscoveryAction.countDocuments({
+    viewerId,
+    action: "pass",
+  });
+}
+
+export async function resetPassedFounders(viewerId: string): Promise<number> {
+  await connectDB();
+
+  const result = await DiscoveryAction.deleteMany({
+    viewerId,
+    action: "pass",
+  });
+
+  return result.deletedCount ?? 0;
+}
+
 export async function getExcludedTargetIds(viewerId: string): Promise<string[]> {
   const [actedTargetIds, matchedUserIds] = await Promise.all([
     DiscoveryAction.find({ viewerId })
@@ -213,7 +233,8 @@ export async function getDiscoveryFeed(
   const remainingCount = await User.countDocuments(feedFilter);
 
   if (remainingCount === 0) {
-    return { status: "no-more", remainingCount: 0 };
+    const passedCount = await getPassedFounderCount(options.viewerId);
+    return { status: "no-more", remainingCount: 0, passedCount };
   }
 
   const nextUser = await User.findOne(feedFilter)

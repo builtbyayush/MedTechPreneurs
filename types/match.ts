@@ -21,8 +21,20 @@ export type MatchListItem = {
   partner: MatchPartner;
 };
 
+export type OutgoingConnectStatus = "matched" | "pending";
+
+export type OutgoingConnectListItem = {
+  targetUserId: string;
+  connectedAt: string;
+  status: OutgoingConnectStatus;
+  matchId?: string;
+  matchedAt?: string;
+  partner: MatchPartner;
+};
+
 export type MatchListResponse = {
   matches: MatchListItem[];
+  outgoingConnects: OutgoingConnectListItem[];
 };
 
 export type DiscoveryActionResult = {

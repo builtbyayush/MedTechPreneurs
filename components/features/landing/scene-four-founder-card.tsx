@@ -70,7 +70,7 @@ export function SceneFourFounderCard() {
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.08)}
             >
               Every profile is built for one purpose.
-              <span className="mt-2 block text-white/88">
+              <span className="mt-2 block text-brand-red">
                 Finding the teammate you don&apos;t already have.
               </span>
             </motion.h2>

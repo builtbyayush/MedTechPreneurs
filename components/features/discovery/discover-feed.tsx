@@ -38,6 +38,8 @@ export function DiscoverFeed() {
   const [isLoadingNext, setIsLoadingNext] = useState(false);
   const [exitDirection, setExitDirection] = useState<SwipeAction | null>(null);
   const [restoreSignal, setRestoreSignal] = useState(0);
+  const [passedCount, setPassedCount] = useState(0);
+  const [isResettingPasses, setIsResettingPasses] = useState(false);
   const pendingActionRef = useRef<SwipeAction | null>(null);
   const pendingFounderIdRef = useRef<string | null>(null);
 
@@ -75,10 +77,12 @@ export function DiscoverFeed() {
     if (feed.status === "founder" && feed.founder) {
       setFounder(feed.founder);
       setFeedState("founder");
+      setPassedCount(0);
       return;
     }
 
     setFounder(null);
+    setPassedCount(feed.passedCount ?? 0);
     setFeedState(feed.status === "empty" ? "empty" : "no-more");
   }, []);
 
@@ -87,6 +91,46 @@ export function DiscoverFeed() {
     setErrorMessage(null);
     applyFeed(await fetchFeed());
   }, [applyFeed, fetchFeed]);
+
+  const resetPassedFounders = useCallback(async () => {
+    if (isResettingPasses) {
+      return;
+    }
+
+    setIsResettingPasses(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/discovery/reset-passes", {
+        method: "POST",
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { ok?: boolean; resetCount?: number; error?: string }
+        | null;
+
+      if (!response.ok) {
+        setErrorMessage(
+          payload?.error ?? "Unable to reset passed founders right now.",
+        );
+        return;
+      }
+
+      const resetCount = payload?.resetCount ?? 0;
+      toast({
+        title: resetCount > 0 ? "Passed founders restored" : "Nothing to reset",
+        description:
+          resetCount > 0
+            ? `${resetCount} ${resetCount === 1 ? "founder is" : "founders are"} back in your Discover feed.`
+            : "You haven't passed on anyone yet.",
+      });
+
+      await loadFounder();
+    } catch {
+      setErrorMessage("Unable to reset passed founders right now.");
+    } finally {
+      setIsResettingPasses(false);
+    }
+  }, [isResettingPasses, loadFounder, toast]);
 
   useEffect(() => {
     let active = true;
@@ -244,9 +288,26 @@ export function DiscoverFeed() {
           <DiscoveryEmptyState
             icon={Compass}
             title="No more founders today"
-            description="You've seen everyone available for now. Come back later as new founders complete onboarding."
+            description={
+              passedCount > 0
+                ? `You've seen everyone available for now, including ${passedCount} ${
+                    passedCount === 1 ? "founder you passed on" : "founders you passed on"
+                  }. Reset passes to browse them again.`
+                : "You've seen everyone available for now. Come back later as new founders complete onboarding."
+            }
             actionLabel="Check again"
             onAction={() => void loadFounder()}
+            secondaryActionLabel={
+              passedCount > 0
+                ? isResettingPasses
+                  ? "Resetting passes…"
+                  : `Reset ${passedCount} passed ${passedCount === 1 ? "founder" : "founders"}`
+                : undefined
+            }
+            onSecondaryAction={
+              passedCount > 0 ? () => void resetPassedFounders() : undefined
+            }
+            secondaryActionDisabled={isResettingPasses}
           />
         ) : null}
 

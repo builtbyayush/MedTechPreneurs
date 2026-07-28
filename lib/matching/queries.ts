@@ -17,7 +17,7 @@ import {
   getMatchPartnerId,
   Match,
 } from "@/models/Match";
-import type { MatchListItem } from "@/types/match";
+import type { MatchListItem, OutgoingConnectListItem } from "@/types/match";
 import {
   FOUNDER_ROLE_LABELS,
   type FounderRole,
@@ -87,6 +87,115 @@ export async function tryCreateMutualMatch(input: {
     created: true,
     matchId: match?._id.toString(),
   };
+}
+
+export async function getOutgoingConnectsForUser(
+  userId: string,
+): Promise<OutgoingConnectListItem[]> {
+  await connectDB();
+
+  const viewerObjectId = new mongoose.Types.ObjectId(userId);
+  const connectActions = await DiscoveryAction.find({
+    viewerId: userId,
+    action: "connect",
+  })
+    .sort({ createdAt: -1 })
+    .lean<
+      {
+        targetUserId: mongoose.Types.ObjectId;
+        createdAt: Date;
+      }[]
+    >();
+
+  if (connectActions.length === 0) {
+    return [];
+  }
+
+  const targetObjectIds = connectActions.map((action) => action.targetUserId);
+
+  const [targets, reciprocalConnects, matches] = await Promise.all([
+    User.find({ _id: { $in: targetObjectIds } })
+      .select(
+        "name headline founderRole companyName city country profilePhotoUrl",
+      )
+      .lean(),
+    DiscoveryAction.find({
+      viewerId: { $in: targetObjectIds },
+      targetUserId: viewerObjectId,
+      action: "connect",
+    })
+      .select("viewerId")
+      .lean<{ viewerId: mongoose.Types.ObjectId }[]>(),
+    Match.find({
+      status: "matched",
+      $or: [
+        { userA: viewerObjectId, userB: { $in: targetObjectIds } },
+        { userB: viewerObjectId, userA: { $in: targetObjectIds } },
+      ],
+    })
+      .select("userA userB _id matchedAt createdAt")
+      .lean<
+        {
+          _id: mongoose.Types.ObjectId;
+          userA: mongoose.Types.ObjectId;
+          userB: mongoose.Types.ObjectId;
+          matchedAt?: Date | null;
+          createdAt: Date;
+        }[]
+      >(),
+  ]);
+
+  const reciprocalIds = new Set(
+    reciprocalConnects.map((action) => action.viewerId.toString()),
+  );
+  const matchByPartnerId = new Map<
+    string,
+    { matchId: string; matchedAt: string }
+  >();
+
+  for (const match of matches) {
+    const partnerId = getMatchPartnerId(match, userId);
+    matchByPartnerId.set(partnerId, {
+      matchId: match._id.toString(),
+      matchedAt: (match.matchedAt ?? match.createdAt).toISOString(),
+    });
+  }
+
+  const targetMap = new Map(
+    targets.map((target) => [target._id.toString(), target]),
+  );
+
+  return connectActions.flatMap((action) => {
+    const targetId = action.targetUserId.toString();
+    const target = targetMap.get(targetId);
+
+    if (!target?.founderRole) {
+      return [];
+    }
+
+    const matchInfo = matchByPartnerId.get(targetId);
+    const status =
+      matchInfo || reciprocalIds.has(targetId) ? "matched" : "pending";
+
+    return [
+      {
+        targetUserId: targetId,
+        connectedAt: action.createdAt.toISOString(),
+        status,
+        matchId: matchInfo?.matchId,
+        matchedAt: matchInfo?.matchedAt,
+        partner: {
+          id: targetId,
+          name: target.name,
+          headline: target.headline ?? undefined,
+          founderRole: target.founderRole as FounderRole,
+          companyName: target.companyName ?? undefined,
+          location: formatLocation(target.city, target.country),
+          profilePhotoUrl: target.profilePhotoUrl ?? undefined,
+        },
+      },
+    ];
+  });
 }
 
 export async function getMatchedFoundersForUser(
