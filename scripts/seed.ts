@@ -128,6 +128,7 @@ async function seedUsers(): Promise<{ created: number; updated: number }> {
         buildingFocus: founder.buildingFocus,
         currentStage: founder.currentStage,
         lookingForRoles: founder.lookingForRoles,
+        partnershipGoals: founder.partnershipGoals ?? ["finding-partnership"],
         country: founder.country,
         city: founder.city,
         headline: founder.headline,

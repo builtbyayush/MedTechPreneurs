@@ -34,6 +34,7 @@ export async function PATCH(request: Request) {
     const country = data.country?.trim() || undefined;
     const city = data.city?.trim() || undefined;
     const uniqueLookingForRoles = [...new Set(data.lookingForRoles)];
+    const uniquePartnershipGoals = [...new Set(data.partnershipGoals)];
     const legacyCategory = mapFounderRoleToCategory(data.founderRole);
     const mappedLookingFor = mapLookingForRolesToCategories(uniqueLookingForRoles);
     const legacyLookingFor = mappedLookingFor.filter(
@@ -42,6 +43,24 @@ export async function PATCH(request: Request) {
 
     await connectDB();
 
+    const existingUser = await User.findById(session.user.id)
+      .select("emailVerified")
+      .lean<{ emailVerified?: boolean } | null>();
+
+    if (!existingUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (!existingUser.emailVerified) {
+      return NextResponse.json(
+        {
+          error: "Email not verified",
+          message: "Verify your email before completing onboarding.",
+        },
+        { status: 403 },
+      );
+    }
+
     const user = await User.findByIdAndUpdate(
       session.user.id,
       {
@@ -49,6 +68,7 @@ export async function PATCH(request: Request) {
         buildingFocus: data.buildingFocus,
         currentStage: data.currentStage,
         lookingForRoles: uniqueLookingForRoles,
+        partnershipGoals: uniquePartnershipGoals,
         country,
         city,
         category: legacyCategory,

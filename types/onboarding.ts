@@ -88,13 +88,32 @@ export const LOOKING_FOR_ROLE_LABELS: Record<LookingForRole, string> = {
   advisor: "Advisor",
 };
 
-export const ONBOARDING_STEP_COUNT = 7;
+export const PARTNERSHIP_GOALS = [
+  "seeking-mentorship",
+  "providing-mentorship",
+  "seeking-investment",
+  "providing-investment",
+  "finding-partnership",
+] as const;
+
+export type PartnershipGoal = (typeof PARTNERSHIP_GOALS)[number];
+
+export const PARTNERSHIP_GOAL_LABELS: Record<PartnershipGoal, string> = {
+  "seeking-mentorship": "Seeking Mentorship",
+  "providing-mentorship": "Providing Mentorship",
+  "seeking-investment": "Seeking Investment",
+  "providing-investment": "Providing Investment",
+  "finding-partnership": "Finding the Right Partnership",
+};
+
+export const ONBOARDING_STEP_COUNT = 9;
 
 export type OnboardingFormState = {
   founderRole?: FounderRole;
   buildingFocus?: BuildingType;
   currentStage?: CurrentStage;
   lookingForRoles: LookingForRole[];
+  partnershipGoals: PartnershipGoal[];
   country: string;
   city: string;
 };

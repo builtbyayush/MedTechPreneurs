@@ -3,6 +3,7 @@ import type {
   CurrentStage,
   FounderRole,
   LookingForRole,
+  PartnershipGoal,
 } from "@/types/onboarding";
 
 export type SeedFounder = {
@@ -12,6 +13,7 @@ export type SeedFounder = {
   buildingFocus: BuildingType;
   currentStage: CurrentStage;
   lookingForRoles: LookingForRole[];
+  partnershipGoals?: PartnershipGoal[];
   country: string;
   city: string;
   headline: string;

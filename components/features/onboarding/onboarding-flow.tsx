@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
+import { EmailVerificationStep } from "@/components/features/onboarding/email-verification-step";
 import { OnboardingOptionCard } from "@/components/features/onboarding/onboarding-option-card";
 import { OnboardingShell } from "@/components/features/onboarding/onboarding-shell";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
   founderRoleStepSchema,
   locationStepSchema,
   lookingForStepSchema,
+  partnershipGoalsStepSchema,
 } from "@/lib/validations/onboarding";
 import { getFirstName } from "@/lib/user/display-name";
 import { fadeUpTransition } from "@/lib/motion";
@@ -34,7 +36,10 @@ import {
   LOOKING_FOR_ROLES,
   LOOKING_FOR_ROLE_LABELS,
   ONBOARDING_STEP_COUNT,
+  PARTNERSHIP_GOALS,
+  PARTNERSHIP_GOAL_LABELS,
   type OnboardingFormState,
+  type PartnershipGoal,
 } from "@/types/onboarding";
 
 const stepMotion = {
@@ -53,8 +58,10 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
   const [form, setForm] = useState<OnboardingFormState>({
     lookingForRoles: [],
+    partnershipGoals: [],
     country: "",
     city: "",
   });
@@ -88,12 +95,22 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
         {
           eyebrow: "Matching",
           title: "Who are you looking for?",
-          description: "Select every partnership type you'd consider.",
+          description: "Select every co-founder type you'd consider.",
+        },
+        {
+          eyebrow: "Goals",
+          title: "What are you here for?",
+          description: "Select every goal that applies to you on Splice+.",
         },
         {
           eyebrow: "Location",
           title: "Where are you based?",
           description: "Optional — helps with future location-aware matching.",
+        },
+        {
+          eyebrow: "Verification",
+          title: "Verify your email",
+          description: "Confirm your email so founders know you're reachable.",
         },
         {
           eyebrow: "Review",
@@ -151,7 +168,24 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
     }
 
     if (step === 5) {
+      const parsed = partnershipGoalsStepSchema.safeParse(form);
+      if (!parsed.success) {
+        setError(parsed.error.issues[0]?.message ?? "Select at least one goal");
+        return false;
+      }
+      return true;
+    }
+
+    if (step === 6) {
       locationStepSchema.safeParse(form);
+      return true;
+    }
+
+    if (step === 7) {
+      if (!emailVerified) {
+        setError("Verify your email before continuing.");
+        return false;
+      }
       return true;
     }
 
@@ -161,6 +195,11 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
         parsed.error.issues[0]?.message ??
           "Please complete the required steps before finishing.",
       );
+      return false;
+    }
+
+    if (!emailVerified) {
+      setError("Verify your email before finishing.");
       return false;
     }
 
@@ -187,7 +226,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
 
   function handleSkipLocation() {
     setError(null);
-    setStep(6);
+    setStep(7);
   }
 
   async function handleFinish() {
@@ -197,6 +236,11 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
         parsed.error.issues[0]?.message ??
           "Please complete the required steps before finishing.",
       );
+      return;
+    }
+
+    if (!emailVerified) {
+      setError("Verify your email before finishing.");
       return;
     }
 
@@ -246,6 +290,19 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
     setError(null);
   }
 
+  function togglePartnershipGoal(goal: PartnershipGoal) {
+    setForm((current) => {
+      const exists = current.partnershipGoals.includes(goal);
+      return {
+        ...current,
+        partnershipGoals: exists
+          ? current.partnershipGoals.filter((item) => item !== goal)
+          : [...current.partnershipGoals, goal],
+      };
+    });
+    setError(null);
+  }
+
   const copy = stepCopy[step];
 
   return (
@@ -263,7 +320,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
             Back
           </Button>
 
-          {step === 5 ? (
+          {step === 6 ? (
             <Button
               type="button"
               variant="outline"
@@ -278,7 +335,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
           <Button
             type="button"
             className="ml-auto h-11 min-w-[8.5rem] bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
-            disabled={isSubmitting}
+            disabled={isSubmitting || (step === 7 && !emailVerified)}
             aria-busy={isSubmitting}
             onClick={handleContinue}
           >
@@ -377,6 +434,20 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
             ) : null}
 
             {step === 5 ? (
+              <div className="space-y-3">
+                {PARTNERSHIP_GOALS.map((goal) => (
+                  <OnboardingOptionCard
+                    key={goal}
+                    label={PARTNERSHIP_GOAL_LABELS[goal]}
+                    mode="multiple"
+                    selected={form.partnershipGoals.includes(goal)}
+                    onSelect={() => togglePartnershipGoal(goal)}
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            {step === 6 ? (
               <div className="founder-card-glass space-y-5 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
                 <div className="space-y-2">
                   <label htmlFor="onboarding-country" className={authLabelClassName}>
@@ -409,7 +480,14 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 6 ? (
+            {step === 7 ? (
+              <EmailVerificationStep
+                onVerifiedChange={setEmailVerified}
+                onError={setError}
+              />
+            ) : null}
+
+            {step === 8 ? (
               <div className="founder-card-glass space-y-4 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
                 <ReviewRow
                   label="You"
@@ -446,12 +524,23 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
                   }
                 />
                 <ReviewRow
+                  label="Goals"
+                  value={
+                    form.partnershipGoals.length
+                      ? form.partnershipGoals
+                          .map((goal) => PARTNERSHIP_GOAL_LABELS[goal])
+                          .join(", ")
+                      : "—"
+                  }
+                />
+                <ReviewRow
                   label="Location"
                   value={
                     [form.city, form.country].filter(Boolean).join(", ") ||
                     "Not provided"
                   }
                 />
+                <ReviewRow label="Email" value={emailVerified ? "Verified" : "—"} />
               </div>
             ) : null}
           </motion.div>

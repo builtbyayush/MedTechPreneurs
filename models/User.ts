@@ -5,6 +5,7 @@ import {
   CURRENT_STAGES,
   FOUNDER_ROLES,
   LOOKING_FOR_ROLES,
+  PARTNERSHIP_GOALS,
 } from "@/types/onboarding";
 import { GENDERS, USER_CATEGORIES } from "@/types/user";
 
@@ -34,6 +35,10 @@ const UserSchema = new Schema(
     currentStage: { type: String, enum: CURRENT_STAGES },
     lookingForRoles: {
       type: [{ type: String, enum: LOOKING_FOR_ROLES }],
+      default: [],
+    },
+    partnershipGoals: {
+      type: [{ type: String, enum: PARTNERSHIP_GOALS }],
       default: [],
     },
     country: { type: String, trim: true },

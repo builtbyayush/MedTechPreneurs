@@ -5,6 +5,7 @@ import {
   CURRENT_STAGES,
   FOUNDER_ROLES,
   LOOKING_FOR_ROLES,
+  PARTNERSHIP_GOALS,
 } from "@/types/onboarding";
 
 export const founderRoleStepSchema = z.object({
@@ -31,6 +32,12 @@ export const lookingForStepSchema = z.object({
     .min(1, "Select at least one partnership type"),
 });
 
+export const partnershipGoalsStepSchema = z.object({
+  partnershipGoals: z
+    .array(z.enum(PARTNERSHIP_GOALS))
+    .min(1, "Select at least one goal"),
+});
+
 export const locationStepSchema = z.object({
   country: z.string().trim().max(80).optional(),
   city: z.string().trim().max(80).optional(),
@@ -41,6 +48,7 @@ export const completeOnboardingSchema = z.object({
   buildingFocus: z.enum(BUILDING_TYPES),
   currentStage: z.enum(CURRENT_STAGES),
   lookingForRoles: z.array(z.enum(LOOKING_FOR_ROLES)).min(1),
+  partnershipGoals: z.array(z.enum(PARTNERSHIP_GOALS)).min(1),
   country: z.string().trim().max(80).optional(),
   city: z.string().trim().max(80).optional(),
 });
