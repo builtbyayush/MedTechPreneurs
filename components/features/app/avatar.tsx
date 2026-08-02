@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
 import { cn } from "@/lib/utils";
 
 type AvatarProps = {
@@ -31,11 +32,12 @@ export function Avatar({
   className,
 }: AvatarProps) {
   const initials = getInitials(name);
+  const resolvedImageUrl = resolveProfilePhotoSrc(imageUrl);
 
-  if (imageUrl) {
+  if (resolvedImageUrl) {
     return (
       <Image
-        src={imageUrl}
+        src={resolvedImageUrl}
         alt={name ? `${name}'s avatar` : "User avatar"}
         width={size === "sm" ? 32 : size === "md" ? 40 : 48}
         height={size === "sm" ? 32 : size === "md" ? 40 : 48}

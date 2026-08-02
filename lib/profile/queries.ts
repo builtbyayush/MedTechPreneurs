@@ -129,3 +129,38 @@ export async function updateFounderProfile(
 
   return serializeFounderProfile(user);
 }
+
+export async function getUserProfilePhotoUrl(
+  userId: string,
+): Promise<string | undefined> {
+  await connectDB();
+
+  const user = await User.findById(userId).select("profilePhotoUrl").lean();
+
+  return user?.profilePhotoUrl?.trim() || undefined;
+}
+
+export async function updateProfilePhotoUrl(
+  userId: string,
+  profilePhotoUrl: string | undefined,
+): Promise<FounderProfile> {
+  await connectDB();
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      profilePhotoUrl: profilePhotoUrl?.trim() || undefined,
+    },
+    { returnDocument: "after" },
+  )
+    .select(
+      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country city",
+    )
+    .lean();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return serializeFounderProfile(user);
+}

@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 type ProfilePhotoPlaceholderProps = {
   alt: string;
   className?: string;
+  aspectClassName?: string;
 };
 
 /**
@@ -16,14 +17,16 @@ type ProfilePhotoPlaceholderProps = {
 export function ProfilePhotoPlaceholder({
   alt,
   className,
+  aspectClassName = "aspect-[3/4]",
 }: ProfilePhotoPlaceholderProps) {
   const gradientId = useId();
 
   return (
     <div
       className={cn(
-        "relative aspect-[3/4] w-full overflow-hidden bg-[#0a1628]",
-        className
+        "relative w-full overflow-hidden bg-[#0a1628]",
+        aspectClassName,
+        className,
       )}
       role="img"
       aria-label={alt}

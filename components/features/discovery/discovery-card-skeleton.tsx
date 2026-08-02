@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { DISCOVERY_CARD_PHOTO_ASPECT } from "@/constants/discovery";
 import { cn } from "@/lib/utils";
 
 type DiscoveryCardSkeletonProps = {
@@ -14,22 +15,22 @@ export function DiscoveryCardSkeleton({ className }: DiscoveryCardSkeletonProps)
       )}
       aria-hidden
     >
-      <Skeleton className="aspect-[3/4] w-full rounded-none" />
-      <div className="space-y-4 p-6">
+      <Skeleton className={cn("w-full rounded-none", DISCOVERY_CARD_PHOTO_ASPECT)} />
+      <div className="space-y-3 px-5 py-4">
         <Skeleton className="h-7 w-2/3" />
-        <div className="flex gap-2">
+        <div className="flex gap-1.5">
           <Skeleton className="h-6 w-24 rounded-md" />
           <Skeleton className="h-6 w-20 rounded-md" />
         </div>
-        <Skeleton className="h-20 w-full rounded-lg" />
-        <div className="flex gap-2">
+        <Skeleton className="h-16 w-full rounded-lg" />
+        <div className="flex gap-1.5">
           <Skeleton className="h-8 w-20 rounded-md" />
           <Skeleton className="h-8 w-24 rounded-md" />
         </div>
-        <Skeleton className="h-12 w-full rounded-lg" />
-        <div className="grid grid-cols-2 gap-3 pt-2">
-          <Skeleton className="h-11 rounded-xl" />
-          <Skeleton className="h-11 rounded-xl" />
+        <Skeleton className="h-9 w-full rounded-lg" />
+        <div className="space-y-0.5 border-t border-white/[0.08] pt-3">
+          <Skeleton className="h-3 w-1/3" />
+          <Skeleton className="h-3 w-2/3" />
         </div>
       </div>
     </div>

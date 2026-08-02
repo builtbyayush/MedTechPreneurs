@@ -18,15 +18,16 @@ import { ProfileFounderFields } from "@/components/features/profile/profile-foun
 import { ProfileSection } from "@/components/features/profile/profile-section";
 import { CompatibilityExplainer } from "@/components/features/profile/compatibility-explainer";
 import { ProfilePhotoPlaceholder } from "@/components/features/founder/profile-photo-placeholder";
+import { ProfilePhotoUpload } from "@/components/features/profile/profile-photo-upload";
 import { SkillTag } from "@/components/features/founder/skill-tag";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   PROFILE_LIMITS,
-  PROFILE_PHOTO_PLACEHOLDER,
 } from "@/constants/profile";
 import { ROUTES } from "@/constants/routes";
 import { useToast } from "@/hooks/use-toast";
+import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
 import { profileUpdateSchema } from "@/lib/validations/profile";
 import type { FounderProfile } from "@/types/profile";
 import { cn } from "@/lib/utils";
@@ -64,6 +65,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
 
   const skills = form.watch("skills");
   const profilePhotoUrl = form.watch("profilePhotoUrl");
+  const profilePhotoSrc = resolveProfilePhotoSrc(profilePhotoUrl);
 
   function addSkill() {
     const value = skillInput.trim();
@@ -160,10 +162,10 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         >
           <div className="space-y-5">
             <div className="overflow-hidden rounded-2xl border border-white/10">
-              {profilePhotoUrl ? (
+              {profilePhotoSrc ? (
                 <div className="relative aspect-[3/4] w-full">
                   <Image
-                    src={profilePhotoUrl}
+                    src={profilePhotoSrc}
                     alt={`Profile photo for ${initialProfile.name}`}
                     fill
                     className="object-cover"
@@ -178,34 +180,15 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
               )}
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06]"
-                onClick={() =>
-                  form.setValue("profilePhotoUrl", PROFILE_PHOTO_PLACEHOLDER, {
-                    shouldDirty: true,
-                  })
-                }
-              >
-                Use placeholder photo
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-white/65 hover:bg-white/5 hover:text-white"
-                onClick={() =>
-                  form.setValue("profilePhotoUrl", "", { shouldDirty: true })
-                }
-              >
-                Remove photo
-              </Button>
-            </div>
-            <p className="text-xs text-white/45">
-              Real photo uploads arrive in a future phase. Placeholder photos help
-              you preview Discovery cards today.
-            </p>
+            <ProfilePhotoUpload
+              hasPhoto={Boolean(profilePhotoSrc)}
+              disabled={isSaving}
+              onPhotoChange={(secureUrl) => {
+                form.setValue("profilePhotoUrl", secureUrl ?? "", {
+                  shouldDirty: false,
+                });
+              }}
+            />
 
             <div className="space-y-2">
               <label className={authLabelClassName} htmlFor="profile-name">

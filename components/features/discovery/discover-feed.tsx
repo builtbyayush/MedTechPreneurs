@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/features/app/section-header";
 import { DiscoveryCardSkeleton } from "@/components/features/discovery/discovery-card-skeleton";
 import { DiscoveryEmptyState } from "@/components/features/discovery/discovery-empty-state";
 import { DiscoverySearch } from "@/components/features/discovery/discovery-search";
+import { DISCOVERY_SEARCH_ENABLED } from "@/constants/discovery";
 import { DiscoverySwipeStack } from "@/components/features/discovery/discovery-swipe-stack";
 import type { SwipeAction } from "@/components/features/discovery/discovery-swipe-card";
 import {
@@ -263,15 +264,16 @@ export function DiscoverFeed() {
   }, [beginAction, feedState, isLoadingNext, isSubmitting]);
 
   return (
-    <PageContainer className="pb-8 pt-2">
+    <PageContainer className="pb-4 pt-1">
       <SectionHeader
+        className="mb-2"
         title="Discover"
         description="Swipe left to pass, right to connect — or use the buttons below."
       />
 
-      <DiscoverySearch className="mb-5" />
+      {DISCOVERY_SEARCH_ENABLED ? <DiscoverySearch className="mb-4" /> : null}
 
-      <div className="mt-4">
+      <div className="mt-2">
         {feedState === "loading" ? <DiscoveryCardSkeleton /> : null}
 
         {feedState === "empty" ? (
@@ -325,7 +327,7 @@ export function DiscoverFeed() {
         ) : null}
 
         {feedState === "founder" && founder ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <DiscoverySwipeStack
               founder={founder}
               isLoadingNext={isLoadingNext}
@@ -389,7 +391,7 @@ export function DiscoverFeed() {
               </p>
             ) : null}
 
-            <div className="flex flex-wrap items-center justify-center gap-1 border-t border-white/10 pt-3">
+            <div className="flex flex-wrap items-center justify-center gap-1 border-t border-white/10 pt-2">
               <ReportProfileButton
                 reportedUserId={founder.id}
                 reportedUserName={founder.name}

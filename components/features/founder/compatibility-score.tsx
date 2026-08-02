@@ -4,17 +4,20 @@ type CompatibilityScoreProps = {
   score: number;
   className?: string;
   label?: string;
+  compact?: boolean;
 };
 
 export function CompatibilityScore({
   score,
   className,
   label = "Compatibility",
+  compact = false,
 }: CompatibilityScoreProps) {
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-lg border border-teal/20 bg-teal/[0.06] px-4 py-3.5",
+        "relative overflow-hidden rounded-lg border border-teal/20 bg-teal/[0.06]",
+        compact ? "px-3 py-2.5" : "px-4 py-3.5",
         className,
       )}
       aria-label={`${score}% compatibility`}
@@ -26,14 +29,29 @@ export function CompatibilityScore({
       <p className="font-heading text-[10px] font-bold tracking-[0.18em] text-teal uppercase">
         {label}
       </p>
-      <div className="mt-1 flex items-baseline gap-1.5">
-        <span className="font-heading text-3xl font-black tabular-nums tracking-tight text-white">
+      <div className={cn("flex items-baseline gap-1.5", compact ? "mt-0.5" : "mt-1")}>
+        <span
+          className={cn(
+            "font-heading font-black tabular-nums tracking-tight text-white",
+            compact ? "text-2xl" : "text-3xl",
+          )}
+        >
           {score}
         </span>
-        <span className="font-heading text-lg font-bold text-teal/80">%</span>
+        <span
+          className={cn(
+            "font-heading font-bold text-teal/80",
+            compact ? "text-base" : "text-lg",
+          )}
+        >
+          %
+        </span>
       </div>
       <div
-        className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]"
+        className={cn(
+          "h-1 overflow-hidden rounded-full bg-white/[0.06]",
+          compact ? "mt-2" : "mt-3",
+        )}
         aria-hidden
       >
         <div

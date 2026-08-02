@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { AppShell } from "@/components/features/app/app-shell";
 import { ROUTES } from "@/constants/routes";
 import { getUserOnboardingStatus } from "@/lib/onboarding/queries";
+import { getUserProfilePhotoUrl } from "@/lib/profile/queries";
 
 type AppLayoutProps = {
   children: ReactNode;
@@ -23,5 +24,11 @@ export default async function AppLayout({ children }: AppLayoutProps) {
     redirect(ROUTES.onboarding);
   }
 
-  return <AppShell user={session.user}>{children}</AppShell>;
+  const profilePhotoUrl = await getUserProfilePhotoUrl(session.user.id);
+
+  return (
+    <AppShell user={session.user} profilePhotoUrl={profilePhotoUrl}>
+      {children}
+    </AppShell>
+  );
 }

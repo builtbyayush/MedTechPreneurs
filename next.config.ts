@@ -15,6 +15,15 @@ function getAllowedDevOrigins(): string[] {
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
+  },
   /** Required for mobile/LAN testing in `next dev` (Next.js 16+ blocks cross-origin dev assets). */
   allowedDevOrigins: getAllowedDevOrigins(),
   async headers() {

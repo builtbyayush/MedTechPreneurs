@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { PROFILE_LIMITS } from "@/constants/profile";
+import { isAllowedProfilePhotoUrl } from "@/lib/cloudinary/validation-shared";
 import {
   BUILDING_TYPES,
   CURRENT_STAGES,
@@ -28,7 +29,15 @@ const linkedinUrlSchema = z
   );
 
 export const profileUpdateSchema = z.object({
-  profilePhotoUrl: z.string().trim().max(500).optional().or(z.literal("")),
+  profilePhotoUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .or(z.literal(""))
+    .refine((value) => isAllowedProfilePhotoUrl(value ?? ""), {
+      message: "Profile photo must be uploaded through Splice",
+    }),
   headline: z
     .string()
     .trim()

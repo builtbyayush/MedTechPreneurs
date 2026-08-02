@@ -13,9 +13,10 @@ type TopNavigationProps = {
     email?: string | null;
     image?: string | null;
   };
+  profilePhotoUrl?: string | null;
 };
 
-export function TopNavigation({ user }: TopNavigationProps) {
+export function TopNavigation({ user, profilePhotoUrl }: TopNavigationProps) {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-elevated/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="flex h-14 items-center justify-between px-4 sm:px-5">
@@ -36,7 +37,7 @@ export function TopNavigation({ user }: TopNavigationProps) {
           >
             <Avatar
               name={user.name}
-              imageUrl={user.image}
+              imageUrl={profilePhotoUrl ?? user.image}
               size="sm"
             />
           </Link>

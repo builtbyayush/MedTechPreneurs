@@ -6,7 +6,8 @@ import { CompatibilityReasons } from "@/components/features/founder/compatibilit
 import { ProfilePhotoPlaceholder } from "@/components/features/founder/profile-photo-placeholder";
 import { SkillTag } from "@/components/features/founder/skill-tag";
 import { VerifiedBadge } from "@/components/features/founder/verified-badge";
-import { isProfilePhotoPlaceholder } from "@/constants/profile";
+import { DISCOVERY_CARD_PHOTO_ASPECT } from "@/constants/discovery";
+import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
 import {
   BUILDING_TYPE_LABELS,
   CURRENT_STAGE_LABELS,
@@ -41,17 +42,18 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
     CURRENT_STAGE_LABELS[founder.currentStage],
   ].filter(Boolean) as string[];
 
+  const profilePhotoSrc = resolveProfilePhotoSrc(founder.profilePhotoUrl);
+
   return (
     <article
       className={cn("w-full select-none", className)}
       aria-label={`Founder profile for ${founder.name}`}
     >
       <div className="shadow-founder-card overflow-hidden rounded-2xl border border-white/[0.12] bg-ink-elevated ring-1 ring-white/[0.06] ring-inset">
-        {founder.profilePhotoUrl &&
-        !isProfilePhotoPlaceholder(founder.profilePhotoUrl) ? (
-          <div className="relative aspect-[3/4] w-full">
+        {profilePhotoSrc ? (
+          <div className={cn("relative w-full", DISCOVERY_CARD_PHOTO_ASPECT)}>
             <Image
-              src={founder.profilePhotoUrl}
+              src={profilePhotoSrc}
               alt={`Profile photo for ${founder.name}`}
               fill
               className="object-cover"
@@ -62,21 +64,22 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
         ) : (
           <ProfilePhotoPlaceholder
             alt={`Profile photo placeholder for ${founder.name}`}
+            aspectClassName={DISCOVERY_CARD_PHOTO_ASPECT}
             className="rounded-none"
           />
         )}
 
-        <div className="space-y-5 p-6 pt-5">
-          <div className="space-y-2">
+        <div className="space-y-3 px-5 py-4">
+          <div className="space-y-1">
             <h2 className="font-heading text-[1.375rem] leading-tight font-extrabold tracking-tight text-white">
               {founder.name}
             </h2>
             {founder.headline ? (
-              <p className="text-sm leading-relaxed text-teal/90">
+              <p className="text-sm leading-snug text-teal/90">
                 {founder.headline}
               </p>
             ) : null}
-            <div className="flex flex-wrap items-center gap-2 pt-1">
+            <div className="flex flex-wrap items-center gap-1.5">
               <SkillTag label={FOUNDER_ROLE_LABELS[founder.founderRole]} />
               {founder.verified ? (
                 <VerifiedBadge />
@@ -88,11 +91,16 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
             </div>
           </div>
 
-          <CompatibilityScore score={founder.compatibilityScore} />
-          <CompatibilityReasons reasons={founder.compatibilityReasons} />
+          <div className="space-y-1.5">
+            <CompatibilityScore score={founder.compatibilityScore} compact />
+            <CompatibilityReasons
+              reasons={founder.compatibilityReasons}
+              compact
+            />
+          </div>
 
           {founder.skills.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {founder.skills.map((skill) => (
                 <SkillTag key={skill} label={skill} />
               ))}
@@ -100,20 +108,22 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
           ) : null}
 
           {metaTags.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {metaTags.map((tag) => (
                 <SkillTag key={tag} label={tag} />
               ))}
             </div>
           ) : null}
 
-          <p className="text-sm leading-relaxed text-white/65">{founder.bio}</p>
+          <p className="line-clamp-2 text-sm leading-snug text-white/65">
+            {founder.bio}
+          </p>
 
-          <div className="space-y-1 border-t border-white/[0.08] pt-4">
-            <p className="text-xs leading-relaxed text-white/55">
+          <div className="space-y-0.5 border-t border-white/[0.08] pt-3">
+            <p className="text-xs leading-snug text-white/55">
               {founder.location}
             </p>
-            <p className="text-xs leading-relaxed text-white/70">
+            <p className="text-xs leading-snug text-white/70">
               <span className="text-white/45">Looking for:</span> {lookingFor}
             </p>
           </div>

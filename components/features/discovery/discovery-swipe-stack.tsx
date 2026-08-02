@@ -38,7 +38,6 @@ export function DiscoverySwipeStack({
   return (
     <div
       className={cn("relative mx-auto w-full max-w-md", className)}
-      style={{ minHeight: "520px" }}
       aria-live="polite"
       aria-busy={isLoadingNext || isSubmitting}
     >

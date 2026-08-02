@@ -8,7 +8,7 @@ import {
 } from "@/components/features/safety/report-profile-button";
 import { ProfilePhotoPlaceholder } from "@/components/features/founder/profile-photo-placeholder";
 import { SkillTag } from "@/components/features/founder/skill-tag";
-import { isProfilePhotoPlaceholder } from "@/constants/profile";
+import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
 import { FOUNDER_ROLE_LABELS } from "@/types/onboarding";
 import type { MatchListItem } from "@/types/match";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ function formatMatchedDate(isoDate: string): string {
 
 export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
   const { partner } = match;
+  const profilePhotoSrc = resolveProfilePhotoSrc(partner.profilePhotoUrl);
 
   return (
     <article
@@ -39,10 +40,9 @@ export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
     >
       <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:p-5">
         <div className="relative mx-auto size-24 shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:mx-0 sm:size-28">
-          {partner.profilePhotoUrl &&
-          !isProfilePhotoPlaceholder(partner.profilePhotoUrl) ? (
+          {profilePhotoSrc ? (
             <Image
-              src={partner.profilePhotoUrl}
+              src={profilePhotoSrc}
               alt={`Profile photo for ${partner.name}`}
               fill
               className="object-cover"
