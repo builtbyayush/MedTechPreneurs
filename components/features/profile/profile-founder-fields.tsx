@@ -4,12 +4,12 @@ import type { UseFormReturn } from "react-hook-form";
 import type { z } from "zod";
 
 import { OnboardingOptionCard } from "@/components/features/onboarding/onboarding-option-card";
+import { IndiaLocationFields } from "@/components/features/location/india-location-fields";
 import {
-  authFieldClassName,
   authLabelClassName,
 } from "@/components/features/auth/auth-shell";
-import { Input } from "@/components/ui/input";
 import { profileUpdateSchema } from "@/lib/validations/profile";
+import { INDIA_COUNTRY_NAME } from "@/lib/locations/india";
 import {
   BUILDING_TYPES,
   BUILDING_TYPE_LABELS,
@@ -124,28 +124,28 @@ export function ProfileFounderFields({ form }: ProfileFounderFieldsProps) {
         ) : null}
       </FieldGroup>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <label className={authLabelClassName} htmlFor="profile-country">
-            Country
-          </label>
-          <Input
-            id="profile-country"
-            className={authFieldClassName}
-            {...form.register("country")}
-          />
-        </div>
-        <div className="space-y-2">
-          <label className={authLabelClassName} htmlFor="profile-city">
-            City
-          </label>
-          <Input
-            id="profile-city"
-            className={authFieldClassName}
-            {...form.register("city")}
-          />
-        </div>
-      </div>
+      <IndiaLocationFields
+        country={form.watch("country") || INDIA_COUNTRY_NAME}
+        state={form.watch("state") ?? ""}
+        city={form.watch("city") ?? ""}
+        countryId="profile-country"
+        stateId="profile-state"
+        cityId="profile-city"
+        onChange={(next) => {
+          form.setValue("country", next.country, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+          form.setValue("state", next.state, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+          form.setValue("city", next.city, {
+            shouldDirty: true,
+            shouldValidate: true,
+          });
+        }}
+      />
 
       <p className="text-xs leading-relaxed text-teal/80">
         Changes here update compatibility scores immediately across Discovery and

@@ -28,6 +28,7 @@ import {
 import { ROUTES } from "@/constants/routes";
 import { useToast } from "@/hooks/use-toast";
 import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
+import { INDIA_COUNTRY_NAME, findStateForCityName } from "@/lib/locations/india";
 import { profileUpdateSchema } from "@/lib/validations/profile";
 import type { FounderProfile } from "@/types/profile";
 import { cn } from "@/lib/utils";
@@ -38,10 +39,27 @@ type ProfileEditorProps = {
   initialProfile: FounderProfile;
 };
 
+function resolveInitialLocation(profile: FounderProfile): {
+  country: string;
+  state: string;
+  city: string;
+} {
+  const country = profile.country || INDIA_COUNTRY_NAME;
+  const city = profile.city ?? "";
+  const state =
+    profile.state ||
+    (city ? findStateForCityName(city)?.name : undefined) ||
+    "";
+
+  return { country, state, city };
+}
+
 export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   const { toast } = useToast();
   const [skillInput, setSkillInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  const initialLocation = resolveInitialLocation(initialProfile);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileUpdateSchema),
@@ -58,8 +76,9 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
       buildingFocus: initialProfile.buildingFocus,
       currentStage: initialProfile.currentStage,
       lookingForRoles: initialProfile.lookingForRoles ?? [],
-      country: initialProfile.country ?? "",
-      city: initialProfile.city ?? "",
+      country: initialLocation.country,
+      state: initialLocation.state,
+      city: initialLocation.city,
     },
   });
 

@@ -245,7 +245,7 @@ export function EmailVerificationStep({
         </>
       ) : (
         <div className="rounded-2xl border border-teal/30 bg-teal/10 px-4 py-3 text-sm text-teal">
-          Email verified — you can continue to review your profile.
+          Email verified — you can continue setting up your profile.
         </div>
       )}
     </div>

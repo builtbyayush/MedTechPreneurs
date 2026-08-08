@@ -49,7 +49,7 @@ export function SceneTwoFracture() {
           }}
         >
           <motion.p
-            className="font-heading text-[10px] font-medium tracking-[0.32em] text-fracture-gold/90 uppercase sm:text-[11px]"
+            className="font-heading text-xs font-medium tracking-[0.32em] text-fracture-gold/90 uppercase"
             variants={copyVariants}
             transition={fadeUpTransition(reducedMotion, 0)}
           >
@@ -77,11 +77,11 @@ export function SceneTwoFracture() {
             variants={copyVariants}
             transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.16)}
           >
-            <p className="mx-auto max-w-[500px] text-base leading-[1.7] text-white/50 sm:text-[17px] lg:max-w-[520px]">
+            <p className="mx-auto max-w-[500px] text-lg leading-[1.7] text-white/60 sm:text-[17px] lg:max-w-[520px]">
               Healthcare&apos;s biggest breakthroughs require clinical expertise,
               technical execution and business leadership.
             </p>
-            <p className="mt-12 font-[family-name:var(--font-display-serif)] text-[1.25rem] font-semibold leading-snug text-brand-red sm:mt-14 sm:text-[1.375rem]">
+            <p className="mt-12 font-[family-name:var(--font-display-serif)] text-xl font-semibold leading-snug text-brand-red sm:mt-14 sm:text-[1.375rem]">
               Those people rarely begin at the same table.
             </p>
           </motion.div>

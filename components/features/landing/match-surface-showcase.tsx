@@ -160,8 +160,8 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
               Dr. Ananya Sharma
             </h2>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <CategoryBadge category="healthcare" />
-              <VerifiedBadge />
+              <CategoryBadge category="healthcare" size="md" />
+              <VerifiedBadge size="md" />
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
             className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
             aria-hidden
           />
-          <p className="font-heading text-[10px] font-bold tracking-[0.2em] text-teal/90 uppercase">
+          <p className="font-heading text-xs font-bold tracking-[0.2em] text-teal/90 uppercase">
             Complementarity
           </p>
           <div className="mt-2 flex items-baseline gap-0.5">
@@ -198,7 +198,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
             className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.05] to-transparent"
             aria-hidden
           />
-          <p className="text-[10px] font-medium tracking-[0.16em] text-white/40 uppercase">
+          <p className="text-xs font-medium tracking-[0.16em] text-white/40 uppercase">
             Recommended complement
           </p>
 
@@ -206,11 +206,11 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
             <div className="w-full shrink-0 rounded-[10px] border border-white/[0.07] bg-white/[0.025] p-3.5 sm:w-[128px]">
               <div className="flex items-center gap-2">
                 <span className="size-1.5 shrink-0 rounded-full bg-teal/70" aria-hidden />
-                <span className="text-[9px] font-medium tracking-[0.12em] text-white/38 uppercase">
+                <span className="text-xs font-medium tracking-[0.12em] text-white/38 uppercase">
                   Your role
                 </span>
               </div>
-              <p className="mt-2 text-sm font-semibold leading-snug tracking-[-0.01em] text-white/72">
+              <p className="mt-2 text-base font-semibold leading-snug tracking-[-0.01em] text-white/72">
                 Clinician
               </p>
             </div>
@@ -244,13 +244,13 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
                   />
                 </div>
                 <div className="min-w-0 pr-1">
-                  <p className="text-[9px] font-medium tracking-[0.12em] text-white/42 uppercase">
+                  <p className="text-xs font-medium tracking-[0.12em] text-white/42 uppercase">
                     Engineer
                   </p>
                   <p className="mt-0.5 truncate text-[15px] font-semibold leading-tight tracking-[-0.01em] text-white/95">
                     Arjun Mehta
                   </p>
-                  <p className="mt-1 text-[11px] font-semibold tabular-nums tracking-wide text-teal/90">
+                  <p className="mt-1 text-xs font-semibold tabular-nums tracking-wide text-teal/90">
                     91% complement
                   </p>
                 </div>
@@ -260,7 +260,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
         </div>
       </div>
 
-      <figcaption className="mt-5 text-center text-[11px] tracking-[0.04em] text-white/32">
+      <figcaption className="mt-5 text-center text-xs tracking-[0.04em] text-white/40">
         Example product view
       </figcaption>
     </figure>

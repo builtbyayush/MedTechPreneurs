@@ -3,6 +3,7 @@ import { User } from "@/models/User";
 
 export type UserOnboardingRecord = {
   onboardingCompleted: boolean;
+  emailVerified?: boolean;
   founderRole?: string | null;
   buildingFocus?: string | null;
   currentStage?: string | null;
@@ -18,7 +19,7 @@ export async function getUserOnboardingStatus(
 
   const user = await User.findById(userId)
     .select(
-      "onboardingCompleted founderRole buildingFocus currentStage lookingForRoles country city",
+      "onboardingCompleted emailVerified founderRole buildingFocus currentStage lookingForRoles country city",
     )
     .lean<UserOnboardingRecord | null>();
 

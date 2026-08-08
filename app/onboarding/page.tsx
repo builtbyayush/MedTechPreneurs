@@ -22,5 +22,10 @@ export default async function OnboardingPage() {
     redirect(ROUTES.app.home);
   }
 
-  return <OnboardingFlow userName={session.user.name} />;
+  return (
+    <OnboardingFlow
+      userName={session.user.name}
+      initialEmailVerified={Boolean(onboarding?.emailVerified)}
+    />
+  );
 }

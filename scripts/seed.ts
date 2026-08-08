@@ -15,6 +15,7 @@ import {
   mapFounderRoleToCategory,
   mapLookingForRolesToCategories,
 } from "@/lib/onboarding/mappers";
+import { findStateForCityName } from "@/lib/locations/india";
 import { Conversation } from "@/models/Conversation";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
 import { getCanonicalMatchPair } from "@/models/Match";
@@ -130,6 +131,7 @@ async function seedUsers(): Promise<{ created: number; updated: number }> {
         lookingForRoles: founder.lookingForRoles,
         partnershipGoals: founder.partnershipGoals ?? ["finding-partnership"],
         country: founder.country,
+        state: findStateForCityName(founder.city)?.name,
         city: founder.city,
         headline: founder.headline,
         bio: founder.bio,

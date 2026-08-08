@@ -7,10 +7,12 @@ import {
   toCompatibilityProfile,
 } from "@/lib/compatibility";
 import { ensureConversationForMatch } from "@/lib/messaging/queries";
+import { copyIntroductionsIntoConversation } from "@/lib/matching/intro";
 import {
   mapFounderRoleToCategory,
   mapLookingForRolesToCategories,
 } from "@/lib/onboarding/mappers";
+import { formatLocation } from "@/lib/locations/format";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
 import {
   getCanonicalMatchPair,
@@ -25,10 +27,6 @@ import {
 import { User } from "@/models/User";
 
 const ACTIVE_MATCH_STATUSES = ["pending", "matched"] as const;
-
-function formatLocation(city?: string | null, country?: string | null): string {
-  return [city, country].filter(Boolean).join(", ") || "Location not shared";
-}
 
 export async function getActiveMatchedUserIds(userId: string): Promise<string[]> {
   await connectDB();
@@ -81,6 +79,11 @@ export async function tryCreateMutualMatch(input: {
       userIdA: input.viewerId,
       userIdB: input.targetUserId,
     });
+    await copyIntroductionsIntoConversation({
+      matchId: match._id.toString(),
+      userIdA: input.viewerId,
+      userIdB: input.targetUserId,
+    });
   }
 
   return {
@@ -104,6 +107,8 @@ export async function getOutgoingConnectsForUser(
       {
         targetUserId: mongoose.Types.ObjectId;
         createdAt: Date;
+        introMessage?: string | null;
+        introSentAt?: Date | null;
       }[]
     >();
 
@@ -116,7 +121,7 @@ export async function getOutgoingConnectsForUser(
   const [targets, reciprocalConnects, matches] = await Promise.all([
     User.find({ _id: { $in: targetObjectIds } })
       .select(
-        "name headline founderRole companyName city country profilePhotoUrl",
+        "name headline founderRole companyName city state country profilePhotoUrl",
       )
       .lean(),
     DiscoveryAction.find({
@@ -176,6 +181,8 @@ export async function getOutgoingConnectsForUser(
     const matchInfo = matchByPartnerId.get(targetId);
     const status =
       matchInfo || reciprocalIds.has(targetId) ? "matched" : "pending";
+    const introSent = Boolean(action.introSentAt);
+    const introPreview = action.introMessage?.trim() || undefined;
 
     return [
       {
@@ -184,13 +191,18 @@ export async function getOutgoingConnectsForUser(
         status,
         matchId: matchInfo?.matchId,
         matchedAt: matchInfo?.matchedAt,
+        introSent,
+        introSentAt: action.introSentAt
+          ? action.introSentAt.toISOString()
+          : undefined,
+        introPreview: introSent ? introPreview : undefined,
         partner: {
           id: targetId,
           name: target.name,
           headline: target.headline ?? undefined,
           founderRole: target.founderRole as FounderRole,
           companyName: target.companyName ?? undefined,
-          location: formatLocation(target.city, target.country),
+          location: formatLocation(target.city, target.state, target.country),
           profilePhotoUrl: target.profilePhotoUrl ?? undefined,
         },
       },
@@ -224,7 +236,7 @@ export async function getMatchedFoundersForUser(
   }
 
   const viewerUser = await User.findById(userId)
-    .select("founderRole buildingFocus currentStage lookingForRoles country city")
+    .select("founderRole buildingFocus currentStage lookingForRoles country state city")
     .lean();
   const viewerProfile = toCompatibilityProfile(viewerUser ?? {});
   const compatibilityCache = createCompatibilityCache();
@@ -232,7 +244,7 @@ export async function getMatchedFoundersForUser(
   const partnerIds = matches.map((match) => getMatchPartnerId(match, userId));
   const partners = await User.find({ _id: { $in: partnerIds } })
     .select(
-      "name headline founderRole companyName city country profilePhotoUrl buildingFocus currentStage lookingForRoles",
+      "name headline founderRole companyName city state country profilePhotoUrl buildingFocus currentStage lookingForRoles",
     )
     .lean();
 
@@ -275,7 +287,7 @@ export async function getMatchedFoundersForUser(
           headline: partner.headline ?? undefined,
           founderRole: partner.founderRole as FounderRole,
           companyName: partner.companyName ?? undefined,
-          location: formatLocation(partner.city, partner.country),
+          location: formatLocation(partner.city, partner.state, partner.country),
           profilePhotoUrl: partner.profilePhotoUrl ?? undefined,
         },
       } satisfies MatchListItem,
@@ -308,6 +320,11 @@ export async function createSeedMatch(input: {
 
   if ((input.status ?? "matched") === "matched") {
     await ensureConversationForMatch({
+      matchId: match._id.toString(),
+      userIdA: input.userIdA,
+      userIdB: input.userIdB,
+    });
+    await copyIntroductionsIntoConversation({
       matchId: match._id.toString(),
       userIdA: input.userIdA,
       userIdB: input.userIdB,

@@ -7,13 +7,9 @@ import { useMemo, useState } from "react";
 import { EmailVerificationStep } from "@/components/features/onboarding/email-verification-step";
 import { OnboardingOptionCard } from "@/components/features/onboarding/onboarding-option-card";
 import { OnboardingShell } from "@/components/features/onboarding/onboarding-shell";
+import { IndiaLocationFields } from "@/components/features/location/india-location-fields";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ROUTES } from "@/constants/routes";
-import {
-  authFieldClassName,
-  authLabelClassName,
-} from "@/components/features/auth/auth-shell";
 import {
   buildingFocusStepSchema,
   completeOnboardingSchema,
@@ -23,6 +19,7 @@ import {
   lookingForStepSchema,
   partnershipGoalsStepSchema,
 } from "@/lib/validations/onboarding";
+import { INDIA_COUNTRY_NAME } from "@/lib/locations/india";
 import { getFirstName } from "@/lib/user/display-name";
 import { fadeUpTransition } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
@@ -48,21 +45,41 @@ const stepMotion = {
   exit: { opacity: 0, y: -12 },
 };
 
+/** Step indices after moving email verification to the front. */
+const STEP = {
+  verifyEmail: 0,
+  welcome: 1,
+  founderRole: 2,
+  buildingFocus: 3,
+  currentStage: 4,
+  lookingFor: 5,
+  partnershipGoals: 6,
+  location: 7,
+  review: 8,
+} as const;
+
 type OnboardingFlowProps = {
   userName?: string | null;
+  initialEmailVerified?: boolean;
 };
 
-export function OnboardingFlow({ userName }: OnboardingFlowProps) {
+export function OnboardingFlow({
+  userName,
+  initialEmailVerified = false,
+}: OnboardingFlowProps) {
   const router = useRouter();
   const reducedMotion = usePrefersReducedMotion();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState<number>(
+    initialEmailVerified ? STEP.welcome : STEP.verifyEmail,
+  );
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(initialEmailVerified);
   const [form, setForm] = useState<OnboardingFormState>({
     lookingForRoles: [],
     partnershipGoals: [],
-    country: "",
+    country: INDIA_COUNTRY_NAME,
+    state: "",
     city: "",
   });
 
@@ -71,6 +88,12 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
   const stepCopy = useMemo(
     () =>
       [
+        {
+          eyebrow: "Verification",
+          title: "Verify your email",
+          description:
+            "Confirm your email first so we know you're reachable before we record your profile.",
+        },
         {
           eyebrow: "Welcome",
           title: firstName === "there" ? "Welcome to Splice+" : `Hi, ${firstName}`,
@@ -108,11 +131,6 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
           description: "Optional — helps with future location-aware matching.",
         },
         {
-          eyebrow: "Verification",
-          title: "Verify your email",
-          description: "Confirm your email so founders know you're reachable.",
-        },
-        {
           eyebrow: "Review",
           title: "You're almost in",
           description: "Confirm your answers before entering the app.",
@@ -126,12 +144,29 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
     setError(null);
   }
 
+  function requireEmailVerified(): boolean {
+    if (!emailVerified) {
+      setError("Verify your email before continuing.");
+      return false;
+    }
+    return true;
+  }
+
   function validateCurrentStep(): boolean {
-    if (step === 0) {
+    if (step === STEP.verifyEmail) {
+      return requireEmailVerified();
+    }
+
+    if (!requireEmailVerified()) {
+      setStep(STEP.verifyEmail);
+      return false;
+    }
+
+    if (step === STEP.welcome) {
       return true;
     }
 
-    if (step === 1) {
+    if (step === STEP.founderRole) {
       const parsed = founderRoleStepSchema.safeParse(form);
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? "Choose one option");
@@ -140,7 +175,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
       return true;
     }
 
-    if (step === 2) {
+    if (step === STEP.buildingFocus) {
       const parsed = buildingFocusStepSchema.safeParse(form);
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? "Choose one option");
@@ -149,7 +184,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
       return true;
     }
 
-    if (step === 3) {
+    if (step === STEP.currentStage) {
       const parsed = currentStageStepSchema.safeParse(form);
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? "Choose one option");
@@ -158,7 +193,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
       return true;
     }
 
-    if (step === 4) {
+    if (step === STEP.lookingFor) {
       const parsed = lookingForStepSchema.safeParse(form);
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? "Select at least one option");
@@ -167,7 +202,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
       return true;
     }
 
-    if (step === 5) {
+    if (step === STEP.partnershipGoals) {
       const parsed = partnershipGoalsStepSchema.safeParse(form);
       if (!parsed.success) {
         setError(parsed.error.issues[0]?.message ?? "Select at least one goal");
@@ -176,16 +211,8 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
       return true;
     }
 
-    if (step === 6) {
+    if (step === STEP.location) {
       locationStepSchema.safeParse(form);
-      return true;
-    }
-
-    if (step === 7) {
-      if (!emailVerified) {
-        setError("Verify your email before continuing.");
-        return false;
-      }
       return true;
     }
 
@@ -195,11 +222,6 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
         parsed.error.issues[0]?.message ??
           "Please complete the required steps before finishing.",
       );
-      return false;
-    }
-
-    if (!emailVerified) {
-      setError("Verify your email before finishing.");
       return false;
     }
 
@@ -226,7 +248,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
 
   function handleSkipLocation() {
     setError(null);
-    setStep(7);
+    setStep(STEP.review);
   }
 
   async function handleFinish() {
@@ -241,6 +263,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
 
     if (!emailVerified) {
       setError("Verify your email before finishing.");
+      setStep(STEP.verifyEmail);
       return;
     }
 
@@ -314,13 +337,13 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
             type="button"
             variant="ghost"
             className="text-white/70 hover:bg-white/5 hover:text-white"
-            disabled={step === 0 || isSubmitting}
+            disabled={step === STEP.verifyEmail || isSubmitting}
             onClick={handleBack}
           >
             Back
           </Button>
 
-          {step === 6 ? (
+          {step === STEP.location ? (
             <Button
               type="button"
               variant="outline"
@@ -335,7 +358,9 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
           <Button
             type="button"
             className="ml-auto h-11 min-w-[8.5rem] bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
-            disabled={isSubmitting || (step === 7 && !emailVerified)}
+            disabled={
+              isSubmitting || (step === STEP.verifyEmail && !emailVerified)
+            }
             aria-busy={isSubmitting}
             onClick={handleContinue}
           >
@@ -368,7 +393,14 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
             transition={fadeUpTransition(reducedMotion)}
             className="flex flex-1 flex-col"
           >
-            {step === 0 ? (
+            {step === STEP.verifyEmail ? (
+              <EmailVerificationStep
+                onVerifiedChange={setEmailVerified}
+                onError={setError}
+              />
+            ) : null}
+
+            {step === STEP.welcome ? (
               <div className="founder-card-glass flex flex-1 flex-col justify-center rounded-3xl border border-white/10 p-6 shadow-founder-card sm:p-8">
                 <p className="text-lg leading-relaxed text-white/75">
                   A short setup helps us understand who you are, what you&apos;re
@@ -380,7 +412,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 1 ? (
+            {step === STEP.founderRole ? (
               <div className="space-y-3">
                 {FOUNDER_ROLES.map((role) => (
                   <OnboardingOptionCard
@@ -393,7 +425,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 2 ? (
+            {step === STEP.buildingFocus ? (
               <div className="space-y-3">
                 {BUILDING_TYPES.map((type) => (
                   <OnboardingOptionCard
@@ -406,7 +438,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 3 ? (
+            {step === STEP.currentStage ? (
               <div className="space-y-3">
                 {CURRENT_STAGES.map((stage) => (
                   <OnboardingOptionCard
@@ -419,7 +451,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 4 ? (
+            {step === STEP.lookingFor ? (
               <div className="space-y-3">
                 {LOOKING_FOR_ROLES.map((role) => (
                   <OnboardingOptionCard
@@ -433,7 +465,7 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 5 ? (
+            {step === STEP.partnershipGoals ? (
               <div className="space-y-3">
                 {PARTNERSHIP_GOALS.map((goal) => (
                   <OnboardingOptionCard
@@ -447,47 +479,21 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
               </div>
             ) : null}
 
-            {step === 6 ? (
-              <div className="founder-card-glass space-y-5 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
-                <div className="space-y-2">
-                  <label htmlFor="onboarding-country" className={authLabelClassName}>
-                    Country
-                  </label>
-                  <Input
-                    id="onboarding-country"
-                    value={form.country}
-                    onChange={(event) =>
-                      updateForm({ country: event.target.value })
-                    }
-                    placeholder="India"
-                    autoComplete="country-name"
-                    className={authFieldClassName}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="onboarding-city" className={authLabelClassName}>
-                    City
-                  </label>
-                  <Input
-                    id="onboarding-city"
-                    value={form.city}
-                    onChange={(event) => updateForm({ city: event.target.value })}
-                    placeholder="Bengaluru"
-                    autoComplete="address-level2"
-                    className={authFieldClassName}
-                  />
-                </div>
+            {step === STEP.location ? (
+              <div className="founder-card-glass rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
+                <IndiaLocationFields
+                  country={form.country}
+                  state={form.state}
+                  city={form.city}
+                  countryId="onboarding-country"
+                  stateId="onboarding-state"
+                  cityId="onboarding-city"
+                  onChange={(next) => updateForm(next)}
+                />
               </div>
             ) : null}
 
-            {step === 7 ? (
-              <EmailVerificationStep
-                onVerifiedChange={setEmailVerified}
-                onError={setError}
-              />
-            ) : null}
-
-            {step === 8 ? (
+            {step === STEP.review ? (
               <div className="founder-card-glass space-y-4 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
                 <ReviewRow
                   label="You"
@@ -536,8 +542,9 @@ export function OnboardingFlow({ userName }: OnboardingFlowProps) {
                 <ReviewRow
                   label="Location"
                   value={
-                    [form.city, form.country].filter(Boolean).join(", ") ||
-                    "Not provided"
+                    [form.city, form.state, form.country]
+                      .filter(Boolean)
+                      .join(", ") || "Not provided"
                   }
                 />
                 <ReviewRow label="Email" value={emailVerified ? "Verified" : "—"} />

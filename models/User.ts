@@ -42,6 +42,7 @@ const UserSchema = new Schema(
       default: [],
     },
     country: { type: String, trim: true },
+    state: { type: String, trim: true },
     city: { type: String, trim: true },
     profilePhotoUrl: { type: String, trim: true },
     headline: { type: String, trim: true, maxlength: 120 },

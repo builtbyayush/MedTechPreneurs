@@ -77,7 +77,7 @@ export function SceneOneHeadline({ id }: { id: string }) {
   return (
     <h1
       id={id}
-      className="mt-8 font-heading text-[9vw] font-black uppercase leading-[0.9] tracking-tighter sm:mt-10 sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-6xl 2xl:text-7xl"
+      className="mt-8 font-heading text-[clamp(2rem,9vw,2.5rem)] font-black uppercase leading-[0.9] tracking-tighter sm:mt-10 sm:text-4xl md:text-5xl lg:text-[2.75rem] xl:text-6xl 2xl:text-7xl"
       style={{ perspective: 1000 }}
     >
       {HEADLINE_WORDS.map((word, index) => (

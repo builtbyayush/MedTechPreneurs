@@ -27,6 +27,7 @@ function serializeFounderProfile(user: {
   currentStage?: FounderProfile["currentStage"] | null;
   lookingForRoles?: FounderProfile["lookingForRoles"] | null;
   country?: string | null;
+  state?: string | null;
   city?: string | null;
 }): FounderProfile {
   return {
@@ -46,6 +47,7 @@ function serializeFounderProfile(user: {
     currentStage: user.currentStage ?? undefined,
     lookingForRoles: user.lookingForRoles ?? [],
     country: user.country ?? undefined,
+    state: user.state ?? undefined,
     city: user.city ?? undefined,
   };
 }
@@ -57,7 +59,7 @@ export async function getFounderProfile(
 
   const user = await User.findById(userId)
     .select(
-      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country city",
+      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country state city",
     )
     .lean();
 
@@ -111,6 +113,10 @@ export async function updateFounderProfile(
     updatePayload.country = data.country;
   }
 
+  if (data.state !== undefined) {
+    updatePayload.state = data.state;
+  }
+
   if (data.city !== undefined) {
     updatePayload.city = data.city;
   }
@@ -119,7 +125,7 @@ export async function updateFounderProfile(
     returnDocument: "after",
   })
     .select(
-      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country city",
+      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country state city",
     )
     .lean();
 
@@ -154,7 +160,7 @@ export async function updateProfilePhotoUrl(
     { returnDocument: "after" },
   )
     .select(
-      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country city",
+      "name email profilePhotoUrl headline bio skills yearsExperience companyName linkedinUrl websiteUrl founderRole buildingFocus currentStage lookingForRoles country state city",
     )
     .lean();
 

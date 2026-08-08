@@ -10,8 +10,10 @@ import { DiscoveryEmptyState } from "@/components/features/discovery/discovery-e
 import { MatchFounderCard } from "@/components/features/matches/match-founder-card";
 import { MatchesListSkeleton } from "@/components/features/matches/matches-list-skeleton";
 import { OutgoingConnectRow } from "@/components/features/matches/outgoing-connect-row";
+import { useAuthSession } from "@/hooks/use-auth-session";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { fadeUpTransition } from "@/lib/motion";
+import { getFirstName } from "@/lib/user/display-name";
 import type {
   MatchListItem,
   MatchListResponse,
@@ -29,6 +31,8 @@ function applyMatchesPayload(payload: MatchListResponse) {
 
 export function MatchesFeed() {
   const reducedMotion = usePrefersReducedMotion();
+  const { user } = useAuthSession();
+  const viewerFirstName = getFirstName(user?.name, "there");
   const [state, setState] = useState<MatchesState>("loading");
   const [matches, setMatches] = useState<MatchListItem[]>([]);
   const [outgoingConnects, setOutgoingConnects] = useState<
@@ -72,6 +76,24 @@ export function MatchesFeed() {
   useEffect(() => {
     void loadMatches(true);
   }, [loadMatches]);
+
+  function handleIntroSent(
+    targetUserId: string,
+    payload: { introPreview: string; introSentAt: string },
+  ) {
+    setOutgoingConnects((current) =>
+      current.map((connect) =>
+        connect.targetUserId === targetUserId
+          ? {
+              ...connect,
+              introSent: true,
+              introSentAt: payload.introSentAt,
+              introPreview: payload.introPreview,
+            }
+          : connect,
+      ),
+    );
+  }
 
   const hasOutgoingConnects = outgoingConnects.length > 0;
   const hasMatches = matches.length > 0;
@@ -126,7 +148,11 @@ export function MatchesFeed() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={fadeUpTransition(reducedMotion, index * 0.04)}
                     >
-                      <OutgoingConnectRow connect={connect} />
+                      <OutgoingConnectRow
+                        connect={connect}
+                        viewerFirstName={viewerFirstName}
+                        onIntroSent={handleIntroSent}
+                      />
                     </motion.li>
                   ))}
                 </ul>

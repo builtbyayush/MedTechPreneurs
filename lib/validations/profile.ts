@@ -102,6 +102,7 @@ export const profileUpdateSchema = z.object({
     .min(1, "Select at least one partnership type")
     .optional(),
   country: z.string().trim().max(80).optional().or(z.literal("")),
+  state: z.string().trim().max(80).optional().or(z.literal("")),
   city: z.string().trim().max(80).optional().or(z.literal("")),
 });
 
@@ -119,6 +120,7 @@ export function normalizeProfileInput(
     linkedinUrl: input.linkedinUrl?.trim() || undefined,
     websiteUrl: input.websiteUrl?.trim() || undefined,
     country: input.country?.trim() || undefined,
+    state: input.state?.trim() || undefined,
     city: input.city?.trim() || undefined,
     skills: input.skills.map((skill) => skill.trim()).filter(Boolean),
   };

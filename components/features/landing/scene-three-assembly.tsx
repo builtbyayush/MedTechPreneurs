@@ -68,7 +68,7 @@ export function SceneThreeAssembly() {
 
             <motion.h2
               id="scene-three-heading"
-              className="mt-8 font-heading text-[2rem] leading-[1.08] font-black tracking-tight text-white sm:mt-10 sm:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem]"
+              className="mt-8 font-heading text-[2.125rem] leading-[1.08] font-black tracking-tight text-white sm:mt-10 sm:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.08)}
             >
@@ -83,7 +83,7 @@ export function SceneThreeAssembly() {
               {CAPABILITIES.map((line) => (
                 <li
                   key={line}
-                  className="font-heading text-[13px] font-bold tracking-[0.12em] text-white/82 uppercase sm:text-sm"
+                  className="font-heading text-sm font-bold tracking-[0.12em] text-white/82 uppercase"
                 >
                   {line}
                 </li>
@@ -91,7 +91,7 @@ export function SceneThreeAssembly() {
             </motion.ul>
 
             <motion.p
-              className="mt-10 max-w-[440px] text-base leading-[1.7] text-white/50 sm:mt-12 sm:text-[17px]"
+              className="mt-10 max-w-[440px] text-lg leading-[1.7] text-white/60 sm:mt-12 sm:text-[17px]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.24)}
             >

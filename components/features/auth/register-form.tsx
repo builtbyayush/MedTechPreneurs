@@ -24,12 +24,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { AUTH_ROUTES } from "@/config/auth";
 import { ROUTES } from "@/constants/routes";
-import {
-  AUTH_ERROR_MESSAGES,
-  getAuthErrorMessage,
-} from "@/lib/auth/errors";
+import { AUTH_ERROR_MESSAGES, getAuthErrorMessage } from "@/lib/auth/errors";
 import { registerSchema } from "@/lib/validations/auth";
 import { cn } from "@/lib/utils";
 
@@ -91,7 +87,7 @@ export function RegisterForm() {
       return;
     }
 
-    router.push(AUTH_ROUTES.defaultCallback);
+    router.push(ROUTES.onboarding);
     router.refresh();
   }
 

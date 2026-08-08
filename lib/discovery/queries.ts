@@ -7,6 +7,7 @@ import {
   toCompatibilityProfile,
 } from "@/lib/compatibility";
 import { getActiveMatchedUserIds, tryCreateMutualMatch } from "@/lib/matching/queries";
+import { formatLocation } from "@/lib/locations/format";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
 import { User } from "@/models/User";
 import type {
@@ -52,10 +53,6 @@ export function buildEligibleFounderFilter(
     buildingFocus: { $exists: true, $ne: null },
     currentStage: { $exists: true, $ne: null },
   };
-}
-
-function formatLocation(city?: string | null, country?: string | null): string {
-  return [city, country].filter(Boolean).join(", ") || "Location not shared";
 }
 
 function getCompatibilityPlaceholder(userId: string): number {
@@ -137,6 +134,7 @@ export function serializeDiscoveryFounder(user: {
   currentStage?: CurrentStage | null;
   lookingForRoles?: LookingForRole[] | null;
   country?: string | null;
+  state?: string | null;
   city?: string | null;
   emailVerified?: boolean | null;
 }): Omit<
@@ -157,7 +155,7 @@ export function serializeDiscoveryFounder(user: {
     buildingFocus: user.buildingFocus,
     currentStage: user.currentStage,
     lookingForRoles: user.lookingForRoles ?? [],
-    location: formatLocation(user.city, user.country),
+    location: formatLocation(user.city, user.state, user.country),
     bio: resolveBio({
       name: user.name,
       bio: user.bio,
@@ -213,7 +211,7 @@ export async function getDiscoveryFeed(
 
   const compatibilityCache = createCompatibilityCache();
   const viewerUser = await User.findById(options.viewerId)
-    .select("founderRole buildingFocus currentStage lookingForRoles country city")
+    .select("founderRole buildingFocus currentStage lookingForRoles country state city")
     .lean();
   const viewerProfile = toCompatibilityProfile(viewerUser ?? {});
 
@@ -240,7 +238,7 @@ export async function getDiscoveryFeed(
   const nextUser = await User.findOne(feedFilter)
     .sort({ createdAt: -1 })
     .select(
-      "name headline bio skills yearsExperience companyName profilePhotoUrl founderRole buildingFocus currentStage lookingForRoles country city emailVerified createdAt",
+      "name headline bio skills yearsExperience companyName profilePhotoUrl founderRole buildingFocus currentStage lookingForRoles country state city emailVerified createdAt",
     )
     .lean();
 
@@ -336,7 +334,7 @@ export async function searchDiscoveryFounders(input: {
 
   const compatibilityCache = createCompatibilityCache();
   const viewerUser = await User.findById(input.viewerId)
-    .select("founderRole buildingFocus currentStage lookingForRoles country city")
+    .select("founderRole buildingFocus currentStage lookingForRoles country state city")
     .lean();
   const viewerProfile = toCompatibilityProfile(viewerUser ?? {});
 
@@ -361,7 +359,7 @@ export async function searchDiscoveryFounders(input: {
 
   const candidates = await User.find(searchFilter)
     .select(
-      "name headline companyName founderRole buildingFocus currentStage lookingForRoles country city",
+      "name headline companyName founderRole buildingFocus currentStage lookingForRoles country state city",
     )
     .limit(input.limit ?? 8)
     .lean();

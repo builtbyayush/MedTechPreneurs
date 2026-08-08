@@ -21,6 +21,9 @@ const DiscoveryActionSchema = new Schema(
       enum: DISCOVERY_ACTIONS,
       required: true,
     },
+    /** One pre-match introductory message (LinkedIn-style note). */
+    introMessage: { type: String, trim: true, maxlength: 300 },
+    introSentAt: { type: Date },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },

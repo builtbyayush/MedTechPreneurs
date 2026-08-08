@@ -32,7 +32,7 @@ export function LandingCtaPrimary({
       <Link
         href={href}
         className={cn(
-          "inline-flex w-full items-center justify-center rounded-lg bg-teal font-heading text-sm font-extrabold tracking-wide text-ink transition-colors hover:bg-[#33d6d6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal sm:w-auto",
+          "inline-flex w-full items-center justify-center rounded-lg bg-teal font-heading text-base font-extrabold tracking-wide text-ink transition-colors hover:bg-[#33d6d6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal sm:w-auto",
           size === "lg" && "h-12 px-7 shadow-brutal-teal sm:shadow-brutal-teal-lg",
           size === "md" && "h-10 px-5 shadow-brutal-teal",
           className
@@ -55,7 +55,7 @@ export function LandingCtaLink({ href, children, className }: LandingCtaLinkProp
     <Link
       href={href}
       className={cn(
-        "text-sm font-medium text-white/80 underline-offset-4 transition-colors hover:text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal",
+        "text-base font-medium text-white/80 underline-offset-4 transition-colors hover:text-teal hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal",
         className
       )}
     >

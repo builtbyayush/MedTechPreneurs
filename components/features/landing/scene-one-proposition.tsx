@@ -65,7 +65,7 @@ export function SceneOneProposition() {
 
               <SceneOneHeadline id="scene-one-heading" />
 
-              <p className="mt-6 max-w-[640px] text-lg leading-[1.65] text-white/75 lg:mt-8">
+              <p className="mt-6 max-w-[640px] text-lg leading-[1.65] text-white/80 lg:mt-8">
                 Whether you are a Startup, Medical Institution, or an Investor
                 — Join us to help Bridge the Gap between Technology &amp;
                 Healthcare
@@ -96,7 +96,7 @@ export function SceneOneProposition() {
           </div>
 
           <motion.p
-            className="mt-14 flex items-center justify-center gap-1.5 text-[11px] tracking-wide text-white/35 sm:mt-16 lg:mt-20 lg:justify-start"
+            className="mt-14 flex items-center justify-center gap-1.5 text-xs tracking-wide text-white/45 sm:mt-16 lg:mt-20 lg:justify-start"
             initial={{ opacity: 0 }}
             animate={{ opacity: reducedMotion ? 1 : 0.4 }}
             transition={

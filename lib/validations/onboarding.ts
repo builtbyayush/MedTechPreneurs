@@ -40,6 +40,7 @@ export const partnershipGoalsStepSchema = z.object({
 
 export const locationStepSchema = z.object({
   country: z.string().trim().max(80).optional(),
+  state: z.string().trim().max(80).optional(),
   city: z.string().trim().max(80).optional(),
 });
 
@@ -50,6 +51,7 @@ export const completeOnboardingSchema = z.object({
   lookingForRoles: z.array(z.enum(LOOKING_FOR_ROLES)).min(1),
   partnershipGoals: z.array(z.enum(PARTNERSHIP_GOALS)).min(1),
   country: z.string().trim().max(80).optional(),
+  state: z.string().trim().max(80).optional(),
   city: z.string().trim().max(80).optional(),
 });
 

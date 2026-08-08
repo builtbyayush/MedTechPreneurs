@@ -1,10 +1,21 @@
+"use client";
+
+import { useState } from "react";
+
+import { IntroduceYourselfDialog } from "@/components/features/matches/introduce-yourself-dialog";
 import { Avatar } from "@/components/features/app/avatar";
+import { Button } from "@/components/ui/button";
 import { FOUNDER_ROLE_LABELS } from "@/types/onboarding";
 import type { OutgoingConnectListItem } from "@/types/match";
 import { cn } from "@/lib/utils";
 
 type OutgoingConnectRowProps = {
   connect: OutgoingConnectListItem;
+  viewerFirstName?: string;
+  onIntroSent?: (targetUserId: string, payload: {
+    introPreview: string;
+    introSentAt: string;
+  }) => void;
   className?: string;
 };
 
@@ -27,58 +38,111 @@ const STATUS_COPY = {
   },
 } as const;
 
-export function OutgoingConnectRow({ connect, className }: OutgoingConnectRowProps) {
+export function OutgoingConnectRow({
+  connect,
+  viewerFirstName,
+  onIntroSent,
+  className,
+}: OutgoingConnectRowProps) {
   const status = STATUS_COPY[connect.status];
   const { partner } = connect;
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const showIntroAction = connect.status === "pending";
+  const introSent = Boolean(connect.introSent);
 
   return (
     <article
       className={cn(
-        "founder-card-glass flex items-start gap-3 rounded-2xl border border-white/10 p-4 shadow-founder-card",
+        "founder-card-glass flex flex-col gap-3 rounded-2xl border border-white/10 p-4 shadow-founder-card",
         className,
       )}
       aria-label={`Connection with ${partner.name}`}
     >
-      <Avatar
-        name={partner.name}
-        imageUrl={partner.profilePhotoUrl}
-        size="lg"
-        className="shrink-0"
-      />
+      <div className="flex items-start gap-3">
+        <Avatar
+          name={partner.name}
+          imageUrl={partner.profilePhotoUrl}
+          size="lg"
+          className="shrink-0"
+        />
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="truncate font-heading text-base font-extrabold text-white">
-              {partner.name}
-            </h3>
-            <p className="text-xs text-teal/85">
-              {FOUNDER_ROLE_LABELS[partner.founderRole]}
-            </p>
-            {partner.headline ? (
-              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/55">
-                {partner.headline}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h3 className="truncate font-heading text-base font-extrabold text-white">
+                {partner.name}
+              </h3>
+              <p className="text-xs text-teal/85">
+                {FOUNDER_ROLE_LABELS[partner.founderRole]}
               </p>
-            ) : null}
+              {partner.headline ? (
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/55">
+                  {partner.headline}
+                </p>
+              ) : null}
+            </div>
+
+            <span
+              className={cn(
+                "shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase",
+                status.className,
+              )}
+            >
+              {status.label}
+            </span>
           </div>
 
-          <span
-            className={cn(
-              "shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase",
-              status.className,
-            )}
-          >
-            {status.label}
-          </span>
+          <p className="mt-2 text-[11px] text-white/45">
+            You connected on {formatConnectDate(connect.connectedAt)}
+            {connect.status === "matched" && connect.matchedAt
+              ? ` · Matched ${formatConnectDate(connect.matchedAt)}`
+              : null}
+          </p>
         </div>
-
-        <p className="mt-2 text-[11px] text-white/45">
-          You connected on {formatConnectDate(connect.connectedAt)}
-          {connect.status === "matched" && connect.matchedAt
-            ? ` · Matched ${formatConnectDate(connect.matchedAt)}`
-            : null}
-        </p>
       </div>
+
+      {showIntroAction ? (
+        <div className="border-t border-white/[0.06] pt-3">
+          {introSent ? (
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-teal/90">
+                Intro sent · Waiting for them
+              </p>
+              {connect.introPreview ? (
+                <p className="line-clamp-2 text-xs leading-relaxed text-white/45">
+                  “{connect.introPreview}”
+                </p>
+              ) : (
+                <p className="text-xs text-white/40">
+                  Waiting for them to respond.
+                </p>
+              )}
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-9 border-white/15 bg-transparent text-xs font-semibold text-white/75 hover:bg-white/[0.04] hover:text-white"
+              onClick={() => setDialogOpen(true)}
+            >
+              Introduce Yourself
+            </Button>
+          )}
+        </div>
+      ) : null}
+
+      <IntroduceYourselfDialog
+        targetUserId={connect.targetUserId}
+        targetUserName={partner.name}
+        viewerFirstName={viewerFirstName}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSent={(payload) => {
+          onIntroSent?.(connect.targetUserId, payload);
+        }}
+      />
     </article>
   );
 }

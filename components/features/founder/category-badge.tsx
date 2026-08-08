@@ -17,14 +17,20 @@ const ACCENT: Record<FounderCategory, string> = {
 
 type CategoryBadgeProps = {
   category: FounderCategory;
+  size?: "sm" | "md";
   className?: string;
 };
 
-export function CategoryBadge({ category, className }: CategoryBadgeProps) {
+export function CategoryBadge({
+  category,
+  size = "sm",
+  className,
+}: CategoryBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-md border px-2.5 py-1 font-heading text-[10px] font-bold tracking-[0.12em] uppercase",
+        "inline-flex items-center rounded-md border px-2.5 py-1 font-heading font-bold tracking-[0.12em] uppercase",
+        size === "md" ? "text-xs" : "text-[10px]",
         ACCENT[category],
         className
       )}

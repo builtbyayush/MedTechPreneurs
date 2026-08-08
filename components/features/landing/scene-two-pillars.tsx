@@ -67,10 +67,10 @@ export function SceneTwoPillars({ inView = true, className }: SceneTwoPillarsPro
           >
             <pillar.icon className="size-[18px] stroke-[1.5]" />
           </div>
-          <p className="mt-5 font-heading text-[10px] font-bold tracking-[0.2em] text-[#00C6C6] uppercase">
+          <p className="mt-5 font-heading text-xs font-bold tracking-[0.2em] text-[#00C6C6] uppercase">
             {pillar.title}
           </p>
-          <p className="mt-2 max-w-[220px] text-sm leading-relaxed text-white/45">
+          <p className="mt-2 max-w-[220px] text-base leading-relaxed text-white/55">
             {pillar.description}
           </p>
         </motion.div>

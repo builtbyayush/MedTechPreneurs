@@ -115,5 +115,6 @@ export type OnboardingFormState = {
   lookingForRoles: LookingForRole[];
   partnershipGoals: PartnershipGoal[];
   country: string;
+  state: string;
   city: string;
 };

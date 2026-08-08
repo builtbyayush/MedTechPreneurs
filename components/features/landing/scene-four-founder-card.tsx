@@ -76,7 +76,7 @@ export function SceneFourFounderCard() {
             </motion.h2>
 
             <motion.p
-              className="mt-10 max-w-[460px] text-base leading-[1.72] text-white/50 sm:mt-12 sm:text-[17px]"
+              className="mt-10 max-w-[460px] text-lg leading-[1.72] text-white/60 sm:mt-12 sm:text-[17px]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.16)}
             >

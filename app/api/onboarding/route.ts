@@ -32,6 +32,7 @@ export async function PATCH(request: Request) {
 
     const data = parsed.data;
     const country = data.country?.trim() || undefined;
+    const state = data.state?.trim() || undefined;
     const city = data.city?.trim() || undefined;
     const uniqueLookingForRoles = [...new Set(data.lookingForRoles)];
     const uniquePartnershipGoals = [...new Set(data.partnershipGoals)];
@@ -70,6 +71,7 @@ export async function PATCH(request: Request) {
         lookingForRoles: uniqueLookingForRoles,
         partnershipGoals: uniquePartnershipGoals,
         country,
+        state,
         city,
         category: legacyCategory,
         lookingFor:

@@ -96,7 +96,7 @@ export function LandingNav() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="block rounded-md px-3 py-2.5 text-sm text-white/75 hover:bg-white/[0.04] hover:text-white"
+                  className="block rounded-md px-3 py-2.5 text-base text-white/75 hover:bg-white/[0.04] hover:text-white"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -107,7 +107,7 @@ export function LandingNav() {
             <li>
               <Link
                 href="/login"
-                className="block rounded-md px-3 py-2.5 text-sm text-white/75 hover:text-white"
+                className="block rounded-md px-3 py-2.5 text-base text-white/75 hover:text-white"
                 onClick={() => setMenuOpen(false)}
               >
                 Log in

@@ -29,6 +29,10 @@ export type OutgoingConnectListItem = {
   status: OutgoingConnectStatus;
   matchId?: string;
   matchedAt?: string;
+  /** True when the viewer already sent their one pre-match introduction. */
+  introSent?: boolean;
+  introSentAt?: string;
+  introPreview?: string;
   partner: MatchPartner;
 };
 

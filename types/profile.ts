@@ -22,6 +22,7 @@ export type FounderProfile = {
   currentStage?: CurrentStage;
   lookingForRoles: LookingForRole[];
   country?: string;
+  state?: string;
   city?: string;
 };
 
