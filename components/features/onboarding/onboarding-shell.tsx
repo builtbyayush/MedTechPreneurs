@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { OnboardingProgress } from "@/components/features/onboarding/onboarding-progress";
 import { SplicePlusLogo } from "@/components/features/brand/splice-plus-logo";
+import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 type OnboardingShellProps = {
@@ -33,6 +35,12 @@ export function OnboardingShell({
       <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-lg flex-col border-x border-white/[0.06] px-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))] sm:px-6">
         <div className="mb-8 flex items-center justify-between gap-4">
           <SplicePlusLogo className="text-xl sm:text-2xl" />
+          <Link
+            href={ROUTES.logout}
+            className="rounded-md px-2 py-1.5 text-sm font-medium text-white/55 transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+          >
+            Log out
+          </Link>
         </div>
 
         <OnboardingProgress step={step} className="mb-8" />

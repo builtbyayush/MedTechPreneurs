@@ -15,6 +15,16 @@ function getAllowedDevOrigins(): string[] {
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  /** Fallback: expose server Pusher app key/cluster to the browser when NEXT_PUBLIC_* are unset. */
+  env: {
+    NEXT_PUBLIC_PUSHER_KEY:
+      process.env.NEXT_PUBLIC_PUSHER_KEY ?? process.env.PUSHER_KEY ?? "",
+    NEXT_PUBLIC_PUSHER_CLUSTER:
+      process.env.NEXT_PUBLIC_PUSHER_CLUSTER ??
+      process.env.PUSHER_CLUSTER ??
+      "",
+    NEXT_PUBLIC_REALTIME_DEBUG: process.env.REALTIME_DEBUG ?? "false",
+  },
   images: {
     remotePatterns: [
       {
@@ -28,6 +38,19 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: getAllowedDevOrigins(),
   async headers() {
     return [
+      {
+        source: "/manifest.webmanifest",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
+          },
+          {
+            key: "Content-Type",
+            value: "application/manifest+json",
+          },
+        ],
+      },
       {
         source: "/sw.js",
         headers: [

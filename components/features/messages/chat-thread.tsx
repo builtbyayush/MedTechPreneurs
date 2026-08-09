@@ -10,7 +10,15 @@ import { ChatComposer } from "@/components/features/messages/chat-composer";
 import { ChatThreadSkeleton } from "@/components/features/messages/chat-thread-skeleton";
 import { MessageBubble } from "@/components/features/messages/message-bubble";
 import { ROUTES } from "@/constants/routes";
+import {
+  appendMessageIfNew,
+  useConversationRealtime,
+} from "@/hooks/use-conversation-realtime";
 import { useMessagingPoll } from "@/hooks/use-messaging-poll";
+import {
+  MESSAGING_POLL_ENABLED,
+  MESSAGING_POLL_INTERVAL_MS,
+} from "@/lib/messaging/constants";
 import type {
   ConversationPartner,
   MessageListItem,
@@ -135,8 +143,25 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
     };
   }, [conversationId, scrollToBottom]);
 
-  useMessagingPoll(() => loadMessages(), {
+  const handleRealtimeMessage = useCallback(
+    (nextMessage: MessageListItem) => {
+      shouldStickToBottomRef.current = true;
+      setMessages((current) => appendMessageIfNew(current, nextMessage));
+      setState("ready");
+      requestAnimationFrame(() => scrollToBottom());
+    },
+    [scrollToBottom],
+  );
+
+  useConversationRealtime({
+    conversationId,
+    onMessage: handleRealtimeMessage,
     enabled: state === "ready" || state === "empty",
+  });
+
+  useMessagingPoll(() => loadMessages(), {
+    enabled: (state === "ready" || state === "empty") && MESSAGING_POLL_ENABLED,
+    intervalMs: MESSAGING_POLL_INTERVAL_MS * 4,
   });
 
   useEffect(() => {
@@ -173,7 +198,7 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
       setErrorMessage(null);
       const nextMessage = (payload as SendMessageResponse).message;
       shouldStickToBottomRef.current = true;
-      setMessages((current) => [...current, nextMessage]);
+      setMessages((current) => appendMessageIfNew(current, nextMessage));
       setState("ready");
       requestAnimationFrame(() => scrollToBottom());
       return true;
@@ -184,8 +209,8 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
   }
 
   return (
-    <div className="flex min-h-[calc(100svh-3.5rem-4rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] flex-col">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-ink-elevated/90 px-4 py-3 backdrop-blur-md">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <header className="shrink-0 border-b border-white/10 bg-ink-elevated/90 px-4 py-3 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <Link
             href={ROUTES.app.messages}
@@ -221,7 +246,7 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-4 py-4"
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4"
         aria-live="polite"
         aria-label="Message history"
         onScroll={(event) => {
@@ -264,7 +289,7 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
         ) : null}
       </div>
 
-      <div className="sticky bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30">
+      <div className="relative z-20 shrink-0 bg-ink-elevated pb-[env(safe-area-inset-bottom)]">
         {errorMessage && state !== "error" ? (
           <p
             className="border-t border-coral/20 bg-coral/10 px-4 py-2 text-sm text-coral"

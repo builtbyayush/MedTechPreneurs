@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { AppShell } from "@/components/features/app/app-shell";
 import { ROUTES } from "@/constants/routes";
 import { getUserOnboardingStatus } from "@/lib/onboarding/queries";
@@ -20,7 +20,13 @@ export default async function AppLayout({ children }: AppLayoutProps) {
 
   const onboarding = await getUserOnboardingStatus(session.user.id);
 
-  if (!onboarding?.onboardingCompleted) {
+  // Stale JWT after DB purge / deleted account — clear session and start fresh.
+  if (!onboarding) {
+    await signOut({ redirectTo: ROUTES.register });
+    redirect(ROUTES.register);
+  }
+
+  if (!onboarding.onboardingCompleted) {
     redirect(ROUTES.onboarding);
   }
 

@@ -6,7 +6,7 @@ import {
   createCompatibilityCache,
   toCompatibilityProfile,
 } from "@/lib/compatibility";
-import { ensureConversationForMatch } from "@/lib/messaging/queries";
+import { ensureConversationForMatch, resolveConversationIdsForMatches } from "@/lib/messaging/queries";
 import { copyIntroductionsIntoConversation } from "@/lib/matching/intro";
 import {
   mapFounderRoleToCategory,
@@ -74,16 +74,23 @@ export async function tryCreateMutualMatch(input: {
   ).select("_id");
 
   if (match?._id) {
-    await ensureConversationForMatch({
-      matchId: match._id.toString(),
-      userIdA: input.viewerId,
-      userIdB: input.targetUserId,
-    });
-    await copyIntroductionsIntoConversation({
-      matchId: match._id.toString(),
-      userIdA: input.viewerId,
-      userIdB: input.targetUserId,
-    });
+    try {
+      await ensureConversationForMatch({
+        matchId: match._id.toString(),
+        userIdA: input.viewerId,
+        userIdB: input.targetUserId,
+      });
+      await copyIntroductionsIntoConversation({
+        matchId: match._id.toString(),
+        userIdA: input.viewerId,
+        userIdB: input.targetUserId,
+      });
+    } catch (error) {
+      console.error("[matching] Conversation setup failed after mutual match", {
+        matchId: match._id.toString(),
+        error,
+      });
+    }
   }
 
   return {
@@ -166,6 +173,8 @@ export async function getOutgoingConnectsForUser(
     });
   }
 
+  const conversationByMatchId = await resolveConversationIdsForMatches(matches);
+
   const targetMap = new Map(
     targets.map((target) => [target._id.toString(), target]),
   );
@@ -191,6 +200,9 @@ export async function getOutgoingConnectsForUser(
         status,
         matchId: matchInfo?.matchId,
         matchedAt: matchInfo?.matchedAt,
+        conversationId: matchInfo?.matchId
+          ? conversationByMatchId.get(matchInfo.matchId)
+          : undefined,
         introSent,
         introSentAt: action.introSentAt
           ? action.introSentAt.toISOString()
@@ -252,6 +264,8 @@ export async function getMatchedFoundersForUser(
     partners.map((partner) => [partner._id.toString(), partner]),
   );
 
+  const conversationByMatchId = await resolveConversationIdsForMatches(matches);
+
   return matches.flatMap((match) => {
     const partnerId = getMatchPartnerId(match, userId);
     const partner = partnerMap.get(partnerId);
@@ -277,6 +291,7 @@ export async function getMatchedFoundersForUser(
     return [
       {
         matchId: match._id.toString(),
+        conversationId: conversationByMatchId.get(match._id.toString()),
         matchedAt: (match.matchedAt ?? match.createdAt).toISOString(),
         compatibilityScore: compatibility.score,
         compatibilityExplanation: compatibility.explanation,
@@ -337,8 +352,16 @@ export async function createSeedMatch(input: {
 export async function createSeedConnect(input: {
   viewerId: string;
   targetUserId: string;
+  introMessage?: string;
+  introSentAt?: Date;
 }): Promise<void> {
   await connectDB();
+
+  const introMessage = input.introMessage?.trim();
+  const introSentAt =
+    introMessage && introMessage.length > 0
+      ? (input.introSentAt ?? new Date())
+      : undefined;
 
   await DiscoveryAction.findOneAndUpdate(
     { viewerId: input.viewerId, targetUserId: input.targetUserId },
@@ -346,6 +369,9 @@ export async function createSeedConnect(input: {
       viewerId: input.viewerId,
       targetUserId: input.targetUserId,
       action: "connect",
+      ...(introMessage && introSentAt
+        ? { introMessage, introSentAt }
+        : {}),
     },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );

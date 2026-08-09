@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { IntroduceYourselfDialog } from "@/components/features/matches/introduce-yourself-dialog";
+import { MatchMessageButton } from "@/components/features/matches/match-message-button";
 import { Avatar } from "@/components/features/app/avatar";
 import { Button } from "@/components/ui/button";
 import { FOUNDER_ROLE_LABELS } from "@/types/onboarding";
@@ -130,6 +131,19 @@ export function OutgoingConnectRow({
               Introduce Yourself
             </Button>
           )}
+        </div>
+      ) : null}
+
+      {connect.status === "matched" ? (
+        <div className="border-t border-white/[0.06] pt-3">
+          <p className="mb-3 text-xs leading-relaxed text-white/55">
+            You&apos;re mutually connected — start your conversation in Messages.
+          </p>
+          <MatchMessageButton
+            conversationId={connect.conversationId}
+            partnerName={partner.name}
+            fullWidth
+          />
         </div>
       ) : null}
 

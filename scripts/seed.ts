@@ -18,6 +18,7 @@ import {
 import { findStateForCityName } from "@/lib/locations/india";
 import { Conversation } from "@/models/Conversation";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
+import { EmailVerificationCode } from "@/models/EmailVerificationCode";
 import { getCanonicalMatchPair } from "@/models/Match";
 import { Match } from "@/models/Match";
 import { Message } from "@/models/Message";
@@ -45,9 +46,44 @@ type SeedSummary = {
   elapsedMs: number;
 };
 
-function parseArgs(argv: string[]): { clear: boolean } {
+function parseArgs(argv: string[]): { clear: boolean; purge: boolean } {
   return {
     clear: argv.includes("--clear"),
+    purge: argv.includes("--purge"),
+  };
+}
+
+/** Wipe every app collection — keeps only a clean slate for re-seeding. */
+async function purgeAllData(): Promise<Record<string, number>> {
+  const [
+    messages,
+    conversations,
+    discoveryActions,
+    matches,
+    reports,
+    verificationCodes,
+    users,
+  ] = await Promise.all([
+    Message.deleteMany({}),
+    Conversation.deleteMany({}),
+    DiscoveryAction.deleteMany({}),
+    Match.deleteMany({}),
+    Report.deleteMany({}),
+    EmailVerificationCode.deleteMany({}),
+    User.deleteMany({}),
+  ]);
+
+  // Ensure Conversation indexes match the current schema (participantKey unique).
+  await Conversation.syncIndexes();
+
+  return {
+    messages: messages.deletedCount ?? 0,
+    conversations: conversations.deletedCount ?? 0,
+    discoveryActions: discoveryActions.deletedCount ?? 0,
+    matches: matches.deletedCount ?? 0,
+    reports: reports.deletedCount ?? 0,
+    verificationCodes: verificationCodes.deletedCount ?? 0,
+    users: users.deletedCount ?? 0,
   };
 }
 
@@ -182,10 +218,18 @@ async function seedRelationships(): Promise<void> {
       continue;
     }
 
-    await createSeedConnect({ viewerId: fromId, targetUserId: toId });
+    await createSeedConnect({
+      viewerId: fromId,
+      targetUserId: toId,
+      introMessage: relationship.intro,
+    });
 
     if (relationship.mutual) {
-      await createSeedConnect({ viewerId: toId, targetUserId: fromId });
+      await createSeedConnect({
+        viewerId: toId,
+        targetUserId: fromId,
+        introMessage: relationship.introReply,
+      });
     }
   }
 }
@@ -385,11 +429,17 @@ async function seedDashboardDemo(): Promise<void> {
 
 async function main(): Promise<void> {
   const startedAt = Date.now();
-  const { clear } = parseArgs(process.argv.slice(2));
+  const { clear, purge } = parseArgs(process.argv.slice(2));
 
   await connectDB();
 
-  if (clear) {
+  if (purge) {
+    const removed = await purgeAllData();
+    console.log("Purged entire database:");
+    for (const [collection, count] of Object.entries(removed)) {
+      console.log(`  ${collection}: ${count}`);
+    }
+  } else if (clear) {
     const removed = await clearSeedData();
     console.log(`Cleared ${removed} existing @splice.dev seed users.`);
   }

@@ -460,7 +460,16 @@ export const SEED_FOUNDERS: SeedFounder[] = [
 ];
 
 export type SeedRelationship =
-  | { type: "connect"; from: string; to: string; mutual?: boolean }
+  | {
+      type: "connect";
+      from: string;
+      to: string;
+      mutual?: boolean;
+      /** Pre-match intro from `from` → `to` (pending connects / match copy). */
+      intro?: string;
+      /** Pre-match intro from `to` → `from` when mutual. */
+      introReply?: string;
+    }
   | { type: "pass"; from: string; to: string };
 
 export type SeedReport = {
@@ -492,9 +501,9 @@ export const SEED_REPORTS: SeedReport[] = [
 ];
 
 export const SEED_RELATIONSHIPS: SeedRelationship[] = [
+  // Mutual matches (chat threads seeded separately in seed-messages-data)
   { type: "connect", from: "doctor@splice.dev", to: "engineer@splice.dev", mutual: true },
   { type: "connect", from: "business@splice.dev", to: "researcher@splice.dev", mutual: true },
-  { type: "connect", from: "investor@splice.dev", to: "doctor@splice.dev" },
   { type: "connect", from: "kavya.iyer@splice.dev", to: "vikram.singh@splice.dev", mutual: true },
   { type: "connect", from: "imran.shaikh@splice.dev", to: "deepa.krishnan@splice.dev", mutual: true },
   { type: "connect", from: "amit.choudhury@splice.dev", to: "tanya.bose@splice.dev", mutual: true },
@@ -503,6 +512,40 @@ export const SEED_RELATIONSHIPS: SeedRelationship[] = [
   { type: "connect", from: "karthik.reddy@splice.dev", to: "pooja.saxena@splice.dev", mutual: true },
   { type: "connect", from: "elena.varghese@splice.dev", to: "ritu.malhotra@splice.dev", mutual: true },
   { type: "connect", from: "sana.qureshi@splice.dev", to: "sanjeet.bhatt@splice.dev", mutual: true },
+  // Pending outgoing connects with pre-match introductions
+  {
+    type: "connect",
+    from: "investor@splice.dev",
+    to: "doctor@splice.dev",
+    intro:
+      "Ananya — backing clinically led diagnostics is my focus. Impressed by PulseBridge's district hospital angle; happy to compare notes.",
+  },
+  {
+    type: "connect",
+    from: "investor@splice.dev",
+    to: "engineer@splice.dev",
+    intro:
+      "Rohan, CardioSense's low-power monitoring thesis maps to portfolios I advise. Would like to connect before your next raise.",
+  },
+  {
+    type: "connect",
+    from: "nisha.verma@splice.dev",
+    to: "elena.varghese@splice.dev",
+    intro:
+      "Elena — ClinicLedger needs consent-aware integrations across clinic chains. Your HealthBridge API looks like the missing piece.",
+  },
+  {
+    type: "connect",
+    from: "aravind.reddy@splice.dev",
+    to: "doctor@splice.dev",
+    intro:
+      "Dr. Sharma — BedsideAI is building edge inference for ICU monitors. Looking for a clinical co-founder who knows Indian hospital workflows.",
+  },
+  {
+    type: "connect",
+    from: "sameer.agarwal@splice.dev",
+    to: "business@splice.dev",
+  },
   { type: "pass", from: "doctor@splice.dev", to: "lisa.fernandes@splice.dev" },
   { type: "pass", from: "engineer@splice.dev", to: "sana.qureshi@splice.dev" },
   { type: "pass", from: "business@splice.dev", to: "dev.rastogi@splice.dev" },

@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { MESSAGE_DUPLICATE_WINDOW_MS } from "@/lib/messaging/constants";
 import {
   Conversation,
+  getConversationParticipantKey,
   getConversationPartnerId,
 } from "@/models/Conversation";
 import { Message } from "@/models/Message";
@@ -105,17 +106,72 @@ export async function ensureConversationForMatch(input: {
   await assertMatchedParticipants(input.userIdA, input.userIdB);
 
   const participants = getCanonicalMatchPair(input.userIdA, input.userIdB);
+  const participantKey = getConversationParticipantKey(
+    input.userIdA,
+    input.userIdB,
+  );
 
   const conversation = await Conversation.findOneAndUpdate(
-    { participants },
+    { participantKey },
     {
       participants,
+      participantKey,
       matchId: new mongoose.Types.ObjectId(input.matchId),
     },
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   ).select("_id");
 
   return conversation._id.toString();
+}
+
+export async function resolveConversationIdsForMatches(
+  matches: {
+    _id: mongoose.Types.ObjectId;
+    userA: mongoose.Types.ObjectId;
+    userB: mongoose.Types.ObjectId;
+  }[],
+): Promise<Map<string, string>> {
+  await connectDB();
+
+  if (matches.length === 0) {
+    return new Map();
+  }
+
+  const matchIds = matches.map((match) => match._id);
+  const existing = await Conversation.find({ matchId: { $in: matchIds } })
+    .select("_id matchId")
+    .lean<{ _id: mongoose.Types.ObjectId; matchId: mongoose.Types.ObjectId }[]>();
+
+  const conversationByMatchId = new Map(
+    existing.map((conversation) => [
+      conversation.matchId.toString(),
+      conversation._id.toString(),
+    ]),
+  );
+
+  for (const match of matches) {
+    const matchId = match._id.toString();
+
+    if (conversationByMatchId.has(matchId)) {
+      continue;
+    }
+
+    try {
+      const conversationId = await ensureConversationForMatch({
+        matchId,
+        userIdA: match.userA.toString(),
+        userIdB: match.userB.toString(),
+      });
+      conversationByMatchId.set(matchId, conversationId);
+    } catch (error) {
+      console.error("[messaging] Failed to ensure conversation for match", {
+        matchId,
+        error,
+      });
+    }
+  }
+
+  return conversationByMatchId;
 }
 
 export async function getConversationForUser(input: {
@@ -163,6 +219,21 @@ export async function getConversationsForUser(
   await connectDB();
 
   const viewerObjectId = new mongoose.Types.ObjectId(userId);
+  const matchedRows = await Match.find({
+    status: "matched",
+    $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
+  })
+    .select("_id userA userB")
+    .lean<
+      {
+        _id: mongoose.Types.ObjectId;
+        userA: mongoose.Types.ObjectId;
+        userB: mongoose.Types.ObjectId;
+      }[]
+    >();
+
+  await resolveConversationIdsForMatches(matchedRows);
+
   const conversations = await Conversation.find({
     participants: viewerObjectId,
   })
@@ -358,6 +429,25 @@ export async function sendMessage(input: {
     lastActivityAt: message.createdAt,
   });
 
+  console.info("[REALTIME] message persisted", {
+    messageId: message._id.toString(),
+    conversationId: conversation._id.toString(),
+  });
+
+  // Dynamic import keeps seed scripts free of the `server-only` Pusher module.
+  const { publishNewMessageEvent } = await import(
+    "@/lib/pusher/publish-message"
+  );
+  await publishNewMessageEvent({
+    messageId: message._id.toString(),
+    conversationId: conversation._id.toString(),
+    senderId: message.senderId.toString(),
+    recipientId: getConversationPartnerId(conversation, input.userId),
+    text: message.content,
+    sentAt: message.createdAt.toISOString(),
+    messageType: "text",
+  });
+
   return serializeMessage(
     {
       _id: message._id,
@@ -370,6 +460,30 @@ export async function sendMessage(input: {
     },
     input.userId,
   );
+}
+
+export async function markConversationMessagesRead(input: {
+  conversationId: string;
+  userId: string;
+}): Promise<number> {
+  await connectDB();
+
+  const conversation = await getConversationForUser(input);
+
+  if (!conversation) {
+    throw new Error("Conversation not found");
+  }
+
+  const result = await Message.updateMany(
+    {
+      conversationId: conversation._id,
+      senderId: { $ne: new mongoose.Types.ObjectId(input.userId) },
+      isRead: false,
+    },
+    { isRead: true },
+  );
+
+  return result.modifiedCount;
 }
 
 export async function backfillConversationsForMatchedUsers(
@@ -390,8 +504,9 @@ export async function backfillConversationsForMatchedUsers(
   for (const match of matches) {
     const userIdA = match.userA.toString();
     const userIdB = match.userB.toString();
+    const participantKey = getConversationParticipantKey(userIdA, userIdB);
     const existing = await Conversation.findOne({
-      participants: getCanonicalMatchPair(userIdA, userIdB),
+      $or: [{ participantKey }, { participants: getCanonicalMatchPair(userIdA, userIdB) }],
     })
       .select("_id")
       .lean();

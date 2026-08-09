@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { PageContainer } from "@/components/features/app/page-container";
+import { DesktopNotificationsSetting } from "@/components/features/settings/desktop-notifications-setting";
 import { SectionHeader } from "@/components/features/app/section-header";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
@@ -67,15 +68,11 @@ export function SettingsPage({ user }: SettingsPageProps) {
       </SettingsSection>
 
       <SettingsSection title="Privacy & notifications" icon={Shield}>
+        <DesktopNotificationsSetting />
         <SettingsAction
           label="Privacy preferences"
           description="Data export and visibility controls — coming soon."
           onClick={() => showPlaceholder("Privacy preferences")}
-        />
-        <SettingsAction
-          label="Notification settings"
-          description="Email and push preferences — not enabled in beta."
-          onClick={() => showPlaceholder("Notifications")}
         />
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/55">
           Legal:{" "}

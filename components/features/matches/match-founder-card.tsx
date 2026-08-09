@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { CompatibilityScore } from "@/components/features/founder/compatibility-score";
 import { CompatibilityReasons } from "@/components/features/founder/compatibility-reasons";
+import { MatchMessageButton } from "@/components/features/matches/match-message-button";
 import {
   BlockUserButton,
   ReportProfileButton,
@@ -96,7 +97,11 @@ export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
             ) : null}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-1 border-t border-white/[0.08] pt-3 sm:justify-start">
+          <div className="flex flex-wrap items-center justify-center gap-2 border-t border-white/[0.08] pt-3 sm:justify-start">
+            <MatchMessageButton
+              conversationId={match.conversationId}
+              partnerName={partner.name}
+            />
             <ReportProfileButton
               reportedUserId={partner.id}
               reportedUserName={partner.name}

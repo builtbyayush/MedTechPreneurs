@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { INTRO_MESSAGE_MAX_LENGTH } from "@/constants/intro";
 import { connectDB } from "@/lib/db";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
-import { Conversation } from "@/models/Conversation";
+import { Conversation, getConversationParticipantKey } from "@/models/Conversation";
 import { Message } from "@/models/Message";
 import {
   getCanonicalMatchPair,
@@ -148,7 +148,13 @@ export async function copyIntroductionsIntoConversation(input: {
   await connectDB();
 
   const participants = getCanonicalMatchPair(input.userIdA, input.userIdB);
-  const conversation = await Conversation.findOne({ participants })
+  const participantKey = getConversationParticipantKey(
+    input.userIdA,
+    input.userIdB,
+  );
+  const conversation = await Conversation.findOne({
+    $or: [{ participantKey }, { participants }],
+  })
     .select("_id")
     .lean();
 

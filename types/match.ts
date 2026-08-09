@@ -14,6 +14,7 @@ export type MatchPartner = {
 
 export type MatchListItem = {
   matchId: string;
+  conversationId?: string;
   matchedAt: string;
   compatibilityScore: number;
   compatibilityExplanation: string;
@@ -28,6 +29,7 @@ export type OutgoingConnectListItem = {
   connectedAt: string;
   status: OutgoingConnectStatus;
   matchId?: string;
+  conversationId?: string;
   matchedAt?: string;
   /** True when the viewer already sent their one pre-match introduction. */
   introSent?: boolean;

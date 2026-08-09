@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useMessagingRealtime } from "@/components/providers/messaging-realtime-provider";
 import { APP_NAV_ITEMS } from "@/constants/navigation";
+import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const { totalUnreadCount } = useMessagingRealtime();
 
   return (
     <nav
@@ -19,13 +22,15 @@ export function BottomNavigation() {
           const isActive =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
+          const showUnreadBadge =
+            item.href === ROUTES.app.messages && totalUnreadCount > 0;
 
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
                 className={cn(
-                  "flex h-full flex-col items-center justify-center gap-1 px-1 text-[10px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal sm:text-[11px]",
+                  "relative flex h-full flex-col items-center justify-center gap-1 px-1 text-[10px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-teal sm:text-[11px]",
                   isActive
                     ? "text-teal"
                     : "text-white/45 hover:text-white/75",
@@ -34,11 +39,19 @@ export function BottomNavigation() {
               >
                 <span
                   className={cn(
-                    "inline-flex size-8 items-center justify-center rounded-xl transition-colors",
+                    "relative inline-flex size-8 items-center justify-center rounded-xl transition-colors",
                     isActive ? "bg-teal/15" : "bg-transparent",
                   )}
                 >
                   <Icon className="size-[18px]" aria-hidden />
+                  {showUnreadBadge ? (
+                    <span
+                      className="absolute -right-1 -top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-teal px-1 py-0.5 text-[9px] font-bold leading-none text-ink"
+                      aria-label={`${totalUnreadCount} unread messages`}
+                    >
+                      {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                    </span>
+                  ) : null}
                 </span>
                 <span>{item.label}</span>
               </Link>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "splice-pwa-v3";
+const CACHE_NAME = "splice-pwa-v4";
 const OFFLINE_URL = "/offline";
 
 /** Only precache the offline shell — never precache app HTML (stale chunk refs after rebuild). */
@@ -30,6 +30,41 @@ self.addEventListener("activate", (event) => {
     ),
   );
   self.clients.claim();
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const data = event.notification.data || {};
+  const targetUrl =
+    typeof data.url === "string" && data.url.startsWith("/")
+      ? data.url
+      : typeof data.conversationId === "string" && data.conversationId
+        ? `/messages/${data.conversationId}`
+        : "/messages";
+
+  event.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if ("focus" in client) {
+            const navigate =
+              "navigate" in client && typeof client.navigate === "function"
+                ? client.navigate(targetUrl)
+                : Promise.resolve();
+
+            return Promise.resolve(navigate).then(() => client.focus());
+          }
+        }
+
+        if (clients.openWindow) {
+          return clients.openWindow(targetUrl);
+        }
+
+        return undefined;
+      }),
+  );
 });
 
 self.addEventListener("fetch", (event) => {

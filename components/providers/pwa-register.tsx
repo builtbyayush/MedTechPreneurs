@@ -2,14 +2,9 @@
 
 import { useEffect } from "react";
 
-import { siteConfig } from "@/config/site";
-
+/** Registers the service worker for offline shell + reliable desktop notifications. */
 export function PwaRegister() {
   useEffect(() => {
-    if (!siteConfig.pwa.enabled) {
-      return;
-    }
-
     if (!("serviceWorker" in navigator)) {
       return;
     }
