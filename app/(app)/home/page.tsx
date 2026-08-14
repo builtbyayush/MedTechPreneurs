@@ -9,6 +9,27 @@ export const metadata = {
   title: "Home",
 };
 
+const HOME_QUERY_BUDGET_MS = 15_000;
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error("[home] getHomeDashboard timed out"));
+        }, ms);
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+}
+
 export default async function AppHomePage() {
   const session = await auth();
 
@@ -16,11 +37,16 @@ export default async function AppHomePage() {
     redirect(ROUTES.login);
   }
 
+  let data;
   try {
-    const data = await getHomeDashboard(session.user.id);
-    return <HomeDashboard data={data} />;
+    data = await withTimeout(
+      getHomeDashboard(session.user.id),
+      HOME_QUERY_BUDGET_MS,
+    );
   } catch (error) {
     console.error("[home] getHomeDashboard failed", error);
     throw error;
   }
+
+  return <HomeDashboard data={data} />;
 }
