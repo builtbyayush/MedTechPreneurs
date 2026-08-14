@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -33,7 +33,6 @@ import { cn } from "@/lib/utils";
 type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
   const recoveryError = searchParams.get("error");
@@ -65,21 +64,30 @@ export function LoginForm() {
     setIsSubmitting(true);
     setError(null);
 
-    const result = await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-      remember: String(values.remember),
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+        remember: String(values.remember),
+        redirect: false,
+      });
 
-    if (result?.error) {
-      setError(getAuthErrorMessage(result.error, "invalidCredentials"));
+      if (result?.error) {
+        setError(getAuthErrorMessage(result.error, "invalidCredentials"));
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Hard navigation so the new session cookie is applied cleanly.
+      // Soft router.push can race service workers / RSC and leave you on /login.
+      window.location.assign(callbackUrl);
+    } catch (err) {
+      console.error("[login] signIn failed", err);
+      setError(
+        "Sign-in failed due to a browser/network issue. Try clearing site data or disabling the service worker, then try again.",
+      );
       setIsSubmitting(false);
-      return;
     }
-
-    router.push(callbackUrl);
-    router.refresh();
   }
 
   const remember = form.watch("remember");

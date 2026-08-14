@@ -1,15 +1,28 @@
-const CACHE_NAME = "splice-pwa-v4";
+const CACHE_NAME = "splice-pwa-v5";
 const OFFLINE_URL = "/offline";
 
 /** Only precache the offline shell — never precache app HTML (stale chunk refs after rebuild). */
 const PRECACHE_URLS = [OFFLINE_URL];
 
-function shouldBypassCache(pathname) {
+/**
+ * Never intercept these — Auth.js / APIs must hit the network with a real Response.
+ * Intercepting `/api/auth/*` with respondWith(fetch()) has caused:
+ * "Failed to convert value to 'Response'" and broken credential sign-in.
+ */
+function shouldBypassServiceWorker(pathname) {
   return (
     pathname.startsWith("/_next/") ||
     pathname.startsWith("/api/") ||
-    pathname === "/sw.js"
+    pathname === "/sw.js" ||
+    pathname === "/manifest.webmanifest"
   );
+}
+
+function asResponse(value) {
+  if (value instanceof Response) {
+    return value;
+  }
+  return Response.error();
 }
 
 self.addEventListener("install", (event) => {
@@ -78,39 +91,39 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (shouldBypassCache(requestUrl.pathname)) {
-    event.respondWith(fetch(event.request));
+  // Critical: do not call respondWith for auth/API — let the browser handle it.
+  if (shouldBypassServiceWorker(requestUrl.pathname)) {
     return;
   }
 
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(async () => {
-        const cache = await caches.open(CACHE_NAME);
-        const cachedOffline = await cache.match(OFFLINE_URL);
-        return cachedOffline ?? Response.error();
-      }),
+      fetch(event.request)
+        .then((response) => asResponse(response))
+        .catch(async () => {
+          const cache = await caches.open(CACHE_NAME);
+          const cachedOffline = await cache.match(OFFLINE_URL);
+          return asResponse(cachedOffline);
+        }),
     );
     return;
   }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-
       return fetch(event.request)
         .then((response) => {
-          if (!response.ok || response.type === "opaque") {
-            return response;
+          if (!response || !response.ok || response.type === "opaque") {
+            return asResponse(response ?? cached);
           }
 
           const copy = response.clone();
-          void caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          void caches.open(CACHE_NAME).then((cache) =>
+            cache.put(event.request, copy),
+          );
           return response;
         })
-        .catch(() => cached);
+        .catch(() => asResponse(cached));
     }),
   );
 });
