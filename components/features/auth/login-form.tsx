@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
@@ -27,29 +27,70 @@ import { Input } from "@/components/ui/input";
 import { ROUTES } from "@/constants/routes";
 import { getSafeCallbackUrl } from "@/lib/auth/callback-url";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
+import { getLoginNoticeMessage } from "@/lib/auth/login-url";
 import { loginSchema } from "@/lib/validations/auth";
 import { cn } from "@/lib/utils";
 
 type LoginValues = z.infer<typeof loginSchema>;
 
+/** Auth.js-owned error codes — leave these alone if present. */
+const AUTHJS_ERROR_CODES = new Set([
+  "Configuration",
+  "AccessDenied",
+  "Verification",
+  "OAuthSignin",
+  "OAuthCallback",
+  "OAuthCreateAccount",
+  "EmailCreateAccount",
+  "Callback",
+  "OAuthAccountNotLinked",
+  "EmailSignin",
+  "CredentialsSignin",
+  "SessionRequired",
+  "Default",
+]);
+
 export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
-  const recoveryError = searchParams.get("error");
+  const notice = searchParams.get("notice");
+  const legacyError = searchParams.get("error");
 
-  const [error, setError] = useState<string | null>(() => {
-    if (recoveryError === "account_restricted") {
-      return "This account is restricted. Contact support if you believe this is a mistake.";
-    }
-    if (
-      recoveryError === "stale_session" ||
-      recoveryError === "session_recovery"
-    ) {
-      return "Your session expired or is no longer valid. Please sign in again.";
-    }
-    return null;
-  });
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(() =>
+    getLoginNoticeMessage(notice),
+  );
+  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Strip product `error=` values Auth.js would misread (e.g. stale_session).
+  // Keep real Auth.js codes. Prefer `notice=` for product messaging.
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    let changed = false;
+
+    const errorParam = url.searchParams.get("error");
+    if (errorParam && !AUTHJS_ERROR_CODES.has(errorParam)) {
+      // Migrate known legacy recovery params into notice messaging.
+      if (
+        errorParam === "stale_session" ||
+        errorParam === "session_recovery"
+      ) {
+        setNoticeMessage(getLoginNoticeMessage("session_expired"));
+      } else if (errorParam === "account_restricted") {
+        setNoticeMessage(getLoginNoticeMessage("account_restricted"));
+      }
+      url.searchParams.delete("error");
+      changed = true;
+    }
+
+    if (changed) {
+      window.history.replaceState({}, "", url.pathname + url.search);
+    }
+  }, [legacyError]);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -63,6 +104,7 @@ export function LoginForm() {
   async function onSubmit(values: LoginValues) {
     setIsSubmitting(true);
     setError(null);
+    setNoticeMessage(null);
 
     try {
       const result = await signIn("credentials", {
@@ -79,12 +121,11 @@ export function LoginForm() {
       }
 
       // Hard navigation so the new session cookie is applied cleanly.
-      // Soft router.push can race service workers / RSC and leave you on /login.
       window.location.assign(callbackUrl);
     } catch (err) {
       console.error("[login] signIn failed", err);
       setError(
-        "Sign-in failed due to a browser/network issue. Try clearing site data or disabling the service worker, then try again.",
+        "Sign-in failed due to a browser/network issue. Please try again.",
       );
       setIsSubmitting(false);
     }
@@ -182,8 +223,20 @@ export function LoginForm() {
           </Field>
         </FieldGroup>
 
+        {noticeMessage ? (
+          <p
+            className="rounded-lg border border-teal/25 bg-teal/10 px-3 py-2 text-sm text-teal-text dark:text-teal"
+            role="status"
+          >
+            {noticeMessage}
+          </p>
+        ) : null}
+
         {error ? (
-          <p className="rounded-lg border border-coral/30 bg-coral/10 px-3 py-2 text-sm text-coral" role="alert">
+          <p
+            className="rounded-lg border border-coral/30 bg-coral/10 px-3 py-2 text-sm text-coral"
+            role="alert"
+          >
             {error}
           </p>
         ) : null}

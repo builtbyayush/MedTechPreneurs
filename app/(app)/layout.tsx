@@ -9,6 +9,10 @@ import {
   loadAccountAccess,
   type AccountAccessState,
 } from "@/lib/auth/account";
+import {
+  logoutThenLoginUrl,
+  type LoginNotice,
+} from "@/lib/auth/login-url";
 import { getUserOnboardingStatus } from "@/lib/onboarding/queries";
 import { getUserProfilePhotoUrl } from "@/lib/profile/queries";
 
@@ -23,15 +27,11 @@ type OnboardingStatus = NonNullable<
 const LAYOUT_DB_BUDGET_MS = 12_000;
 
 /**
- * Clear the session via /logout, then land on a public page.
- *
- * NEVER send a still-authenticated browser to /login or /register directly —
- * middleware redirects logged-in users from those routes back to /home and
- * creates an infinite reload loop (see Network: register 307 → home canceled).
+ * Clear the session via /logout, then land on clean /login.
+ * Never use `?error=` — Auth.js owns that param and it breaks credential login.
  */
-function recoverSession(reason: string): never {
-  const to = `${ROUTES.login}?error=${encodeURIComponent(reason)}`;
-  redirect(`${ROUTES.logout}?to=${encodeURIComponent(to)}`);
+function recoverSession(notice: LoginNotice): never {
+  redirect(logoutThenLoginUrl(notice));
 }
 
 async function withTimeout<T>(
@@ -91,12 +91,12 @@ async function AppLayoutContent({ children }: AppLayoutProps) {
     profilePhotoUrl = photoResult ?? null;
   } catch (error) {
     console.error("[app-layout] bootstrap failed", error);
-    recoverSession("session_recovery");
+    recoverSession("session_expired");
   }
 
   // Stale JWT / deleted account — must clear cookie via /logout (not /register).
   if (!access) {
-    recoverSession("stale_session");
+    recoverSession("session_expired");
   }
 
   if (!access.allowed) {
@@ -104,7 +104,7 @@ async function AppLayoutContent({ children }: AppLayoutProps) {
   }
 
   if (!onboarding) {
-    recoverSession("stale_session");
+    recoverSession("session_expired");
   }
 
   if (!onboarding.onboardingCompleted) {

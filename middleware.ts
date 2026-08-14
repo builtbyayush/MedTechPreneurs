@@ -12,16 +12,11 @@ export default auth((request) => {
   const { pathname } = request.nextUrl;
 
   if (isPublicRoute(pathname)) {
-    // Logged-in users hitting marketing/auth entry points go to the app —
-    // except when recovering a bad session (logout already cleared, or
-    // login/register was opened with an explicit error from recovery).
-    const isAuthRecovery =
-      (pathname === ROUTES.login || pathname === ROUTES.register) &&
-      request.nextUrl.searchParams.has("error");
-
+    // Logged-in users on marketing / auth entry points go into the app.
+    // Session recovery always clears the cookie via /logout first, so they
+    // arrive at /login unauthenticated — no special query-param exceptions.
     if (
       isLoggedIn &&
-      !isAuthRecovery &&
       (pathname === ROUTES.home ||
         pathname === ROUTES.login ||
         pathname === ROUTES.register)

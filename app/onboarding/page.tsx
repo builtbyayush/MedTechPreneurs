@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { OnboardingFlow } from "@/components/features/onboarding/onboarding-flow";
 import { ROUTES } from "@/constants/routes";
+import { logoutThenLoginUrl } from "@/lib/auth/login-url";
 import { getUserOnboardingStatus } from "@/lib/onboarding/queries";
 
 export const metadata = {
@@ -18,11 +19,10 @@ export default async function OnboardingPage() {
 
   const onboarding = await getUserOnboardingStatus(session.user.id);
 
-  // Stale JWT after DB purge / deleted account — clear via /logout to avoid
-  // middleware bouncing /register → /home while the session cookie still exists.
+  // Stale JWT after DB purge / deleted account — clear via /logout to a clean
+  // /login URL (never `?error=`, which Auth.js treats as a failed sign-in).
   if (!onboarding) {
-    const to = `${ROUTES.login}?error=stale_session`;
-    redirect(`${ROUTES.logout}?to=${encodeURIComponent(to)}`);
+    redirect(logoutThenLoginUrl("session_expired"));
   }
 
   if (onboarding.onboardingCompleted) {
