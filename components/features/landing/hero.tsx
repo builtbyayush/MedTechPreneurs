@@ -23,7 +23,7 @@ const HEADLINE_WORDS: { text: string; tone: WordTone; breakAfter?: boolean }[] =
   ];
 
 const toneClass: Record<WordTone, string> = {
-  white: "text-white",
+  white: "text-foreground",
   teal: "text-teal",
   coral: "text-coral",
 };
@@ -90,7 +90,7 @@ export function LandingHero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.05 }}
-          className="mt-5 font-heading text-4xl font-black tracking-tight text-white sm:text-5xl"
+          className="mt-5 font-heading text-4xl font-black tracking-tight text-foreground sm:text-5xl"
         >
           <SplicePlusLogo spliceClassName="text-inherit" className="text-inherit" />
         </motion.p>
@@ -108,7 +108,7 @@ export function LandingHero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, delay: 0.45 }}
-          className="mt-8 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg"
+          className="mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg"
         >
           A swipe-based matching platform for Healthcare Professionals,
           Engineers, and Entrepreneurs across Indian healthcare and MedTech —
@@ -128,7 +128,7 @@ export function LandingHero() {
           >
             <Link
               href="/register"
-              className="inline-flex h-12 items-center justify-center rounded-lg bg-coral px-7 font-heading text-sm font-extrabold tracking-wide text-ink shadow-brutal-coral-lg transition-colors hover:bg-[#ff7f72]"
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-coral px-7 font-heading text-sm font-extrabold tracking-wide text-ink shadow-brutal-coral-lg transition-colors hover:bg-coral/90"
             >
               Get Started
             </Link>
@@ -140,7 +140,7 @@ export function LandingHero() {
           >
             <Link
               href="/login"
-              className="inline-flex h-12 items-center justify-center rounded-lg border-2 border-teal bg-ink px-7 font-heading text-sm font-bold tracking-wide text-teal shadow-brutal-teal-lg transition-colors hover:bg-teal hover:text-ink"
+              className="inline-flex h-12 items-center justify-center rounded-lg border-2 border-teal bg-background px-7 font-heading text-sm font-bold tracking-wide text-teal shadow-brutal-teal-lg transition-colors hover:bg-teal hover:text-ink"
             >
               Log In
             </Link>

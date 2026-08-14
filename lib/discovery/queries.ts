@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 import { connectDB } from "@/lib/db";
 import {
+  assertNotBlocked,
+  getBlockedRelationshipUserIds,
+} from "@/lib/blocks/queries";
+import {
   calculateCompatibility,
   createCompatibilityCache,
   toCompatibilityProfile,
@@ -191,7 +195,7 @@ export async function resetPassedFounders(viewerId: string): Promise<number> {
 }
 
 export async function getExcludedTargetIds(viewerId: string): Promise<string[]> {
-  const [actedTargetIds, matchedUserIds] = await Promise.all([
+  const [actedTargetIds, matchedUserIds, blockedUserIds] = await Promise.all([
     DiscoveryAction.find({ viewerId })
       .select("targetUserId")
       .lean<{ targetUserId: mongoose.Types.ObjectId }[]>()
@@ -199,9 +203,10 @@ export async function getExcludedTargetIds(viewerId: string): Promise<string[]> 
         actions.map((action) => action.targetUserId.toString()),
       ),
     getActiveMatchedUserIds(viewerId),
+    getBlockedRelationshipUserIds(viewerId),
   ]);
 
-  return [...new Set([...actedTargetIds, ...matchedUserIds])];
+  return [...new Set([...actedTargetIds, ...matchedUserIds, ...blockedUserIds])];
 }
 
 export async function getDiscoveryFeed(
@@ -277,6 +282,8 @@ export async function recordDiscoveryAction(input: {
   if (input.viewerId === input.targetUserId) {
     throw new Error("Cannot act on your own profile");
   }
+
+  await assertNotBlocked(input.viewerId, input.targetUserId);
 
   const matchedUserIds = await getActiveMatchedUserIds(input.viewerId);
   if (matchedUserIds.includes(input.targetUserId)) {

@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
 import { AUTH_ROUTES, SESSION_MAX_AGE } from "@/config/auth";
+import type { UserRole } from "@/constants/roles";
 
 /**
  * Edge-safe Auth.js config — no providers that import Node-only APIs.
@@ -19,6 +20,7 @@ export const authConfig = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.role = (user as { role?: UserRole }).role ?? "user";
         const sessionMaxAge =
           (user as { sessionMaxAge?: number }).sessionMaxAge ??
           SESSION_MAX_AGE.default;
@@ -29,6 +31,7 @@ export const authConfig = {
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id;
+        session.user.role = (token.role as UserRole | undefined) ?? "user";
       }
       return session;
     },

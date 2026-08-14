@@ -29,15 +29,15 @@ export function SceneFourFounderCard() {
       ref={sectionRef}
       id="founder-card"
       aria-labelledby="scene-four-heading"
-      className="relative overflow-x-clip overflow-y-visible bg-founder-reveal text-white"
+      className="relative overflow-x-clip overflow-y-visible bg-muted/40 text-foreground dark:bg-background"
     >
-      {/* Soft blend from adjacent ink sections */}
+      {/* Soft blend between sections */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ink to-founder-reveal sm:h-32"
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-background to-transparent sm:h-32"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink to-founder-reveal sm:h-32"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background to-transparent sm:h-32"
         aria-hidden
       />
 
@@ -65,7 +65,7 @@ export function SceneFourFounderCard() {
 
             <motion.h2
               id="scene-four-heading"
-              className="mt-8 font-heading text-[2rem] leading-[1.1] font-black tracking-tight text-white sm:mt-10 sm:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.65rem]"
+              className="mt-8 font-heading text-[2rem] leading-[1.1] font-black tracking-tight text-foreground sm:mt-10 sm:text-[2.35rem] lg:text-[2.5rem] xl:text-[2.65rem]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.08)}
             >
@@ -76,7 +76,7 @@ export function SceneFourFounderCard() {
             </motion.h2>
 
             <motion.p
-              className="mt-10 max-w-[460px] text-lg leading-[1.72] text-white/60 sm:mt-12 sm:text-[17px]"
+              className="mt-10 max-w-[460px] text-lg leading-[1.72] text-muted-foreground sm:mt-12 sm:text-[17px]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.16)}
             >

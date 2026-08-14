@@ -30,18 +30,18 @@ export function LegalDocument({
   footer,
 }: LegalDocumentProps) {
   return (
-    <main className="min-h-[100svh] bg-bg-light">
+    <main className="min-h-[100svh] bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-        <div className="mb-10 space-y-4 border-b border-deep-blue/10 pb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+        <div className="mb-10 space-y-4 border-b border-border pb-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-text dark:text-teal">
             {subtitle}
           </p>
-          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-deep-blue sm:text-4xl">
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             {title}
           </h1>
-          <p className="text-sm text-deep-blue/60">Last updated {lastUpdated}</p>
-          <p className="max-w-2xl text-sm leading-relaxed text-deep-blue/75">
-            <SplicePlusMark spliceClassName="text-deep-blue" /> is operated by
+          <p className="text-sm text-muted-foreground">Last updated {lastUpdated}</p>
+          <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <SplicePlusMark spliceClassName="text-foreground" /> is operated by
             MedTechPreneurs. These documents are starter templates for private
             beta — have counsel review before public launch.
           </p>
@@ -50,16 +50,16 @@ export function LegalDocument({
         <article className="prose-legal space-y-10">
           {sections.map((section) => (
             <section key={section.id} id={section.id} className="scroll-mt-24">
-              <h2 className="font-heading text-xl font-bold tracking-tight text-deep-blue">
+              <h2 className="font-heading text-xl font-bold tracking-tight text-foreground">
                 {section.title}
               </h2>
-              <div className="mt-3 space-y-3 text-sm leading-relaxed text-deep-blue/80">
+              <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted-foreground">
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph}>{paragraph}</p>
                 ))}
               </div>
               {section.list && section.list.length > 0 ? (
-                <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-deep-blue/80">
+                <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
                   {section.list.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
@@ -69,7 +69,7 @@ export function LegalDocument({
           ))}
         </article>
 
-        <div className="mt-12 flex flex-wrap gap-3 border-t border-deep-blue/10 pt-8">
+        <div className="mt-12 flex flex-wrap gap-3 border-t border-border pt-8">
           <Link
             href={ROUTES.home}
             className={cn(buttonVariants({ variant: "default" }))}

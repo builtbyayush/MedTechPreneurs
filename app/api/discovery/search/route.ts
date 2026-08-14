@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import { searchDiscoveryFounders } from "@/lib/discovery/queries";
-import { discoverySearchSchema } from "@/lib/validations/report";
+import { discoverySearchSchema } from "@/lib/validations/discovery";
 
 export async function GET(request: Request) {
   try {

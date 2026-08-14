@@ -51,7 +51,7 @@ export function SceneTwoPillars({ inView = true, className }: SceneTwoPillarsPro
           key={pillar.title}
           className={cn(
             "flex flex-col items-center px-4 text-center sm:px-6",
-            index > 0 && "sm:border-l sm:border-white/[0.08]"
+            index > 0 && "sm:border-l sm:border-border"
           )}
           initial={reducedMotion ? false : { opacity: 0, y: 10 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
@@ -62,15 +62,15 @@ export function SceneTwoPillars({ inView = true, className }: SceneTwoPillarsPro
           }}
         >
           <div
-            className="flex size-11 items-center justify-center rounded-full border border-[#00C6C6]/40 text-[#00C6C6]/85"
+            className="flex size-11 items-center justify-center rounded-full border border-teal/40 text-teal-text dark:text-teal"
             aria-hidden
           >
             <pillar.icon className="size-[18px] stroke-[1.5]" />
           </div>
-          <p className="mt-5 font-heading text-xs font-bold tracking-[0.2em] text-[#00C6C6] uppercase">
+          <p className="mt-5 font-heading text-xs font-bold tracking-[0.2em] text-teal-text uppercase dark:text-teal">
             {pillar.title}
           </p>
-          <p className="mt-2 max-w-[220px] text-base leading-relaxed text-white/55">
+          <p className="mt-2 max-w-[220px] text-base leading-relaxed text-muted-foreground">
             {pillar.description}
           </p>
         </motion.div>

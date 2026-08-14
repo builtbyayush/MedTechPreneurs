@@ -10,3 +10,7 @@ export const discoveryActionSchema = z.object({
 });
 
 export type DiscoveryActionInput = z.infer<typeof discoveryActionSchema>;
+
+export const discoverySearchSchema = z.object({
+  q: z.string().trim().min(2, "Enter at least 2 characters").max(80),
+});

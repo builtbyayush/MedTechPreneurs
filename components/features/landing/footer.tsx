@@ -8,13 +8,13 @@ import { Reveal } from "@/components/features/landing/reveal";
 
 export function LandingFooter() {
   return (
-    <footer className="relative border-t border-white/10 px-6 py-16 sm:px-10 sm:py-20">
+    <footer className="relative border-t border-border px-6 py-16 sm:px-10 sm:py-20">
       <div className="mx-auto flex max-w-5xl flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
         <Reveal>
-          <p className="font-heading text-2xl font-black text-white">
+          <p className="font-heading text-2xl font-black text-foreground">
             <SplicePlusLogo spliceClassName="text-inherit" className="text-inherit" />
           </p>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-white/60">
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
             <SplicePlusMark /> is part of the{" "}
             <a
               href="https://medtechpreneurs.com/"
@@ -39,7 +39,7 @@ export function LandingFooter() {
             </Link>
             <Link
               href="/login"
-              className="font-heading font-bold text-white/80 hover:text-white hover:underline"
+              className="font-heading font-bold text-muted-foreground hover:text-foreground hover:underline"
             >
               Log In
             </Link>
@@ -47,7 +47,7 @@ export function LandingFooter() {
               href="https://medtechpreneurs.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-heading font-bold text-white/80 hover:text-teal hover:underline"
+              className="font-heading font-bold text-muted-foreground hover:text-teal hover:underline"
             >
               medtechpreneurs.com
             </a>

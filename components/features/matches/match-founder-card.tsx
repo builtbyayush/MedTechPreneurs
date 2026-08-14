@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 type MatchFounderCardProps = {
   match: MatchListItem;
   className?: string;
+  onBlocked?: (partnerId: string) => void;
 };
 
 function formatMatchedDate(isoDate: string): string {
@@ -27,20 +28,24 @@ function formatMatchedDate(isoDate: string): string {
   }).format(new Date(isoDate));
 }
 
-export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
+export function MatchFounderCard({
+  match,
+  className,
+  onBlocked,
+}: MatchFounderCardProps) {
   const { partner } = match;
   const profilePhotoSrc = resolveProfilePhotoSrc(partner.profilePhotoUrl);
 
   return (
     <article
       className={cn(
-        "founder-card-glass overflow-hidden rounded-2xl border border-white/[0.12] bg-ink-elevated shadow-founder-card ring-1 ring-white/[0.06] ring-inset",
+        "founder-card-glass overflow-hidden rounded-2xl border border-border bg-card shadow-founder-card ring-1 ring-border ring-inset",
         className,
       )}
       aria-label={`Match with ${partner.name}`}
     >
       <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:p-5">
-        <div className="relative mx-auto size-24 shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:mx-0 sm:size-28">
+        <div className="relative mx-auto size-24 shrink-0 overflow-hidden rounded-2xl border border-border sm:mx-0 sm:size-28">
           {profilePhotoSrc ? (
             <Image
               src={profilePhotoSrc}
@@ -59,7 +64,7 @@ export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
 
         <div className="min-w-0 flex-1 space-y-3 text-center sm:text-left">
           <div className="space-y-1">
-            <h3 className="font-heading text-lg font-extrabold tracking-tight text-white">
+            <h3 className="font-heading text-lg font-extrabold tracking-tight text-foreground">
               {partner.name}
             </h3>
             {partner.headline ? (
@@ -76,28 +81,28 @@ export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
             ) : null}
           </div>
 
-          <div className="space-y-1 text-xs leading-relaxed text-white/60">
+          <div className="space-y-1 text-xs leading-relaxed text-muted-foreground">
             <p>{partner.location}</p>
             <p>
-              <span className="text-white/45">Matched</span>{" "}
+              <span className="text-muted-foreground">Matched</span>{" "}
               {formatMatchedDate(match.matchedAt)}
             </p>
           </div>
 
-          <div className="space-y-3 border-t border-white/[0.08] pt-3">
+          <div className="space-y-3 border-t border-border pt-3">
             <CompatibilityScore
               score={match.compatibilityScore}
               className="rounded-xl"
             />
             <CompatibilityReasons reasons={match.compatibilityReasons} />
             {match.compatibilityExplanation ? (
-              <p className="text-xs leading-relaxed text-white/50">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 {match.compatibilityExplanation}
               </p>
             ) : null}
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2 border-t border-white/[0.08] pt-3 sm:justify-start">
+          <div className="flex flex-wrap items-center justify-center gap-2 border-t border-border pt-3 sm:justify-start">
             <MatchMessageButton
               conversationId={match.conversationId}
               partnerName={partner.name}
@@ -105,8 +110,13 @@ export function MatchFounderCard({ match, className }: MatchFounderCardProps) {
             <ReportProfileButton
               reportedUserId={partner.id}
               reportedUserName={partner.name}
+              onReported={() => onBlocked?.(partner.id)}
             />
-            <BlockUserButton userName={partner.name} />
+            <BlockUserButton
+              blockedUserId={partner.id}
+              userName={partner.name}
+              onBlocked={() => onBlocked?.(partner.id)}
+            />
           </div>
         </div>
       </div>

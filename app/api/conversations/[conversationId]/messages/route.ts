@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import {
+  AccountAccessError,
+  assertActiveAccount,
+} from "@/lib/auth/account";
+import {
   getMessagesForConversation,
   sendMessage,
 } from "@/lib/messaging/queries";
@@ -19,6 +23,8 @@ export async function GET(_request: Request, context: RouteContext) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await assertActiveAccount(session.user.id);
+
     const { conversationId } = await context.params;
     const result = await getMessagesForConversation({
       conversationId,
@@ -28,6 +34,13 @@ export async function GET(_request: Request, context: RouteContext) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("[conversations/messages/GET]", error);
+
+    if (error instanceof AccountAccessError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
 
     if (error instanceof Error && error.message === "Conversation not found") {
       return NextResponse.json({ error: error.message }, { status: 404 });
@@ -47,6 +60,8 @@ export async function POST(request: Request, context: RouteContext) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await assertActiveAccount(session.user.id);
 
     const body = await request.json();
     const parsed = sendMessageSchema.safeParse(body);
@@ -71,6 +86,13 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json({ ok: true, message });
   } catch (error) {
     console.error("[conversations/messages/POST]", error);
+
+    if (error instanceof AccountAccessError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
 
     if (error instanceof Error) {
       if (error.message === "Conversation not found") {

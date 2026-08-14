@@ -20,10 +20,17 @@ export const ROUTES = {
     toolkit: "/toolkit",
     settings: "/settings",
   },
+  admin: {
+    moderation: "/admin/moderation",
+  },
 } as const;
 
 export function conversationRoute(conversationId: string): string {
   return `${ROUTES.app.messages}/${conversationId}`;
+}
+
+export function adminReportRoute(reportId: string): string {
+  return `${ROUTES.admin.moderation}/${reportId}`;
 }
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES];

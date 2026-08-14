@@ -42,7 +42,7 @@ export function ChatComposer({ onSend, disabled, className }: ChatComposerProps)
     <form
       onSubmit={(event) => void handleSubmit(event)}
       className={cn(
-        "border-t border-white/10 bg-ink-elevated/95 px-4 py-3 backdrop-blur-md",
+        "border-t border-border bg-card/95 px-4 py-3 backdrop-blur-md",
         className,
       )}
       aria-label="Send a message"
@@ -61,7 +61,7 @@ export function ChatComposer({ onSend, disabled, className }: ChatComposerProps)
           placeholder="Write a message…"
           rows={1}
           disabled={disabled || isSending}
-          className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm text-white placeholder:text-white/35 outline-none focus-visible:border-teal/50 focus-visible:ring-2 focus-visible:ring-teal/20 disabled:opacity-50"
+          className="max-h-32 min-h-11 flex-1 resize-none rounded-2xl border border-border bg-muted px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:border-teal/50 focus-visible:ring-2 focus-visible:ring-teal/20 disabled:opacity-50"
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey) {
               event.preventDefault();
@@ -75,7 +75,7 @@ export function ChatComposer({ onSend, disabled, className }: ChatComposerProps)
           disabled={disabled || isSending || !content.trim()}
           className={cn(
             buttonVariants({ variant: "default" }),
-            "size-11 shrink-0 rounded-2xl bg-teal text-ink shadow-brutal-teal hover:bg-[#33d6d6]",
+            "size-11 shrink-0 rounded-2xl bg-teal text-ink shadow-brutal-teal hover:bg-teal/80",
           )}
           aria-label={isSending ? "Sending message" : "Send message"}
         >
@@ -87,7 +87,7 @@ export function ChatComposer({ onSend, disabled, className }: ChatComposerProps)
         </Button>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-white/40">
+      <div className="mt-2 flex items-center justify-between gap-3 text-[11px] text-muted-foreground">
         <span>{content.length}/{MESSAGE_CONTENT_MAX_LENGTH}</span>
         {errorMessage ? (
           <span className="text-coral" role="alert">

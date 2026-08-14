@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
-import { createUserReport } from "@/lib/reports/queries";
-import { createReportSchema } from "@/lib/validations/report";
+import {
+  AccountAccessError,
+  assertActiveAccount,
+} from "@/lib/auth/account";
+import {
+  createUserReportWithBlock,
+  ReportError,
+} from "@/lib/reports/queries";
+import { createReportLegacySchema } from "@/lib/validations/report";
 
 export async function POST(request: Request) {
   try {
@@ -12,8 +19,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await assertActiveAccount(session.user.id);
+
     const body = await request.json();
-    const parsed = createReportSchema.safeParse(body);
+    const parsed = createReportLegacySchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -25,22 +34,39 @@ export async function POST(request: Request) {
       );
     }
 
-    const report = await createUserReport(session.user.id, {
-      ...parsed.data,
-      description: parsed.data.description || undefined,
-    });
+    const report = await createUserReportWithBlock(
+      session.user.id,
+      parsed.data.reportedUserId,
+      {
+        reason: parsed.data.reason,
+        description: parsed.data.description || undefined,
+      },
+    );
 
     return NextResponse.json({
       ok: true,
       report,
-      message:
-        "Report submitted. Our team will review it — admin review tooling arrives in a future release.",
+      message: "Report submitted. Our team will review it.",
     });
   } catch (error) {
+    console.error("[reports/POST]", error);
+
+    if (error instanceof AccountAccessError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
+
+    if (error instanceof ReportError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
+
     const message =
       error instanceof Error ? error.message : "Unable to submit report";
-
-    console.error("[reports/POST]", error);
 
     return NextResponse.json({ error: message }, { status: 400 });
   }

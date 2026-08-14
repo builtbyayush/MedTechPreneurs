@@ -108,7 +108,7 @@ export function ProfilePhotoUpload({
         <Button
           type="button"
           variant="outline"
-          className="border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06]"
+          className="border-border bg-muted text-foreground hover:bg-muted"
           disabled={disabled || isBusy}
           aria-busy={isUploading}
           onClick={() => inputRef.current?.click()}
@@ -130,7 +130,7 @@ export function ProfilePhotoUpload({
           <Button
             type="button"
             variant="ghost"
-            className="text-white/65 hover:bg-white/5 hover:text-white"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground"
             disabled={disabled || isBusy}
             aria-busy={isRemoving}
             onClick={() => void handleRemove()}
@@ -150,7 +150,7 @@ export function ProfilePhotoUpload({
         ) : null}
       </div>
 
-      <p className="text-xs text-white/45">
+      <p className="text-xs text-muted-foreground">
         JPEG, PNG, or WebP up to 5 MB. Images are resized to 800×800 and
         compressed before upload.
       </p>

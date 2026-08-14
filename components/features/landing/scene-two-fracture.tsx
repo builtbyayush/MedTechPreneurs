@@ -8,7 +8,7 @@ import { SceneTwoArtwork } from "@/components/features/landing/scene-two-artwork
 import { SceneTwoPillars } from "@/components/features/landing/scene-two-pillars";
 import { SceneContainer } from "@/components/features/landing/scene-container";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
-import { EASE_OUT, fadeUpTransition } from "@/lib/motion";
+import { fadeUpTransition } from "@/lib/motion";
 
 export function SceneTwoFracture() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -30,9 +30,9 @@ export function SceneTwoFracture() {
       ref={sectionRef}
       id="scene-two"
       aria-labelledby="scene-two-heading"
-      className="relative bg-ink text-white"
+      className="relative bg-muted/50 text-foreground dark:bg-background"
     >
-      <HeroAtmosphere className="opacity-60" />
+      <HeroAtmosphere className="opacity-40 dark:opacity-60" />
 
       <SceneContainer className="relative flex flex-col items-center pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
         <motion.div
@@ -63,11 +63,11 @@ export function SceneTwoFracture() {
             transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.08)}
           >
             <span className="block">
-              <span className="text-white">Brilliant </span>
+              <span className="text-foreground">Brilliant </span>
               <span className="text-brand-red">alone.</span>
             </span>
             <span className="mt-1 block">
-              <span className="text-white">Incomplete </span>
+              <span className="text-foreground">Incomplete </span>
               <span className="text-brand-red">apart.</span>
             </span>
           </motion.h2>
@@ -77,7 +77,7 @@ export function SceneTwoFracture() {
             variants={copyVariants}
             transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.16)}
           >
-            <p className="mx-auto max-w-[500px] text-lg leading-[1.7] text-white/60 sm:text-[17px] lg:max-w-[520px]">
+            <p className="mx-auto max-w-[500px] text-lg leading-[1.7] text-muted-foreground sm:text-[17px] lg:max-w-[520px]">
               Healthcare&apos;s biggest breakthroughs require clinical expertise,
               technical execution and business leadership.
             </p>

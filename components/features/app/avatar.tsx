@@ -42,7 +42,7 @@ export function Avatar({
         width={size === "sm" ? 32 : size === "md" ? 40 : 48}
         height={size === "sm" ? 32 : size === "md" ? 40 : 48}
         className={cn(
-          "rounded-full border border-white/15 object-cover ring-2 ring-teal/30",
+          "rounded-full border border-border object-cover ring-2 ring-teal/30",
           sizeClasses[size],
           className,
         )}
@@ -53,7 +53,7 @@ export function Avatar({
   return (
     <div
       className={cn(
-        "inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 font-heading font-bold text-white ring-2 ring-teal/25",
+        "inline-flex items-center justify-center rounded-full border border-border bg-muted font-heading font-bold text-foreground ring-2 ring-teal/25",
         sizeClasses[size],
         className,
       )}

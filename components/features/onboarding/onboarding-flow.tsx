@@ -336,7 +336,7 @@ export function OnboardingFlow({
           <Button
             type="button"
             variant="ghost"
-            className="text-white/70 hover:bg-white/5 hover:text-white"
+            className="text-muted-foreground hover:bg-muted hover:text-foreground"
             disabled={step === STEP.verifyEmail || isSubmitting}
             onClick={handleBack}
           >
@@ -347,7 +347,7 @@ export function OnboardingFlow({
             <Button
               type="button"
               variant="outline"
-              className="border-white/15 bg-transparent text-white/75 hover:bg-white/5 hover:text-white"
+              className="border-border bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
               disabled={isSubmitting}
               onClick={handleSkipLocation}
             >
@@ -357,7 +357,7 @@ export function OnboardingFlow({
 
           <Button
             type="button"
-            className="ml-auto h-11 min-w-[8.5rem] bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
+            className="ml-auto h-11 min-w-[8.5rem] bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
             disabled={
               isSubmitting || (step === STEP.verifyEmail && !emailVerified)
             }
@@ -378,10 +378,10 @@ export function OnboardingFlow({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal">
             {copy.eyebrow}
           </p>
-          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             {copy.title}
           </h1>
-          <p className="max-w-md text-base leading-relaxed text-white/60">
+          <p className="max-w-md text-base leading-relaxed text-muted-foreground">
             {copy.description}
           </p>
         </header>
@@ -401,12 +401,12 @@ export function OnboardingFlow({
             ) : null}
 
             {step === STEP.welcome ? (
-              <div className="founder-card-glass flex flex-1 flex-col justify-center rounded-3xl border border-white/10 p-6 shadow-founder-card sm:p-8">
-                <p className="text-lg leading-relaxed text-white/75">
+              <div className="founder-card-glass flex flex-1 flex-col justify-center rounded-3xl border border-border p-6 shadow-founder-card sm:p-8">
+                <p className="text-lg leading-relaxed text-muted-foreground">
                   A short setup helps us understand who you are, what you&apos;re
                   building, and who you want to meet.
                 </p>
-                <p className="mt-4 text-sm text-white/45">
+                <p className="mt-4 text-sm text-muted-foreground">
                   About two minutes. One question at a time.
                 </p>
               </div>
@@ -480,7 +480,7 @@ export function OnboardingFlow({
             ) : null}
 
             {step === STEP.location ? (
-              <div className="founder-card-glass rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
+              <div className="founder-card-glass rounded-3xl border border-border p-5 shadow-founder-card sm:p-6">
                 <IndiaLocationFields
                   country={form.country}
                   state={form.state}
@@ -494,7 +494,7 @@ export function OnboardingFlow({
             ) : null}
 
             {step === STEP.review ? (
-              <div className="founder-card-glass space-y-4 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
+              <div className="founder-card-glass space-y-4 rounded-3xl border border-border p-5 shadow-founder-card sm:p-6">
                 <ReviewRow
                   label="You"
                   value={
@@ -568,9 +568,9 @@ export function OnboardingFlow({
 
 function ReviewRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-white/8 pb-4 last:border-b-0 last:pb-0">
-      <span className="text-sm text-white/45">{label}</span>
-      <span className="max-w-[65%] text-right text-sm font-medium text-white">
+    <div className="flex items-start justify-between gap-4 border-b border-border pb-4 last:border-b-0 last:pb-0">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="max-w-[65%] text-right text-sm font-medium text-foreground">
         {value}
       </span>
     </div>

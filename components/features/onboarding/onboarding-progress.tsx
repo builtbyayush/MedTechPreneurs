@@ -15,14 +15,14 @@ export function OnboardingProgress({ step, className }: OnboardingProgressProps)
 
   return (
     <div className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.16em] text-white/45">
+      <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
         <span>
           Step {step + 1} of {ONBOARDING_STEP_COUNT}
         </span>
         <span>{Math.round(progress)}%</span>
       </div>
       <div
-        className="h-1.5 overflow-hidden rounded-full bg-white/10"
+        className="h-1.5 overflow-hidden rounded-full bg-muted"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={100}

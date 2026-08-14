@@ -70,7 +70,7 @@ export function IndiaLocationFields({
         >
           <option value={INDIA_COUNTRY_NAME}>{INDIA_COUNTRY_NAME}</option>
         </select>
-        <p className="text-xs text-white/40">
+        <p className="text-xs text-muted-foreground">
           Location matching currently focuses on India.
         </p>
       </div>

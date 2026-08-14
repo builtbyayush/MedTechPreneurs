@@ -24,10 +24,10 @@ const HEADLINE_WORDS: HeadlineWordDef[] = [
 ];
 
 const toneClass: Record<WordTone, string> = {
-  white: "text-white",
-  teal: "text-teal",
-  accent: "text-[#c084fc]",
-  highlight: "text-[#fde047]",
+  white: "text-foreground",
+  teal: "text-teal-text dark:text-teal",
+  accent: "text-[#7c3aed] dark:text-[#c084fc]",
+  highlight: "text-[#ca8a04] dark:text-[#fde047]",
 };
 
 function HeadlineWord({

@@ -7,17 +7,17 @@ import { ROUTES } from "@/constants/routes";
 
 export default function NotFoundPage() {
   return (
-    <main className="flex min-h-full flex-1 flex-col items-center justify-center gap-6 bg-bg-light px-4 py-16 text-center">
+    <main className="flex min-h-full flex-1 flex-col items-center justify-center gap-6 bg-background px-4 py-16 text-center text-foreground">
       <div className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-text dark:text-teal">
           404
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight text-deep-blue">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">
           Page not found
         </h1>
-        <p className="mx-auto max-w-md text-sm text-deep-blue/70">
+        <p className="mx-auto max-w-md text-sm text-muted-foreground">
           The page you are looking for does not exist or may have moved. Head
-          back to <SplicePlusMark spliceClassName="text-deep-blue" /> to
+          back to <SplicePlusMark spliceClassName="text-foreground" /> to
           continue.
         </p>
       </div>
@@ -36,12 +36,12 @@ export default function NotFoundPage() {
           App home
         </Link>
       </div>
-      <p className="text-xs text-deep-blue/50">
-        <Link href={ROUTES.terms} className="hover:text-teal">
+      <p className="text-xs text-muted-foreground">
+        <Link href={ROUTES.terms} className="hover:text-teal-text dark:hover:text-teal">
           Terms
         </Link>
         {" · "}
-        <Link href={ROUTES.privacy} className="hover:text-teal">
+        <Link href={ROUTES.privacy} className="hover:text-teal-text dark:hover:text-teal">
           Privacy
         </Link>
       </p>

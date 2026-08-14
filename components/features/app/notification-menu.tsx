@@ -100,7 +100,7 @@ export function NotificationMenu({
         type="button"
         onClick={() => setOpen((current) => !current)}
         className={cn(
-          "relative inline-flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/70 transition-colors hover:bg-white/[0.08] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal",
+          "relative inline-flex size-10 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal",
         )}
         aria-label={
           hasUnread
@@ -131,9 +131,9 @@ export function NotificationMenu({
           />
           <div
             role="menu"
-            className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-72 rounded-2xl border border-white/10 bg-ink-elevated/95 p-3 shadow-match-surface backdrop-blur-md"
+            className="absolute right-0 top-[calc(100%+0.5rem)] z-50 w-72 rounded-2xl border border-border bg-card/95 p-3 shadow-match-surface backdrop-blur-md"
           >
-            <p className="px-1 text-xs font-semibold uppercase tracking-wide text-white/45">
+            <p className="px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Notifications
             </p>
 
@@ -141,7 +141,7 @@ export function NotificationMenu({
               <Link
                 href={ROUTES.app.messages}
                 role="menuitem"
-                className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-sm text-white transition-colors hover:bg-white/[0.06]"
+                className="flex items-center gap-3 rounded-xl border border-border bg-muted px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
                 onClick={() => setOpen(false)}
               >
                 <MessageCircle className="size-4 shrink-0 text-teal" aria-hidden />
@@ -154,18 +154,18 @@ export function NotificationMenu({
               </Link>
 
               {supported ? (
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+                <div className="rounded-xl border border-border bg-muted px-3 py-2.5">
                   <div className="flex items-start gap-3">
                     {isGranted ? (
                       <Check className="mt-0.5 size-4 shrink-0 text-teal" aria-hidden />
                     ) : (
-                      <Monitor className="mt-0.5 size-4 shrink-0 text-white/60" aria-hidden />
+                      <Monitor className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden />
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-white">
+                      <p className="text-sm font-medium text-foreground">
                         Desktop notifications
                       </p>
-                      <p className="mt-1 text-xs leading-relaxed text-white/55">
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                         {getBrowserNotificationStatusLabel(permission)}
                       </p>
                       {canRequest ? (
@@ -187,7 +187,7 @@ export function NotificationMenu({
                             type="button"
                             size="sm"
                             variant="outline"
-                            className="w-full border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06]"
+                            className="w-full border-border bg-muted text-foreground hover:bg-muted"
                             onClick={handleTestNotification}
                           >
                             Send test notification
@@ -195,7 +195,7 @@ export function NotificationMenu({
                         </div>
                       ) : null}
                       {isDenied ? (
-                        <p className="mt-2 text-xs leading-relaxed text-white/45">
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                           Unblock notifications in Chrome site settings to
                           receive alerts.
                         </p>
@@ -204,7 +204,7 @@ export function NotificationMenu({
                   </div>
                 </div>
               ) : (
-                <p className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs leading-relaxed text-white/55">
+                <p className="rounded-xl border border-border bg-muted px-3 py-2.5 text-xs leading-relaxed text-muted-foreground">
                   {getBrowserNotificationUnsupportedReason() ??
                     "Desktop notifications are not supported in this browser."}
                 </p>

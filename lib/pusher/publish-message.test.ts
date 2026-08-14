@@ -59,6 +59,22 @@ describe("pusher auth", () => {
     }
   });
 
+  it("denies subscriptions when participants are blocked", async () => {
+    // getConversationForUser returns null once a block exists either way.
+    vi.mocked(getConversationForUser).mockResolvedValue(null);
+
+    const result = await authorizeChatChannel({
+      userId: "user-a",
+      channelName: "private-chat-conv-blocked",
+      socketId: "1.1",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toBe("conversation_not_found");
+    }
+  });
+
   it("authorizes matched participants for private chat channels", async () => {
     vi.mocked(getConversationForUser).mockResolvedValue({
       _id: { toString: () => "conv-1" } as never,

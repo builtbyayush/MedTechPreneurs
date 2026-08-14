@@ -29,8 +29,8 @@ export function AppShell({ user, profilePhotoUrl, children }: AppShellProps) {
   return (
     <MessagingRealtimeProvider>
       <NotificationSetup />
-      <div className="min-h-[100svh] bg-ink">
-        <div className="mx-auto flex h-[100svh] w-full max-w-lg flex-col overflow-hidden border-x border-white/[0.06] lg:shadow-[0_0_80px_-20px_rgb(0_0_0/0.65)]">
+      <div className="min-h-[100svh] bg-background">
+        <div className="mx-auto flex h-[100svh] w-full max-w-lg flex-col overflow-hidden border-x border-border lg:shadow-[0_0_80px_-20px_rgb(15_42_71/0.12)] dark:lg:shadow-[0_0_80px_-20px_rgb(0_0_0/0.65)]">
           <TopNavigation user={user} profilePhotoUrl={profilePhotoUrl} />
           <main
             className={cn(

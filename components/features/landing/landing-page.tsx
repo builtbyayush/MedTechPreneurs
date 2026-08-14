@@ -8,10 +8,10 @@ import { SceneTwoFracture } from "@/components/features/landing/scene-two-fractu
 
 export function LandingPage() {
   return (
-    <div className="min-h-full bg-ink text-white">
+    <div className="min-h-full bg-background text-foreground">
       <a
         href="#scene-one-heading"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-ink focus:outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-card focus:px-4 focus:py-2 focus:text-foreground focus:outline-none focus:ring-2 focus:ring-teal"
       >
         Skip to main content
       </a>

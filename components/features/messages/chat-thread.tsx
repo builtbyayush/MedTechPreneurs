@@ -2,6 +2,7 @@
 
 import { ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Avatar } from "@/components/features/app/avatar";
@@ -9,6 +10,7 @@ import { DiscoveryEmptyState } from "@/components/features/discovery/discovery-e
 import { ChatComposer } from "@/components/features/messages/chat-composer";
 import { ChatThreadSkeleton } from "@/components/features/messages/chat-thread-skeleton";
 import { MessageBubble } from "@/components/features/messages/message-bubble";
+import { BlockUserButton } from "@/components/features/safety/report-profile-button";
 import { ROUTES } from "@/constants/routes";
 import {
   appendMessageIfNew,
@@ -33,6 +35,7 @@ type ChatThreadProps = {
 type ChatState = "loading" | "ready" | "empty" | "error";
 
 export function ChatThread({ conversationId }: ChatThreadProps) {
+  const router = useRouter();
   const [state, setState] = useState<ChatState>("loading");
   const [messages, setMessages] = useState<MessageListItem[]>([]);
   const [partner, setPartner] = useState<ConversationPartner | null>(null);
@@ -210,11 +213,11 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="shrink-0 border-b border-white/10 bg-ink-elevated/90 px-4 py-3 backdrop-blur-md">
+      <header className="shrink-0 border-b border-border bg-card/90 px-4 py-3 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <Link
             href={ROUTES.app.messages}
-            className="inline-flex size-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+            className="inline-flex size-10 items-center justify-center rounded-xl border border-border bg-muted text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
             aria-label="Back to conversations"
           >
             <ArrowLeft className="size-4" aria-hidden />
@@ -227,8 +230,8 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
                 imageUrl={partner.profilePhotoUrl}
                 size="md"
               />
-              <div className="min-w-0">
-                <h1 className="truncate font-heading text-base font-extrabold text-white">
+              <div className="min-w-0 flex-1">
+                <h1 className="truncate font-heading text-base font-extrabold text-foreground">
                   {partner.name}
                 </h1>
                 {partner.headline ? (
@@ -237,9 +240,14 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
                   </p>
                 ) : null}
               </div>
+              <BlockUserButton
+                blockedUserId={partner.id}
+                userName={partner.name}
+                onBlocked={() => router.push(ROUTES.app.messages)}
+              />
             </div>
           ) : (
-            <div className="h-10 flex-1 animate-pulse rounded-xl bg-white/[0.05]" />
+            <div className="h-10 flex-1 animate-pulse rounded-xl bg-muted" />
           )}
         </div>
       </header>
@@ -289,7 +297,7 @@ export function ChatThread({ conversationId }: ChatThreadProps) {
         ) : null}
       </div>
 
-      <div className="relative z-20 shrink-0 bg-ink-elevated pb-[env(safe-area-inset-bottom)]">
+      <div className="relative z-20 shrink-0 bg-card pb-[env(safe-area-inset-bottom)]">
         {errorMessage && state !== "error" ? (
           <p
             className="border-t border-coral/20 bg-coral/10 px-4 py-2 text-sm text-coral"

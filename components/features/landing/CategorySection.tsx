@@ -88,7 +88,7 @@ const accentStyles: Record<
 };
 
 const toneClass = {
-  white: "text-white",
+  white: "text-foreground",
   teal: "text-teal",
   coral: "text-coral",
 } as const;
@@ -112,7 +112,7 @@ export function CategorySection() {
           ))}
         </motion.h2>
 
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/65">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
           Every user picks one category at sign-up — then discovers people from
           the others. Complementary teams, not lookalike networks.
         </p>
@@ -133,7 +133,7 @@ export function CategorySection() {
                   ease: "easeOut",
                   delay: index * 0.12,
                 }}
-                className={`flex h-full flex-col rounded-lg border-2 bg-ink-elevated p-6 ${styles.border}`}
+                className={`flex h-full flex-col rounded-lg border-2 bg-card p-6 ${styles.border}`}
               >
                 <div
                   className={`mb-4 flex size-11 items-center justify-center rounded-lg ${styles.iconWrap}`}
@@ -147,11 +147,11 @@ export function CategorySection() {
                   {category.label}
                 </p>
 
-                <h3 className="mt-2 font-heading text-xl font-extrabold text-white sm:text-2xl">
+                <h3 className="mt-2 font-heading text-xl font-extrabold text-foreground sm:text-2xl">
                   {category.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-relaxed text-white/65">
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {category.body}
                 </p>
 
@@ -159,7 +159,7 @@ export function CategorySection() {
                   {category.roles.map((role) => (
                     <li
                       key={role}
-                      className="flex items-start gap-2.5 text-sm text-white/85"
+                      className="flex items-start gap-2.5 text-sm text-foreground/85"
                     >
                       <span
                         className={`mt-1.5 size-1.5 shrink-0 rounded-full ${styles.dot}`}

@@ -14,7 +14,9 @@ export default auth((request) => {
   if (isPublicRoute(pathname)) {
     if (
       isLoggedIn &&
-      (pathname === ROUTES.login || pathname === ROUTES.register)
+      (pathname === ROUTES.home ||
+        pathname === ROUTES.login ||
+        pathname === ROUTES.register)
     ) {
       return NextResponse.redirect(new URL(ROUTES.app.home, request.nextUrl));
     }

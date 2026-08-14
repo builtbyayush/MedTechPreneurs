@@ -35,7 +35,7 @@ const STATUS_COPY = {
   },
   pending: {
     label: "Waiting for them",
-    className: "border-white/15 bg-white/[0.04] text-white/65",
+    className: "border-border bg-muted text-muted-foreground",
   },
 } as const;
 
@@ -55,7 +55,7 @@ export function OutgoingConnectRow({
   return (
     <article
       className={cn(
-        "founder-card-glass flex flex-col gap-3 rounded-2xl border border-white/10 p-4 shadow-founder-card",
+        "founder-card-glass flex flex-col gap-3 rounded-2xl border border-border p-4 shadow-founder-card",
         className,
       )}
       aria-label={`Connection with ${partner.name}`}
@@ -71,14 +71,14 @@ export function OutgoingConnectRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="truncate font-heading text-base font-extrabold text-white">
+              <h3 className="truncate font-heading text-base font-extrabold text-foreground">
                 {partner.name}
               </h3>
               <p className="text-xs text-teal/85">
                 {FOUNDER_ROLE_LABELS[partner.founderRole]}
               </p>
               {partner.headline ? (
-                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-white/55">
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                   {partner.headline}
                 </p>
               ) : null}
@@ -94,7 +94,7 @@ export function OutgoingConnectRow({
             </span>
           </div>
 
-          <p className="mt-2 text-[11px] text-white/45">
+          <p className="mt-2 text-[11px] text-muted-foreground">
             You connected on {formatConnectDate(connect.connectedAt)}
             {connect.status === "matched" && connect.matchedAt
               ? ` · Matched ${formatConnectDate(connect.matchedAt)}`
@@ -104,18 +104,18 @@ export function OutgoingConnectRow({
       </div>
 
       {showIntroAction ? (
-        <div className="border-t border-white/[0.06] pt-3">
+        <div className="border-t border-border pt-3">
           {introSent ? (
             <div className="space-y-1">
               <p className="text-xs font-semibold text-teal/90">
                 Intro sent · Waiting for them
               </p>
               {connect.introPreview ? (
-                <p className="line-clamp-2 text-xs leading-relaxed text-white/45">
+                <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
                   “{connect.introPreview}”
                 </p>
               ) : (
-                <p className="text-xs text-white/40">
+                <p className="text-xs text-muted-foreground">
                   Waiting for them to respond.
                 </p>
               )}
@@ -125,7 +125,7 @@ export function OutgoingConnectRow({
               type="button"
               variant="outline"
               size="sm"
-              className="h-9 border-white/15 bg-transparent text-xs font-semibold text-white/75 hover:bg-white/[0.04] hover:text-white"
+              className="h-9 border-border bg-transparent text-xs font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
               onClick={() => setDialogOpen(true)}
             >
               Introduce Yourself
@@ -135,8 +135,8 @@ export function OutgoingConnectRow({
       ) : null}
 
       {connect.status === "matched" ? (
-        <div className="border-t border-white/[0.06] pt-3">
-          <p className="mb-3 text-xs leading-relaxed text-white/55">
+        <div className="border-t border-border pt-3">
+          <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
             You&apos;re mutually connected — start your conversation in Messages.
           </p>
           <MatchMessageButton

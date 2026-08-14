@@ -11,7 +11,7 @@ export function MatchesListSkeleton({ className }: MatchesListSkeletonProps) {
       {Array.from({ length: 3 }).map((_, index) => (
         <div
           key={index}
-          className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-ink-elevated p-4 sm:flex-row sm:p-5"
+          className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:p-5"
         >
           <Skeleton className="mx-auto size-24 shrink-0 rounded-2xl sm:mx-0 sm:size-28" />
           <div className="flex-1 space-y-3">

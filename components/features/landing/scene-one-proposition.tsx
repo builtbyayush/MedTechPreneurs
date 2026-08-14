@@ -47,9 +47,10 @@ export function SceneOneProposition() {
       ref={sectionRef}
       id="scene-one"
       aria-labelledby="scene-one-heading"
-      className="relative min-h-[100svh] bg-ink text-white"
+      className="relative min-h-[100svh] bg-background text-foreground"
     >
       <HeroAtmosphere />
+      <div className="landing-hero-wash pointer-events-none absolute inset-0" aria-hidden />
 
       <SceneContainer className="relative flex min-h-[100svh] flex-col pt-[4.5rem]">
         <div className="flex flex-1 flex-col justify-center py-16 sm:py-20 lg:py-24 xl:pt-28 xl:pb-28">
@@ -65,7 +66,7 @@ export function SceneOneProposition() {
 
               <SceneOneHeadline id="scene-one-heading" />
 
-              <p className="mt-6 max-w-[640px] text-lg leading-[1.65] text-white/80 lg:mt-8">
+              <p className="mt-6 max-w-[640px] text-lg leading-[1.65] text-muted-foreground lg:mt-8">
                 Whether you are a Startup, Medical Institution, or an Investor
                 — Join us to help Bridge the Gap between Technology &amp;
                 Healthcare
@@ -96,7 +97,7 @@ export function SceneOneProposition() {
           </div>
 
           <motion.p
-            className="mt-14 flex items-center justify-center gap-1.5 text-xs tracking-wide text-white/45 sm:mt-16 lg:mt-20 lg:justify-start"
+            className="mt-14 flex items-center justify-center gap-1.5 text-xs tracking-wide text-muted-foreground sm:mt-16 lg:mt-20 lg:justify-start"
             initial={{ opacity: 0 }}
             animate={{ opacity: reducedMotion ? 1 : 0.4 }}
             transition={

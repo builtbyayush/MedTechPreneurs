@@ -1,5 +1,6 @@
 import mongoose, { Schema, type InferSchemaType, type Model } from "mongoose";
 
+import { ACCOUNT_STATUSES, USER_ROLES } from "@/constants/roles";
 import {
   BUILDING_TYPES,
   CURRENT_STAGES,
@@ -28,6 +29,21 @@ const UserSchema = new Schema(
     termsAcceptedAt: { type: Date },
     onboardingCompleted: { type: Boolean, default: false },
     onboardingCompletedAt: { type: Date },
+    role: {
+      type: String,
+      enum: USER_ROLES,
+      default: "user",
+      index: true,
+    },
+    accountStatus: {
+      type: String,
+      enum: ACCOUNT_STATUSES,
+      default: "active",
+      index: true,
+    },
+    suspendedUntil: { type: Date, default: null },
+    moderationWarningCount: { type: Number, default: 0, min: 0 },
+    lastModerationWarningAt: { type: Date },
     isActive: { type: Boolean, default: true },
     emailVerified: { type: Boolean, default: false },
     founderRole: { type: String, enum: FOUNDER_ROLES },

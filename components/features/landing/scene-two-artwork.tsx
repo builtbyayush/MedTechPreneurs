@@ -56,13 +56,13 @@ export function SceneTwoArtwork({
 
         {/* Light edge blend only — don't recess the artwork */}
         <div
-          className="pointer-events-none absolute inset-0 bg-ink/[0.02]"
+          className="pointer-events-none absolute inset-0 bg-foreground/[0.02] dark:bg-ink/[0.02]"
           aria-hidden
         />
 
-        {/* Blend artwork into ink canvas */}
+        {/* Blend artwork into section canvas */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-ink via-ink/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[14%] bg-gradient-to-t from-muted via-muted/70 to-transparent dark:from-ink dark:via-ink/70"
           aria-hidden
         />
       </motion.div>

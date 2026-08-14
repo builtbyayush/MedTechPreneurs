@@ -24,8 +24,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         className={cn(
           "max-w-[85%] rounded-2xl px-4 py-3 shadow-founder-card sm:max-w-[75%]",
           message.isOwn
-            ? "rounded-br-md border border-teal/30 bg-teal/15 text-white"
-            : "rounded-bl-md border border-white/10 bg-white/[0.05] text-white/90",
+            ? "rounded-br-md border border-teal/30 bg-teal/15 text-foreground"
+            : "rounded-bl-md border border-border bg-muted text-foreground/90",
         )}
         aria-label={
           message.isOwn
@@ -39,7 +39,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         <div
           className={cn(
             "mt-2 flex items-center gap-2 text-[10px]",
-            message.isOwn ? "justify-end text-white/55" : "text-white/45",
+            message.isOwn ? "justify-end text-muted-foreground" : "text-muted-foreground",
           )}
         >
           <time dateTime={message.createdAt}>

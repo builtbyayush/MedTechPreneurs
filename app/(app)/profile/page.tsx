@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { ProfileEditor } from "@/components/features/profile/profile-editor";
 import { ROUTES } from "@/constants/routes";
+import { requireAdmin } from "@/lib/auth/account";
 import { getFounderProfile } from "@/lib/profile/queries";
 
 export const metadata = {
@@ -22,5 +23,13 @@ export default async function ProfilePage() {
     redirect(ROUTES.onboarding);
   }
 
-  return <ProfileEditor initialProfile={profile} />;
+  let isAdmin = false;
+  try {
+    await requireAdmin(session.user.id);
+    isAdmin = true;
+  } catch {
+    isAdmin = false;
+  }
+
+  return <ProfileEditor initialProfile={profile} isAdmin={isAdmin} />;
 }

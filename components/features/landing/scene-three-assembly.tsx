@@ -36,14 +36,14 @@ export function SceneThreeAssembly() {
       ref={sectionRef}
       id="how-it-works"
       aria-labelledby="scene-three-heading"
-      className="relative bg-assembly-reveal text-white"
+      className="relative bg-background text-foreground"
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ink to-assembly-reveal sm:h-32"
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-muted/80 to-transparent dark:from-background sm:h-32"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink to-assembly-reveal sm:h-32"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-muted/40 to-transparent dark:from-background sm:h-32"
         aria-hidden
       />
 
@@ -68,7 +68,7 @@ export function SceneThreeAssembly() {
 
             <motion.h2
               id="scene-three-heading"
-              className="mt-8 font-heading text-[2.125rem] leading-[1.08] font-black tracking-tight text-white sm:mt-10 sm:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem]"
+              className="mt-8 font-heading text-[2.125rem] leading-[1.08] font-black tracking-tight text-foreground sm:mt-10 sm:text-[2.5rem] lg:text-[2.75rem] xl:text-[3rem]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.08)}
             >
@@ -83,7 +83,7 @@ export function SceneThreeAssembly() {
               {CAPABILITIES.map((line) => (
                 <li
                   key={line}
-                  className="font-heading text-sm font-bold tracking-[0.12em] text-white/82 uppercase"
+                  className="font-heading text-sm font-bold tracking-[0.12em] text-foreground/80 uppercase"
                 >
                   {line}
                 </li>
@@ -91,7 +91,7 @@ export function SceneThreeAssembly() {
             </motion.ul>
 
             <motion.p
-              className="mt-10 max-w-[440px] text-lg leading-[1.7] text-white/60 sm:mt-12 sm:text-[17px]"
+              className="mt-10 max-w-[440px] text-lg leading-[1.7] text-muted-foreground sm:mt-12 sm:text-[17px]"
               variants={copyVariants}
               transition={fadeUpTransition(reducedMotion, reducedMotion ? 0 : 0.24)}
             >

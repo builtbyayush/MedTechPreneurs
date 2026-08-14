@@ -176,9 +176,9 @@ export function EmailVerificationStep({
   }
 
   return (
-    <div className="founder-card-glass space-y-5 rounded-3xl border border-white/10 p-5 shadow-founder-card sm:p-6">
+    <div className="founder-card-glass space-y-5 rounded-3xl border border-border p-5 shadow-founder-card sm:p-6">
       <div className="space-y-2">
-        <p className="text-sm text-white/60">
+        <p className="text-sm text-muted-foreground">
           {email
             ? `Enter the ${EMAIL_VERIFICATION.codeLength}-digit code we sent to ${maskEmail(email)}.`
             : "We'll send a verification code to your account email."}
@@ -187,9 +187,9 @@ export function EmailVerificationStep({
           <p className="text-sm text-teal/90">{statusMessage}</p>
         ) : null}
         {devCode ? (
-          <p className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/55">
+          <p className="rounded-xl border border-border bg-muted px-3 py-2 text-xs text-muted-foreground">
             SMTP is not configured — use code{" "}
-            <span className="font-mono font-semibold text-white">{devCode}</span>{" "}
+            <span className="font-mono font-semibold text-foreground">{devCode}</span>{" "}
             in development.
           </p>
         ) : null}
@@ -220,7 +220,7 @@ export function EmailVerificationStep({
           <div className="flex flex-wrap items-center gap-3">
             <Button
               type="button"
-              className="h-11 bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
+              className="h-11 bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
               disabled={isConfirming || code.length !== EMAIL_VERIFICATION.codeLength}
               aria-busy={isConfirming}
               onClick={() => void handleConfirm()}
@@ -231,7 +231,7 @@ export function EmailVerificationStep({
             <Button
               type="button"
               variant="ghost"
-              className="text-white/70 hover:bg-white/5 hover:text-white"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground"
               disabled={isSending || cooldownSeconds > 0}
               onClick={() => void sendCode()}
             >

@@ -12,7 +12,6 @@ import { SectionHeader } from "@/components/features/app/section-header";
 import {
   authFieldClassName,
   authLabelClassName,
-  authLinkClassName,
 } from "@/components/features/auth/auth-shell";
 import { ProfileFounderFields } from "@/components/features/profile/profile-founder-fields";
 import { ProfileSection } from "@/components/features/profile/profile-section";
@@ -37,6 +36,7 @@ type ProfileFormValues = z.infer<typeof profileUpdateSchema>;
 
 type ProfileEditorProps = {
   initialProfile: FounderProfile;
+  isAdmin?: boolean;
 };
 
 function resolveInitialLocation(profile: FounderProfile): {
@@ -54,7 +54,10 @@ function resolveInitialLocation(profile: FounderProfile): {
   return { country, state, city };
 }
 
-export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
+export function ProfileEditor({
+  initialProfile,
+  isAdmin = false,
+}: ProfileEditorProps) {
   const { toast } = useToast();
   const [skillInput, setSkillInput] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -85,6 +88,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   const skills = form.watch("skills");
   const profilePhotoUrl = form.watch("profilePhotoUrl");
   const profilePhotoSrc = resolveProfilePhotoSrc(profilePhotoUrl);
+  const { isDirty } = form.formState;
 
   function addSkill() {
     const value = skillInput.trim();
@@ -106,7 +110,10 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
       return;
     }
 
-    form.setValue("skills", [...current, value], { shouldValidate: true });
+    form.setValue("skills", [...current, value], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     setSkillInput("");
     form.clearErrors("skills");
   }
@@ -116,7 +123,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
     form.setValue(
       "skills",
       current.filter((_, itemIndex) => itemIndex !== index),
-      { shouldValidate: true },
+      { shouldValidate: true, shouldDirty: true },
     );
   }
 
@@ -168,7 +175,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
   }
 
   return (
-    <PageContainer className="space-y-6 pb-28 pt-2">
+    <PageContainer className={cn("space-y-6 pt-2", isDirty ? "pb-24" : "pb-8")}>
       <SectionHeader
         title="Profile"
         description="Shape how other founders see you in Discovery."
@@ -180,7 +187,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
           description="Your public introduction on founder cards."
         >
           <div className="space-y-5">
-            <div className="overflow-hidden rounded-2xl border border-white/10">
+            <div className="overflow-hidden rounded-2xl border border-border">
               {profilePhotoSrc ? (
                 <div className="relative aspect-[3/4] w-full">
                   <Image
@@ -339,7 +346,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
               <Button
                 type="button"
                 variant="outline"
-                className="shrink-0 border-white/15 bg-white/[0.03] text-white"
+                className="shrink-0 border-border bg-muted text-foreground"
                 onClick={addSkill}
               >
                 Add
@@ -361,7 +368,7 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-white/45">
+              <p className="text-sm text-muted-foreground">
                 No skills added yet. Add a few to stand out in Discovery.
               </p>
             )}
@@ -431,30 +438,52 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
         </ProfileSection>
 
         <ProfileSection title="Account">
-          <div className="space-y-3 text-sm">
+          <div className="space-y-2 text-sm">
             <SnapshotRow label="Email" value={initialProfile.email} />
-            <Link href={ROUTES.app.settings} className={authLinkClassName}>
+            {isAdmin ? (
+              <Link
+                href={ROUTES.admin.moderation}
+                className="flex w-full items-center justify-between rounded-xl border border-teal/30 bg-teal/10 px-3 py-3 font-semibold text-teal transition-colors hover:bg-teal/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+              >
+                <span>Admin moderation</span>
+                <span className="text-xs font-medium text-teal/80">
+                  Review reports
+                </span>
+              </Link>
+            ) : null}
+            <Link
+              href={ROUTES.app.settings}
+              className="flex w-full items-center rounded-xl border border-border bg-muted px-3 py-3 font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+            >
               Account settings
             </Link>
-            <Link href={ROUTES.app.toolkit} className={authLinkClassName}>
+            <Link
+              href={ROUTES.app.toolkit}
+              className="flex w-full items-center rounded-xl border border-border bg-muted px-3 py-3 font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+            >
               Founder&apos;s Toolkit
             </Link>
-            <Link href={ROUTES.logout} className={authLinkClassName}>
+            <Link
+              href={ROUTES.logout}
+              className="flex w-full items-center rounded-xl border border-border bg-muted px-3 py-3 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+            >
               Log out
             </Link>
           </div>
         </ProfileSection>
 
-        <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-20 -mx-1 border-t border-white/10 bg-ink/90 px-1 py-4 backdrop-blur-md">
-          <Button
-            type="submit"
-            disabled={isSaving}
-            aria-busy={isSaving}
-            className="h-12 w-full bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
-          >
-            {isSaving ? "Saving profile…" : "Save profile"}
-          </Button>
-        </div>
+        {isDirty ? (
+          <div className="sticky bottom-0 z-20 -mx-1 border-t border-border bg-background/95 px-1 pt-3 pb-3 backdrop-blur-md">
+            <Button
+              type="submit"
+              disabled={isSaving}
+              aria-busy={isSaving}
+              className="h-12 w-full bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
+            >
+              {isSaving ? "Saving profile…" : "Save profile"}
+            </Button>
+          </div>
+        ) : null}
       </form>
     </PageContainer>
   );
@@ -463,8 +492,8 @@ export function ProfileEditor({ initialProfile }: ProfileEditorProps) {
 function SnapshotRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
-      <dt className="text-white/45">{label}</dt>
-      <dd className="max-w-[65%] text-right font-medium text-white">{value}</dd>
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="max-w-[65%] text-right font-medium text-foreground">{value}</dd>
     </div>
   );
 }

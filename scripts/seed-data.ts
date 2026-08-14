@@ -475,7 +475,14 @@ export type SeedRelationship =
 export type SeedReport = {
   reporter: string;
   reported: string;
-  reason: "inappropriate_content" | "spam" | "harassment" | "fake_profile" | "other";
+  reason:
+    | "harassment"
+    | "spam"
+    | "fake_profile"
+    | "inappropriate_content"
+    | "fraud_or_scam"
+    | "impersonation"
+    | "other";
   description?: string;
 };
 

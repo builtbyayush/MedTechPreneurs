@@ -30,9 +30,9 @@ type ToastContextValue = {
 const ToastContext = createContext<ToastContextValue | null>(null);
 
 const variantStyles: Record<ToastVariant, string> = {
-  default: "border-white/10 bg-ink-elevated/95 text-white",
-  success: "border-teal/30 bg-ink-elevated/95 text-white",
-  error: "border-coral/30 bg-ink-elevated/95 text-white",
+  default: "border-border bg-card/95 text-foreground",
+  success: "border-teal/30 bg-card/95 text-foreground",
+  error: "border-coral/30 bg-card/95 text-foreground",
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
@@ -72,7 +72,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           >
             <p className="text-sm font-semibold">{item.title}</p>
             {item.description ? (
-              <p className="mt-1 text-xs text-white/65">{item.description}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {item.description}
+              </p>
             ) : null}
           </div>
         ))}

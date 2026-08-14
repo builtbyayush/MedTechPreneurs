@@ -347,7 +347,7 @@ export function DiscoverFeed() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-12 w-full border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06] hover:text-white"
+                  className="h-12 w-full border-border bg-muted text-foreground hover:bg-muted hover:text-foreground"
                   disabled={isSubmitting || isLoadingNext}
                   aria-busy={isSubmitting && exitDirection === "pass"}
                   aria-label={`Pass on ${founder.name}`}
@@ -364,7 +364,7 @@ export function DiscoverFeed() {
                   type="button"
                   className={cn(
                     buttonVariants({ variant: "default" }),
-                    "h-12 w-full bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6]",
+                    "h-12 w-full bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80",
                   )}
                   disabled={isSubmitting || isLoadingNext}
                   aria-busy={isSubmitting && exitDirection === "connect"}
@@ -378,7 +378,7 @@ export function DiscoverFeed() {
               </motion.div>
             </div>
 
-            <p className="text-center text-xs text-white/40">
+            <p className="text-center text-xs text-muted-foreground">
               Keyboard: ← pass · → connect
             </p>
 
@@ -391,12 +391,17 @@ export function DiscoverFeed() {
               </p>
             ) : null}
 
-            <div className="flex flex-wrap items-center justify-center gap-1 border-t border-white/10 pt-2">
+            <div className="flex flex-wrap items-center justify-center gap-1 border-t border-border pt-2">
               <ReportProfileButton
                 reportedUserId={founder.id}
                 reportedUserName={founder.name}
+                onReported={() => void loadFounder()}
               />
-              <BlockUserButton userName={founder.name} />
+              <BlockUserButton
+                blockedUserId={founder.id}
+                userName={founder.name}
+                onBlocked={() => void loadFounder()}
+              />
             </div>
           </div>
         ) : null}

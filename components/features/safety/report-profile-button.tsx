@@ -15,12 +15,14 @@ type ReportProfileDialogProps = {
   reportedUserId: string;
   reportedUserName: string;
   className?: string;
+  onReported?: () => void;
 };
 
 export function ReportProfileButton({
   reportedUserId,
   reportedUserName,
   className,
+  onReported,
 }: ReportProfileDialogProps) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -36,11 +38,10 @@ export function ReportProfileButton({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/reports", {
+      const response = await fetch(`/api/users/${reportedUserId}/report`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          reportedUserId,
           reason,
           description,
         }),
@@ -65,12 +66,13 @@ export function ReportProfileButton({
         title: "Report submitted",
         description:
           payload?.message ??
-          "Our team will review this report. Admin review tooling is coming soon.",
+          "Our team will review it. You've also blocked this user.",
         variant: "success",
       });
       setOpen(false);
       setReason("");
       setDescription("");
+      onReported?.();
     } catch {
       toast({
         title: "Could not submit report",
@@ -88,7 +90,7 @@ export function ReportProfileButton({
         type="button"
         variant="ghost"
         size="sm"
-        className={cn("text-white/50 hover:bg-white/5 hover:text-white", className)}
+        className={cn("text-muted-foreground hover:bg-muted hover:text-foreground", className)}
         onClick={() => setOpen(true)}
       >
         Report profile
@@ -101,14 +103,14 @@ export function ReportProfileButton({
           aria-modal="true"
           aria-labelledby="report-dialog-title"
         >
-          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-ink-elevated p-5 shadow-founder-card">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-founder-card">
             <h2
               id="report-dialog-title"
-              className="font-heading text-lg font-bold text-white"
+              className="font-heading text-lg font-bold text-foreground"
             >
               Report {reportedUserName}
             </h2>
-            <p className="mt-2 text-sm text-white/55">
+            <p className="mt-2 text-sm text-muted-foreground">
               Select a reason. Reports are stored for admin review.
             </p>
 
@@ -119,8 +121,8 @@ export function ReportProfileButton({
                   className={cn(
                     "flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2 text-sm",
                     reason === item
-                      ? "border-teal/40 bg-teal/10 text-white"
-                      : "border-white/10 bg-white/[0.03] text-white/70",
+                      ? "border-teal/40 bg-teal/10 text-foreground"
+                      : "border-border bg-muted text-muted-foreground",
                   )}
                 >
                   <input
@@ -136,7 +138,7 @@ export function ReportProfileButton({
               ))}
             </div>
 
-            <label className="mt-4 block text-xs font-semibold tracking-wide text-white/45 uppercase">
+            <label className="mt-4 block text-xs font-semibold tracking-wide text-muted-foreground uppercase">
               Additional details (optional)
             </label>
             <textarea
@@ -145,14 +147,14 @@ export function ReportProfileButton({
               rows={3}
               maxLength={500}
               placeholder="Share context that helps our review."
-              className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/35"
+              className="mt-2 w-full rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
             />
 
             <div className="mt-5 flex gap-2">
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1 border-white/15 bg-white/[0.03] text-white"
+                className="flex-1 border-border bg-muted text-foreground"
                 onClick={() => setOpen(false)}
                 disabled={isSubmitting}
               >
@@ -160,7 +162,7 @@ export function ReportProfileButton({
               </Button>
               <Button
                 type="button"
-                className="flex-1 bg-teal font-bold text-ink hover:bg-[#33d6d6]"
+                className="flex-1 bg-teal font-bold text-ink hover:bg-teal/80"
                 disabled={!reason || isSubmitting}
                 onClick={() => void submitReport()}
               >
@@ -175,28 +177,119 @@ export function ReportProfileButton({
 }
 
 export function BlockUserButton({
+  blockedUserId,
   userName,
   className,
+  onBlocked,
 }: {
+  blockedUserId: string;
   userName: string;
   className?: string;
+  onBlocked?: () => void;
 }) {
   const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function submitBlock() {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`/api/users/${blockedUserId}/block`, {
+        method: "POST",
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        message?: string;
+      } | null;
+
+      if (!response.ok) {
+        toast({
+          title: "Could not block user",
+          description: payload?.error ?? payload?.message ?? "Please try again.",
+          variant: "error",
+        });
+        return;
+      }
+
+      toast({
+        title: "User blocked",
+        description:
+          payload?.message ??
+          `${userName} has been blocked. You won't see each other or be able to message.`,
+        variant: "success",
+      });
+      setOpen(false);
+      onBlocked?.();
+    } catch {
+      toast({
+        title: "Could not block user",
+        description: "Check your connection and try again.",
+        variant: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="sm"
-      className={cn("text-white/50 hover:bg-white/5 hover:text-white", className)}
-      onClick={() =>
-        toast({
-          title: "Block user",
-          description: `Blocking ${userName} is a placeholder in private beta.`,
-        })
-      }
-    >
-      Block user
-    </Button>
+    <>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        className={cn("text-muted-foreground hover:bg-muted hover:text-foreground", className)}
+        onClick={() => setOpen(true)}
+      >
+        Block user
+      </Button>
+
+      {open ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="block-dialog-title"
+        >
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-founder-card">
+            <h2
+              id="block-dialog-title"
+              className="font-heading text-lg font-bold text-foreground"
+            >
+              Block {userName}?
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              You won&apos;t see each other in Discover, Matches, or Messages.
+              You can unblock them later from Settings.
+            </p>
+
+            <div className="mt-5 flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 border-border bg-muted text-foreground"
+                onClick={() => setOpen(false)}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                className="flex-1 bg-coral font-bold text-foreground hover:bg-coral/90"
+                disabled={isSubmitting}
+                onClick={() => void submitBlock()}
+              >
+                {isSubmitting ? "Blocking…" : "Block user"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

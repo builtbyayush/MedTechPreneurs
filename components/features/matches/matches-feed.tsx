@@ -95,6 +95,15 @@ export function MatchesFeed() {
     );
   }
 
+  function handleBlocked(partnerId: string) {
+    setMatches((current) =>
+      current.filter((match) => match.partner.id !== partnerId),
+    );
+    setOutgoingConnects((current) =>
+      current.filter((connect) => connect.targetUserId !== partnerId),
+    );
+  }
+
   const hasOutgoingConnects = outgoingConnects.length > 0;
   const hasMatches = matches.length > 0;
 
@@ -187,7 +196,10 @@ export function MatchesFeed() {
                         index * 0.04,
                       )}
                     >
-                      <MatchFounderCard match={match} />
+                      <MatchFounderCard
+                        match={match}
+                        onBlocked={handleBlocked}
+                      />
                     </motion.li>
                   ))}
                 </ul>

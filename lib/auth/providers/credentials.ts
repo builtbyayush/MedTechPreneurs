@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
 import { SESSION_MAX_AGE } from "@/config/auth";
+import { getAccountAccessState } from "@/lib/auth/account";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 
@@ -33,7 +34,7 @@ export const credentialsProvider = Credentials({
 
     const user = await User.findOne({
       email: parsed.data.email.toLowerCase(),
-    }).select("+passwordHash");
+    }).select("+passwordHash role accountStatus suspendedUntil");
 
     if (!user?.passwordHash) {
       return null;
@@ -44,10 +45,16 @@ export const credentialsProvider = Credentials({
       return null;
     }
 
+    const access = getAccountAccessState(user);
+    if (!access.allowed) {
+      return null;
+    }
+
     return {
       id: user._id.toString(),
       email: user.email,
       name: user.name,
+      role: access.role,
       remember: parsed.data.remember,
       sessionMaxAge: parsed.data.remember
         ? SESSION_MAX_AGE.remembered

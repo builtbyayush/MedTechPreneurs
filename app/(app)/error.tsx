@@ -23,10 +23,10 @@ export default function AppErrorPage({ error, reset }: AppErrorPageProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">
           Something went wrong
         </p>
-        <h1 className="font-heading text-2xl font-extrabold text-white">
+        <h1 className="font-heading text-2xl font-extrabold text-foreground">
           We hit an unexpected error
         </h1>
-        <p className="mx-auto max-w-md text-sm leading-relaxed text-white/60">
+        <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
           Try again. If the problem continues, check your connection or return
           to Home.
         </p>
@@ -35,7 +35,7 @@ export default function AppErrorPage({ error, reset }: AppErrorPageProps) {
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button
           onClick={reset}
-          className="bg-teal font-bold text-ink hover:bg-[#33d6d6]"
+          className="bg-teal font-bold text-ink hover:bg-teal/80"
         >
           Try again
         </Button>
@@ -43,7 +43,7 @@ export default function AppErrorPage({ error, reset }: AppErrorPageProps) {
           href={ROUTES.app.home}
           className={cn(
             buttonVariants({ variant: "outline" }),
-            "border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06]",
+            "border-border bg-muted text-foreground hover:bg-muted",
           )}
         >
           Back to Home

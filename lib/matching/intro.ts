@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 import { INTRO_MESSAGE_MAX_LENGTH } from "@/constants/intro";
+import { assertNotBlocked } from "@/lib/blocks/queries";
 import { connectDB } from "@/lib/db";
 import { DiscoveryAction } from "@/models/DiscoveryAction";
 import { Conversation, getConversationParticipantKey } from "@/models/Conversation";
@@ -57,6 +58,8 @@ export async function sendIntroduction(input: {
   if (!mongoose.Types.ObjectId.isValid(input.targetUserId)) {
     throw new IntroductionError("Target profile no longer exists.", 404);
   }
+
+  await assertNotBlocked(input.viewerId, input.targetUserId);
 
   const target = await User.findById(input.targetUserId).select("_id").lean();
   if (!target) {

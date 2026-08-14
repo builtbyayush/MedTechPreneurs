@@ -43,13 +43,13 @@ export function ToolkitFeed() {
           description="Curated resources for regulated healthcare startups in India."
         />
 
-        <div className="founder-card-glass rounded-2xl border border-white/10 p-4 shadow-founder-card">
+        <div className="founder-card-glass rounded-2xl border border-border p-4 shadow-founder-card">
           <label className="sr-only" htmlFor="toolkit-search">
             Search toolkit
           </label>
           <div className="relative">
             <Search
-              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40"
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden
             />
             <Input
@@ -57,7 +57,7 @@ export function ToolkitFeed() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search by title or topic"
-              className="border-white/10 bg-white/[0.03] pl-9 text-white placeholder:text-white/40"
+              className="border-border bg-muted pl-9 text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
@@ -117,7 +117,7 @@ function CategoryChip({
         "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
         active
           ? "border-teal/40 bg-teal/15 text-teal"
-          : "border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/[0.06]",
+          : "border-border bg-muted text-muted-foreground hover:bg-muted",
       )}
     >
       {label}
@@ -134,26 +134,26 @@ function ToolkitResourceCard({
 }) {
   const reducedMotion = usePrefersReducedMotion();
   const content = (
-    <div className="founder-card-glass rounded-2xl border border-white/10 p-4 shadow-founder-card transition-colors hover:bg-white/[0.03]">
+    <div className="founder-card-glass rounded-2xl border border-border p-4 shadow-founder-card transition-colors hover:bg-muted">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[10px] font-bold tracking-[0.16em] text-teal uppercase">
             {TOOLKIT_CATEGORY_LABELS[resource.category]}
           </p>
-          <h3 className="mt-1 font-heading text-base font-extrabold text-white">
+          <h3 className="mt-1 font-heading text-base font-extrabold text-foreground">
             {resource.title}
           </h3>
-          <p className="mt-2 text-sm leading-relaxed text-white/60">
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {resource.description}
           </p>
         </div>
         {resource.external ? (
-          <ExternalLink className="size-4 shrink-0 text-white/35" aria-hidden />
+          <ExternalLink className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         ) : null}
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-        <span className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-1 text-white/55">
+        <span className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-1 text-muted-foreground">
           <Clock className="size-3" aria-hidden />
           {resource.readingTimeMinutes} min read
         </span>

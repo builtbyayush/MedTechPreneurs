@@ -116,20 +116,20 @@ export function IntroduceYourselfDialog({
       aria-modal="true"
       aria-labelledby="introduce-yourself-title"
     >
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-ink-elevated p-5 shadow-founder-card">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-5 shadow-founder-card">
         <h2
           id="introduce-yourself-title"
-          className="font-heading text-lg font-bold text-white"
+          className="font-heading text-lg font-bold text-foreground"
         >
           Introduce Yourself
         </h2>
-        <p className="mt-2 text-sm text-white/55">
+        <p className="mt-2 text-sm text-muted-foreground">
           Send a short introduction before they decide to connect.
         </p>
 
         <label
           htmlFor="introduce-yourself-message"
-          className="mt-4 block text-xs font-semibold tracking-wide text-white/45 uppercase"
+          className="mt-4 block text-xs font-semibold tracking-wide text-muted-foreground uppercase"
         >
           Message
         </label>
@@ -144,7 +144,7 @@ export function IntroduceYourselfDialog({
           maxLength={INTRO_MESSAGE_MAX_LENGTH}
           placeholder={placeholder}
           disabled={isSubmitting}
-          className="mt-2 w-full resize-none rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/35 outline-none focus-visible:border-teal/50 focus-visible:ring-2 focus-visible:ring-teal/20 disabled:opacity-50"
+          className="mt-2 w-full resize-none rounded-lg border border-border bg-muted px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:border-teal/50 focus-visible:ring-2 focus-visible:ring-teal/20 disabled:opacity-50"
         />
 
         <div className="mt-2 flex items-center justify-between gap-3">
@@ -153,7 +153,7 @@ export function IntroduceYourselfDialog({
               "text-xs tabular-nums",
               characterCount >= INTRO_MESSAGE_MAX_LENGTH
                 ? "text-coral"
-                : "text-white/40",
+                : "text-muted-foreground",
             )}
           >
             {characterCount} / {INTRO_MESSAGE_MAX_LENGTH}
@@ -170,7 +170,7 @@ export function IntroduceYourselfDialog({
           <Button
             type="button"
             variant="outline"
-            className="flex-1 border-white/15 bg-white/[0.03] text-white"
+            className="flex-1 border-border bg-muted text-foreground"
             onClick={() => onOpenChange(false)}
             disabled={isSubmitting}
           >
@@ -178,7 +178,7 @@ export function IntroduceYourselfDialog({
           </Button>
           <Button
             type="button"
-            className="flex-1 bg-teal font-bold text-ink hover:bg-[#33d6d6]"
+            className="flex-1 bg-teal font-bold text-ink hover:bg-teal/80"
             disabled={!canSubmit}
             onClick={() => void handleSend()}
           >

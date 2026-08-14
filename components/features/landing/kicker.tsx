@@ -9,7 +9,7 @@ export function Kicker({ children, className }: KickerProps) {
   return (
     <p
       className={cn(
-        "font-heading text-sm font-bold tracking-[0.2em] text-teal uppercase",
+        "font-heading text-sm font-bold tracking-[0.2em] text-teal-text uppercase dark:text-teal",
         className
       )}
     >

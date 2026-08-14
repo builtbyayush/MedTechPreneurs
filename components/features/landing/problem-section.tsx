@@ -32,10 +32,10 @@ export function ProblemSection() {
           <p className="font-heading text-xs font-bold tracking-[0.2em] text-teal uppercase">
             Why <SplicePlusMark />
           </p>
-          <h2 className="mt-3 max-w-3xl font-heading text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="mt-3 max-w-3xl font-heading text-3xl font-black tracking-tight text-foreground sm:text-4xl">
             Three groups. One isolation problem.
           </h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/65">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
             Across India&apos;s healthcare and MedTech ecosystem, these three
             communities sit apart — and that gap is where products fail and good
             ideas go unfunded.
@@ -46,15 +46,15 @@ export function ProblemSection() {
           {PROBLEMS.map((item, index) => (
             <Reveal key={item.label} delay={index * 0.08}>
               <article
-                className={`flex h-full flex-col rounded-lg border border-white/10 bg-ink-elevated p-6 ${item.shadow}`}
+                className={`flex h-full flex-col rounded-lg border border-border bg-card p-6 ${item.shadow}`}
               >
                 <p className="font-heading text-xs font-bold tracking-[0.18em] text-coral uppercase">
                   {item.label}
                 </p>
-                <h3 className="mt-3 font-heading text-xl font-extrabold text-white">
+                <h3 className="mt-3 font-heading text-xl font-extrabold text-foreground">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/65">
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {item.body}
                 </p>
               </article>

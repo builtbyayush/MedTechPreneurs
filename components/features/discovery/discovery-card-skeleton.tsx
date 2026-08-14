@@ -10,7 +10,7 @@ export function DiscoveryCardSkeleton({ className }: DiscoveryCardSkeletonProps)
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-white/10 bg-ink-elevated shadow-founder-card",
+        "overflow-hidden rounded-2xl border border-border bg-card shadow-founder-card",
         className,
       )}
       aria-hidden
@@ -28,7 +28,7 @@ export function DiscoveryCardSkeleton({ className }: DiscoveryCardSkeletonProps)
           <Skeleton className="h-8 w-24 rounded-md" />
         </div>
         <Skeleton className="h-9 w-full rounded-lg" />
-        <div className="space-y-0.5 border-t border-white/[0.08] pt-3">
+        <div className="space-y-0.5 border-t border-border pt-3">
           <Skeleton className="h-3 w-1/3" />
           <Skeleton className="h-3 w-2/3" />
         </div>

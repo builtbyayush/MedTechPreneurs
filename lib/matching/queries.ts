@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 import { connectDB } from "@/lib/db";
 import {
+  getBlockedRelationshipUserIds,
+  isBlockedBetween,
+} from "@/lib/blocks/queries";
+import {
   calculateCompatibility,
   createCompatibilityCache,
   toCompatibilityProfile,
@@ -47,6 +51,11 @@ export async function tryCreateMutualMatch(input: {
   targetUserId: string;
 }): Promise<{ created: boolean; matchId?: string }> {
   await connectDB();
+
+  const blocked = await isBlockedBetween(input.viewerId, input.targetUserId);
+  if (blocked) {
+    return { created: false };
+  }
 
   const reciprocalConnect = await DiscoveryAction.findOne({
     viewerId: input.targetUserId,
@@ -105,25 +114,39 @@ export async function getOutgoingConnectsForUser(
   await connectDB();
 
   const viewerObjectId = new mongoose.Types.ObjectId(userId);
-  const connectActions = await DiscoveryAction.find({
-    viewerId: userId,
-    action: "connect",
-  })
-    .sort({ createdAt: -1 })
-    .lean<
-      {
-        targetUserId: mongoose.Types.ObjectId;
-        createdAt: Date;
-        introMessage?: string | null;
-        introSentAt?: Date | null;
-      }[]
-    >();
+  const [connectActions, blockedUserIds] = await Promise.all([
+    DiscoveryAction.find({
+      viewerId: userId,
+      action: "connect",
+    })
+      .sort({ createdAt: -1 })
+      .lean<
+        {
+          targetUserId: mongoose.Types.ObjectId;
+          createdAt: Date;
+          introMessage?: string | null;
+          introSentAt?: Date | null;
+        }[]
+      >(),
+    getBlockedRelationshipUserIds(userId),
+  ]);
 
   if (connectActions.length === 0) {
     return [];
   }
 
-  const targetObjectIds = connectActions.map((action) => action.targetUserId);
+  const blockedIds = new Set(blockedUserIds);
+  const visibleConnectActions = connectActions.filter(
+    (action) => !blockedIds.has(action.targetUserId.toString()),
+  );
+
+  if (visibleConnectActions.length === 0) {
+    return [];
+  }
+
+  const targetObjectIds = visibleConnectActions.map(
+    (action) => action.targetUserId,
+  );
 
   const [targets, reciprocalConnects, matches] = await Promise.all([
     User.find({ _id: { $in: targetObjectIds } })
@@ -179,7 +202,7 @@ export async function getOutgoingConnectsForUser(
     targets.map((target) => [target._id.toString(), target]),
   );
 
-  return connectActions.flatMap((action) => {
+  return visibleConnectActions.flatMap((action) => {
     const targetId = action.targetUserId.toString();
     const target = targetMap.get(targetId);
 
@@ -228,22 +251,34 @@ export async function getMatchedFoundersForUser(
   await connectDB();
 
   const viewerObjectId = new mongoose.Types.ObjectId(userId);
-  const matches = await Match.find({
-    status: "matched",
-    $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
-  })
-    .sort({ matchedAt: -1, createdAt: -1 })
-    .lean<
-      {
-        _id: mongoose.Types.ObjectId;
-        userA: mongoose.Types.ObjectId;
-        userB: mongoose.Types.ObjectId;
-        matchedAt?: Date | null;
-        createdAt: Date;
-      }[]
-    >();
+  const [matches, blockedUserIds] = await Promise.all([
+    Match.find({
+      status: "matched",
+      $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
+    })
+      .sort({ matchedAt: -1, createdAt: -1 })
+      .lean<
+        {
+          _id: mongoose.Types.ObjectId;
+          userA: mongoose.Types.ObjectId;
+          userB: mongoose.Types.ObjectId;
+          matchedAt?: Date | null;
+          createdAt: Date;
+        }[]
+      >(),
+    getBlockedRelationshipUserIds(userId),
+  ]);
 
   if (matches.length === 0) {
+    return [];
+  }
+
+  const blockedIds = new Set(blockedUserIds);
+  const visibleMatches = matches.filter(
+    (match) => !blockedIds.has(getMatchPartnerId(match, userId)),
+  );
+
+  if (visibleMatches.length === 0) {
     return [];
   }
 
@@ -253,7 +288,9 @@ export async function getMatchedFoundersForUser(
   const viewerProfile = toCompatibilityProfile(viewerUser ?? {});
   const compatibilityCache = createCompatibilityCache();
 
-  const partnerIds = matches.map((match) => getMatchPartnerId(match, userId));
+  const partnerIds = visibleMatches.map((match) =>
+    getMatchPartnerId(match, userId),
+  );
   const partners = await User.find({ _id: { $in: partnerIds } })
     .select(
       "name headline founderRole companyName city state country profilePhotoUrl buildingFocus currentStage lookingForRoles",
@@ -264,9 +301,10 @@ export async function getMatchedFoundersForUser(
     partners.map((partner) => [partner._id.toString(), partner]),
   );
 
-  const conversationByMatchId = await resolveConversationIdsForMatches(matches);
+  const conversationByMatchId =
+    await resolveConversationIdsForMatches(visibleMatches);
 
-  return matches.flatMap((match) => {
+  return visibleMatches.flatMap((match) => {
     const partnerId = getMatchPartnerId(match, userId);
     const partner = partnerMap.get(partnerId);
 

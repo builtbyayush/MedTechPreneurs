@@ -69,20 +69,20 @@ export function DiscoverySearch({
     <div className={cn("space-y-3", className)}>
       <div className="relative">
         <Search
-          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40"
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
           aria-hidden
         />
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search founders by name, company, or role"
-          className="border-white/10 bg-white/[0.03] pr-9 pl-9 text-white placeholder:text-white/40"
+          className="border-border bg-muted pr-9 pl-9 text-foreground placeholder:text-muted-foreground"
           aria-label="Search founders"
         />
         {query ? (
           <button
             type="button"
-            className="absolute top-1/2 right-3 -translate-y-1/2 text-white/45 hover:text-white"
+            className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             onClick={() => setQuery("")}
             aria-label="Clear search"
           >
@@ -92,7 +92,7 @@ export function DiscoverySearch({
       </div>
 
       {isSearching ? (
-        <p className="text-xs text-white/45">Searching…</p>
+        <p className="text-xs text-muted-foreground">Searching…</p>
       ) : null}
 
       {error ? (
@@ -115,12 +115,12 @@ export function DiscoverySearch({
               <li key={result.id}>
                 <button
                   type="button"
-                  className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-left transition-colors hover:bg-white/[0.06]"
+                  className="w-full rounded-xl border border-border bg-muted px-3 py-2 text-left transition-colors hover:bg-muted"
                   onClick={() => onSelectFounder?.(result.id)}
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-white">
+                      <p className="truncate font-medium text-foreground">
                         {result.name}
                       </p>
                       <p className="truncate text-xs text-teal/85">
@@ -128,7 +128,7 @@ export function DiscoverySearch({
                         {result.companyName ? ` · ${result.companyName}` : ""}
                       </p>
                       {result.headline ? (
-                        <p className="mt-1 line-clamp-1 text-xs text-white/50">
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
                           {result.headline}
                         </p>
                       ) : null}
@@ -142,7 +142,7 @@ export function DiscoverySearch({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-white/50">No founders match that search.</p>
+          <p className="text-sm text-muted-foreground">No founders match that search.</p>
         )
       ) : null}
     </div>

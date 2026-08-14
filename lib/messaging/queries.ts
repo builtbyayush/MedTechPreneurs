@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 import { isProfilePhotoPlaceholder } from "@/constants/profile";
+import {
+  getBlockedRelationshipUserIds,
+  isBlockedBetween,
+} from "@/lib/blocks/queries";
 import { connectDB } from "@/lib/db";
 import { MESSAGE_DUPLICATE_WINDOW_MS } from "@/lib/messaging/constants";
 import {
@@ -210,6 +214,13 @@ export async function getConversationForUser(input: {
     return null;
   }
 
+  const partnerId = getConversationPartnerId(conversation, input.userId);
+  const blocked = await isBlockedBetween(input.userId, partnerId);
+
+  if (blocked) {
+    return null;
+  }
+
   return conversation;
 }
 
@@ -219,18 +230,21 @@ export async function getConversationsForUser(
   await connectDB();
 
   const viewerObjectId = new mongoose.Types.ObjectId(userId);
-  const matchedRows = await Match.find({
-    status: "matched",
-    $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
-  })
-    .select("_id userA userB")
-    .lean<
-      {
-        _id: mongoose.Types.ObjectId;
-        userA: mongoose.Types.ObjectId;
-        userB: mongoose.Types.ObjectId;
-      }[]
-    >();
+  const [matchedRows, blockedUserIds] = await Promise.all([
+    Match.find({
+      status: "matched",
+      $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
+    })
+      .select("_id userA userB")
+      .lean<
+        {
+          _id: mongoose.Types.ObjectId;
+          userA: mongoose.Types.ObjectId;
+          userB: mongoose.Types.ObjectId;
+        }[]
+      >(),
+    getBlockedRelationshipUserIds(userId),
+  ]);
 
   await resolveConversationIdsForMatches(matchedRows);
 
@@ -264,10 +278,16 @@ export async function getConversationsForUser(
   const activeMatchIds = new Set(
     activeMatches.map((match) => match._id.toString()),
   );
+  const blockedPartnerIds = new Set(blockedUserIds);
 
-  const eligibleConversations = conversations.filter((conversation) =>
-    activeMatchIds.has(conversation.matchId.toString()),
-  );
+  const eligibleConversations = conversations.filter((conversation) => {
+    if (!activeMatchIds.has(conversation.matchId.toString())) {
+      return false;
+    }
+
+    const partnerId = getConversationPartnerId(conversation, userId);
+    return !blockedPartnerIds.has(partnerId);
+  });
 
   if (eligibleConversations.length === 0) {
     return [];

@@ -2,7 +2,7 @@ import { COMPATIBILITY_FACTOR_LABELS } from "@/lib/compatibility/weights";
 
 export function CompatibilityExplainer() {
   return (
-    <div className="space-y-3 text-sm leading-relaxed text-white/65">
+    <div className="space-y-3 text-sm leading-relaxed text-muted-foreground">
       <p>
         Compatibility is calculated dynamically from your onboarding profile and
         each founder you browse or match with. Scores are not stored in the
@@ -17,7 +17,7 @@ export function CompatibilityExplainer() {
           </li>
         ))}
       </ul>
-      <p className="text-white/45">
+      <p className="text-muted-foreground">
         The score reflects weighted overlap across these factors — not AI
         predictions or swipe history.
       </p>

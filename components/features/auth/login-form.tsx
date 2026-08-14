@@ -114,7 +114,7 @@ export function LoginForm() {
               </FieldLabel>
               <Link
                 href="#forgot-password"
-                className="text-xs text-white/50 transition-colors hover:text-teal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                className="text-xs text-muted-foreground transition-colors hover:text-teal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
                 aria-disabled="true"
                 tabIndex={-1}
                 onClick={(event) => event.preventDefault()}
@@ -143,7 +143,7 @@ export function LoginForm() {
                 })
               }
               aria-describedby="login-remember-description"
-              className="border-white/20 data-checked:border-teal data-checked:bg-teal data-checked:text-ink"
+              className="border-border data-checked:border-teal data-checked:bg-teal data-checked:text-ink"
             />
             <FieldContent>
               <FieldLabel
@@ -154,7 +154,7 @@ export function LoginForm() {
               </FieldLabel>
               <p
                 id="login-remember-description"
-                className="text-xs text-white/45"
+                className="text-xs text-muted-foreground"
               >
                 Stay signed in on this device for 30 days.
               </p>
@@ -170,7 +170,7 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          className="h-11 w-full bg-teal text-base font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
+          className="h-11 w-full bg-teal text-base font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
           disabled={isSubmitting}
           aria-busy={isSubmitting}
         >

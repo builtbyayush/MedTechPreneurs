@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Avatar } from "@/components/features/app/avatar";
 import { NotificationMenu } from "@/components/features/app/notification-menu";
 import { SplicePlusLogo } from "@/components/features/brand/splice-plus-logo";
+import { ThemeToggle } from "@/components/features/theme/theme-toggle";
 import { useMessagingRealtime } from "@/components/providers/messaging-realtime-provider";
 import { ROUTES } from "@/constants/routes";
 
@@ -21,7 +22,7 @@ export function TopNavigation({ user, profilePhotoUrl }: TopNavigationProps) {
   const { totalUnreadCount } = useMessagingRealtime();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink-elevated/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border bg-card/80 pt-[env(safe-area-inset-top)] backdrop-blur-md">
       <div className="flex h-14 items-center justify-between px-4 sm:px-5">
         <Link
           href={ROUTES.app.home}
@@ -31,7 +32,8 @@ export function TopNavigation({ user, profilePhotoUrl }: TopNavigationProps) {
           <SplicePlusLogo className="text-lg sm:text-xl" />
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ThemeToggle />
           <NotificationMenu unreadCount={totalUnreadCount} />
           <Link
             href={ROUTES.app.profile}

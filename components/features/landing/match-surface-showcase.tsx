@@ -144,7 +144,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
       className={cn("w-full select-none", className)}
       aria-label="Example product view: verified clinician with complementarity score and recommended engineer match"
     >
-      <div className="shadow-match-surface match-surface-panel relative overflow-hidden rounded-2xl border border-white/[0.09] ring-1 ring-white/[0.04] ring-inset">
+      <div className="shadow-match-surface match-surface-panel relative overflow-hidden rounded-2xl border border-white/10 ring-1 ring-white/[0.04] ring-inset">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         <div className="pointer-events-none absolute inset-x-6 top-0 h-24 bg-gradient-to-b from-white/[0.03] to-transparent" />
 
@@ -167,7 +167,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
         </div>
 
         {/* Zone B — Compatibility bridge */}
-        <div className="relative border-t border-white/[0.06] px-7 py-6">
+        <div className="relative border-t border-white/10 px-7 py-6">
           <div
             className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
             aria-hidden
@@ -182,7 +182,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
             <span className="mb-1 font-heading text-xl font-bold text-teal/80">%</span>
           </div>
           <div
-            className="mt-3.5 h-1 overflow-hidden rounded-full bg-white/[0.05] ring-1 ring-white/[0.04] ring-inset"
+            className="mt-3.5 h-1 overflow-hidden rounded-full bg-white/[0.06] ring-1 ring-white/[0.04] ring-inset"
             aria-hidden
           >
             <div
@@ -193,12 +193,12 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
         </div>
 
         {/* Zone C — Complement reveal */}
-        <div className="relative border-t border-white/[0.06] bg-white/[0.015] px-6 py-6 sm:px-7">
+        <div className="relative border-t border-white/10 bg-white/[0.015] px-6 py-6 sm:px-7">
           <div
             className="pointer-events-none absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.05] to-transparent"
             aria-hidden
           />
-          <p className="text-xs font-medium tracking-[0.16em] text-white/40 uppercase">
+          <p className="text-xs font-medium tracking-[0.16em] text-white/45 uppercase">
             Recommended complement
           </p>
 
@@ -236,7 +236,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
                   : { duration: 0.45, delay: 0.35, ease: [0.25, 0.1, 0.25, 1] }
               }
             >
-              <div className="match-surface-reveal-card flex w-[240px] max-w-none items-center gap-3.5 rounded-xl border border-white/[0.09] bg-ink py-3 pr-4 pl-2.5">
+              <div className="match-surface-reveal-card flex w-[240px] max-w-none items-center gap-3.5 rounded-xl border border-white/10 bg-ink py-3 pr-4 pl-2.5">
                 <div className="overflow-hidden rounded-[10px] ring-1 ring-white/[0.06]">
                   <EditorialPortrait
                     variant="complement"
@@ -260,7 +260,7 @@ export function MatchSurfaceShowcase({ className }: MatchSurfaceShowcaseProps) {
         </div>
       </div>
 
-      <figcaption className="mt-5 text-center text-xs tracking-[0.04em] text-white/40">
+      <figcaption className="mt-5 text-center text-xs tracking-[0.04em] text-muted-foreground">
         Example product view
       </figcaption>
     </figure>

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { LoadingOverlayProvider } from "@/components/providers/loading-overlay-provider";
 import { PwaRegister } from "@/components/providers/pwa-register";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
 
 type AppProvidersProps = {
@@ -11,13 +12,15 @@ type AppProvidersProps = {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <LoadingOverlayProvider>
-          {children}
-          <PwaRegister />
-        </LoadingOverlayProvider>
-      </ToastProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <LoadingOverlayProvider>
+            {children}
+            <PwaRegister />
+          </LoadingOverlayProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

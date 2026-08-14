@@ -159,6 +159,9 @@ async function seedUsers(): Promise<{ created: number; updated: number }> {
         termsAcceptedAt: now,
         onboardingCompleted: true,
         onboardingCompletedAt: now,
+        role: "user",
+        accountStatus: "active",
+        suspendedUntil: null,
         isActive: true,
         emailVerified: true,
         founderRole: founder.founderRole,
@@ -191,6 +194,25 @@ async function seedUsers(): Promise<{ created: number; updated: number }> {
   }
 
   return { created, updated };
+}
+
+async function promoteAdminEmails(): Promise<string[]> {
+  const raw = process.env.ADMIN_EMAILS ?? "";
+  const emails = raw
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (emails.length === 0) {
+    return [];
+  }
+
+  await User.updateMany(
+    { email: { $in: emails } },
+    { $set: { role: "admin" } },
+  );
+
+  return emails;
 }
 
 async function seedRelationships(): Promise<void> {
@@ -445,6 +467,7 @@ async function main(): Promise<void> {
   }
 
   const { created, updated } = await seedUsers();
+  const adminEmails = await promoteAdminEmails();
   await seedRelationships();
   const messageMetrics = await seedMessages();
   await seedDashboardDemo();
@@ -461,6 +484,18 @@ async function main(): Promise<void> {
     reports: metrics.reports,
     elapsedMs: Date.now() - startedAt,
   });
+
+  if (adminEmails.length > 0) {
+    console.log("Admin role granted to:");
+    for (const email of adminEmails) {
+      console.log(`  ${email}`);
+    }
+    console.log("");
+  } else {
+    console.log(
+      "No ADMIN_EMAILS set — add comma-separated emails in .env.local to grant admin.\n",
+    );
+  }
 
   if (messageMetrics.messages === 0 && metrics.messages > 0) {
     console.log("Message threads already present — skipped duplicate seed inserts.");

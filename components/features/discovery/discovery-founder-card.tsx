@@ -49,7 +49,7 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
       className={cn("w-full select-none", className)}
       aria-label={`Founder profile for ${founder.name}`}
     >
-      <div className="shadow-founder-card overflow-hidden rounded-2xl border border-white/[0.12] bg-ink-elevated ring-1 ring-white/[0.06] ring-inset">
+      <div className="shadow-founder-card overflow-hidden rounded-2xl border border-border bg-card ring-1 ring-border ring-inset">
         {profilePhotoSrc ? (
           <div className={cn("relative w-full", DISCOVERY_CARD_PHOTO_ASPECT)}>
             <Image
@@ -71,11 +71,11 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
 
         <div className="space-y-3 px-5 py-4">
           <div className="space-y-1">
-            <h2 className="font-heading text-[1.375rem] leading-tight font-extrabold tracking-tight text-white">
+            <h2 className="font-heading text-[1.375rem] leading-tight font-extrabold tracking-tight text-foreground">
               {founder.name}
             </h2>
             {founder.headline ? (
-              <p className="text-sm leading-snug text-teal/90">
+              <p className="text-sm leading-snug text-teal-text dark:text-teal/90">
                 {founder.headline}
               </p>
             ) : null}
@@ -84,7 +84,7 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
               {founder.verified ? (
                 <VerifiedBadge />
               ) : (
-                <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] font-bold tracking-wide text-white/45 uppercase">
+                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-1 text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
                   Verification pending
                 </span>
               )}
@@ -115,16 +115,16 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
             </div>
           ) : null}
 
-          <p className="line-clamp-2 text-sm leading-snug text-white/65">
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {founder.bio}
           </p>
 
-          <div className="space-y-0.5 border-t border-white/[0.08] pt-3">
-            <p className="text-xs leading-snug text-white/55">
+          <div className="space-y-0.5 border-t border-border pt-3">
+            <p className="text-xs leading-snug text-muted-foreground">
               {founder.location}
             </p>
-            <p className="text-xs leading-snug text-white/70">
-              <span className="text-white/45">Looking for:</span> {lookingFor}
+            <p className="text-xs leading-snug text-muted-foreground">
+              <span className="text-muted-foreground">Looking for:</span> {lookingFor}
             </p>
           </div>
         </div>

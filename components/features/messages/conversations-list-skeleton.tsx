@@ -13,7 +13,7 @@ export function ConversationsListSkeleton({
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="flex items-start gap-3 rounded-2xl border border-white/10 bg-ink-elevated p-4"
+          className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"
         >
           <Skeleton className="size-12 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">

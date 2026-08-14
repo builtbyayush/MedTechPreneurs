@@ -17,17 +17,20 @@
   --color-deep-blue-soft: color-mix(in srgb, #0f2a47 38%, white);
   --color-teal: #00cccc;
   --color-teal-blue: #00cccc;
+  --color-teal-text: var(--splice-teal-text);
   --color-brand-red: #ef4444;
   --color-coral: #ff6b5b;
   --color-bg-light: #f7fafa;
-  /* Landing dark canvas (directional from parent navy, not their purple) */
   --color-ink: #060d18;
   --color-ink-elevated: #0f2a47;
-  /** Scene 4 — sampled from founder-card-reveal.png edge pixels */
   --color-founder-reveal: #010413;
-  /** Scene 3 — sampled from scene-three-assembly-reveal.png edge pixels */
   --color-assembly-reveal: #030913;
   --color-border-dark: rgb(255 255 255 / 0.1);
+  --color-splice-deep-blue: var(--splice-deep-blue);
+  --color-splice-teal: var(--splice-teal);
+  --color-splice-coral: var(--splice-coral);
+  --color-splice-success: var(--splice-success);
+  --color-splice-warning: var(--splice-warning);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,6 +48,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -73,82 +77,99 @@
   --color-teal: #00cccc;
   --color-teal-blue: #00cccc;
   --color-brand-red: #ef4444;
-  --color-coral: #ff6b5b; /* Legacy — prefer teal for primary UI */
+  --color-coral: #ff6b5b;
   --color-bg-light: #f7fafa;
   --color-ink: #060d18;
   --color-ink-elevated: #0f2a47;
-  /** Scene 4 — sampled from founder-card-reveal.png edge pixels */
   --color-founder-reveal: #010413;
-  /** Scene 3 — sampled from scene-three-assembly-reveal.png edge pixels */
   --color-assembly-reveal: #030913;
   --color-border-dark: rgb(255 255 255 / 0.1);
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  /* Splice-specific semantic brand */
+  --splice-deep-blue: #0f2a47;
+  --splice-teal: #00cccc;
+  --splice-teal-text: #0e7c7b;
+  --splice-coral: #ff6b5b;
+  --splice-success: #0e9f6e;
+  --splice-warning: #d97706;
+
+  /* Light theme — clinical, welcoming, not pure white */
+  --background: #f7fafa;
+  --foreground: #0f2a47;
+  --card: #ffffff;
+  --card-foreground: #0f2a47;
+  --popover: #ffffff;
+  --popover-foreground: #0f2a47;
+  --primary: #00cccc;
+  --primary-foreground: #0f2a47;
+  --secondary: #e8f2f2;
+  --secondary-foreground: #0f2a47;
+  --muted: #e8f2f2;
+  --muted-foreground: color-mix(in srgb, #0f2a47 62%, white);
+  --accent: color-mix(in srgb, #00cccc 12%, #f7fafa);
+  --accent-foreground: #0f2a47;
+  --destructive: #ff6b5b;
+  --destructive-foreground: #ffffff;
+  --border: color-mix(in srgb, #0f2a47 12%, #e8f2f2);
+  --input: color-mix(in srgb, #0f2a47 14%, #e8f2f2);
+  --ring: #00cccc;
+  --chart-1: #00cccc;
+  --chart-2: #0e7c7b;
+  --chart-3: #0f2a47;
+  --chart-4: #ff6b5b;
+  --chart-5: #c4a574;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f2a47;
+  --sidebar-primary: #00cccc;
+  --sidebar-primary-foreground: #0f2a47;
+  --sidebar-accent: #e8f2f2;
+  --sidebar-accent-foreground: #0f2a47;
+  --sidebar-border: color-mix(in srgb, #0f2a47 12%, #e8f2f2);
+  --sidebar-ring: #00cccc;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --splice-deep-blue: #0f2a47;
+  --splice-teal: #00cccc;
+  --splice-teal-text: #00cccc;
+  --splice-coral: #ff6b5b;
+  --splice-success: #34d399;
+  --splice-warning: #fbbf24;
+
+  /* Dark theme — preserve current ink / white / teal language */
+  --background: #060d18;
+  --foreground: #ffffff;
+  --card: #0f2a47;
+  --card-foreground: #ffffff;
+  --popover: #0f2a47;
+  --popover-foreground: #ffffff;
+  --primary: #00cccc;
+  --primary-foreground: #060d18;
+  --secondary: color-mix(in srgb, #0f2a47 70%, black);
+  --secondary-foreground: #ffffff;
+  --muted: color-mix(in srgb, #0f2a47 75%, black);
+  --muted-foreground: rgb(255 255 255 / 0.55);
+  --accent: color-mix(in srgb, #0f2a47 80%, black);
+  --accent-foreground: #ffffff;
+  --destructive: #ff6b5b;
+  --destructive-foreground: #ffffff;
+  --border: rgb(255 255 255 / 0.1);
+  --input: rgb(255 255 255 / 0.15);
+  --ring: #00cccc;
+  --chart-1: #00cccc;
+  --chart-2: #0e7c7b;
+  --chart-3: #ffffff;
+  --chart-4: #ff6b5b;
+  --chart-5: #c4a574;
+  --sidebar: #0f2a47;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #00cccc;
+  --sidebar-primary-foreground: #060d18;
+  --sidebar-accent: color-mix(in srgb, #0f2a47 75%, black);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgb(255 255 255 / 0.1);
+  --sidebar-ring: #00cccc;
 }
 
 @layer base {
@@ -183,8 +204,41 @@
   box-shadow: 4px 4px 0 0 rgb(255 255 255 / 0.35);
 }
 
-/* Match Surface — premium panel elevation (Scene 1 showcase) */
+/* Auth / form field chrome — theme-aware */
+.auth-field {
+  border-color: var(--border);
+  background-color: var(--card);
+  color: var(--foreground);
+}
+.auth-field::placeholder {
+  color: var(--muted-foreground);
+}
+.auth-field:focus-visible {
+  border-color: var(--splice-teal);
+  --tw-ring-color: color-mix(in srgb, var(--splice-teal) 30%, transparent);
+}
+.auth-field[aria-invalid="true"] {
+  border-color: var(--splice-coral);
+  --tw-ring-color: color-mix(in srgb, var(--splice-coral) 25%, transparent);
+}
+.dark .auth-field {
+  border-color: rgb(255 255 255 / 0.15);
+  background-color: rgb(255 255 255 / 0.04);
+  color: #ffffff;
+}
+.dark .auth-field::placeholder {
+  color: rgb(255 255 255 / 0.35);
+}
+
+/* Match Surface — premium panel elevation (Scene 1 showcase, dark product island) */
 .shadow-match-surface {
+  box-shadow:
+    0 0 0 1px rgb(15 42 71 / 0.06),
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 16px 40px -16px rgb(15 42 71 / 0.18),
+    0 32px 56px -24px rgb(15 42 71 / 0.12);
+}
+.dark .shadow-match-surface {
   box-shadow:
     0 0 0 1px rgb(255 255 255 / 0.07),
     0 1px 2px rgb(0 0 0 / 0.06),
@@ -195,12 +249,20 @@
 /* Scene 3 assembly hero — premium editorial frame */
 .shadow-assembly-editorial {
   box-shadow:
+    0 0 0 1px rgb(0 204 204 / 0.08),
+    0 0 32px -12px rgb(0 204 204 / 0.1),
+    0 16px 36px -16px rgb(15 42 71 / 0.16),
+    0 6px 16px -8px rgb(15 42 71 / 0.1);
+}
+.dark .shadow-assembly-editorial {
+  box-shadow:
     0 0 0 1px rgb(0 204 204 / 0.07),
     0 0 48px -12px rgb(0 204 204 / 0.08),
     0 20px 44px -16px rgb(0 0 0 / 0.5),
     0 8px 20px -10px rgb(0 0 0 / 0.35);
 }
 
+/* Product island panels stay dark in both themes (device-style showcase) */
 .match-surface-panel {
   background:
     linear-gradient(
@@ -218,8 +280,15 @@
     0 4px 12px -4px rgb(0 0 0 / 0.35);
 }
 
-/* Founder Card elevation — soft layered depth, not brutalist */
+/* Founder Card elevation — soft layered depth */
 .shadow-founder-card {
+  box-shadow:
+    0 0 0 1px rgb(15 42 71 / 0.06),
+    0 2px 4px rgb(15 42 71 / 0.04),
+    0 12px 28px -8px rgb(15 42 71 / 0.12),
+    0 20px 40px -16px rgb(15 42 71 / 0.08);
+}
+.dark .shadow-founder-card {
   box-shadow:
     0 0 0 1px rgb(255 255 255 / 0.05),
     0 2px 4px rgb(0 0 0 / 0.12),
@@ -227,8 +296,12 @@
     0 24px 56px -16px rgb(0 0 0 / 0.35);
 }
 
-/* Scene 4 product reveal — dark glass Founder Card */
+/* App cards — light elevated surface / dark glass */
 .founder-card-glass {
+  background: #ffffff;
+  backdrop-filter: none;
+}
+.dark .founder-card-glass {
   background:
     linear-gradient(
       168deg,
@@ -240,6 +313,13 @@
 }
 
 .shadow-founder-card-reveal {
+  box-shadow:
+    0 0 0 1px rgb(15 42 71 / 0.08),
+    0 0 32px -10px rgb(0 204 204 / 0.12),
+    0 16px 36px -14px rgb(15 42 71 / 0.18),
+    0 28px 52px -20px rgb(15 42 71 / 0.12);
+}
+.dark .shadow-founder-card-reveal {
   box-shadow:
     0 0 0 1px rgb(255 255 255 / 0.07),
     0 0 40px -10px rgb(0 204 204 / 0.1),
@@ -254,6 +334,14 @@
 .founder-card-hero-glow {
   background: radial-gradient(
     ellipse 68% 58% at 50% 48%,
+    rgb(0 204 204 / 0.1) 0%,
+    rgb(0 204 204 / 0.04) 40%,
+    transparent 70%
+  );
+}
+.dark .founder-card-hero-glow {
+  background: radial-gradient(
+    ellipse 68% 58% at 50% 48%,
     rgb(0 204 204 / 0.06) 0%,
     rgb(0 204 204 / 0.02) 40%,
     transparent 70%
@@ -261,10 +349,13 @@
 }
 
 .founder-card-float {
+  filter: drop-shadow(0 24px 48px rgb(15 42 71 / 0.12));
+}
+.dark .founder-card-float {
   filter: drop-shadow(0 24px 48px rgb(0 0 0 / 0.12));
 }
 
-/** Feather JPEG edges into the matched Scene 4 canvas */
+/** Feather JPEG edges into the matched Scene 4 canvas (product island — fixed dark) */
 .founder-card-reveal-blend {
   background-color: var(--color-founder-reveal);
 }
@@ -310,6 +401,14 @@
 .founder-card-swipe-mask {
   background: linear-gradient(
     to top,
+    rgb(247 250 250 / 0.98) 0%,
+    rgb(247 250 250 / 0.92) 42%,
+    transparent 100%
+  );
+}
+.dark .founder-card-swipe-mask {
+  background: linear-gradient(
+    to top,
     rgb(8 14 22 / 0.98) 0%,
     rgb(8 14 22 / 0.92) 42%,
     transparent 100%
@@ -318,11 +417,23 @@
 
 @media (max-width: 1023px) {
   .founder-card-float {
+    filter: drop-shadow(0 16px 32px rgb(15 42 71 / 0.1));
+  }
+  .dark .founder-card-float {
     filter: drop-shadow(0 16px 32px rgb(0 0 0 / 0.1));
   }
 }
 
 .landing-noise {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgb(15 42 71 / 0.015) 10px,
+    rgb(15 42 71 / 0.015) 11px
+  );
+}
+.dark .landing-noise {
   background-image: repeating-linear-gradient(
     45deg,
     transparent,
@@ -334,7 +445,25 @@
 
 .landing-kicker-glow {
   text-shadow:
+    0 0 10px color-mix(in srgb, var(--color-teal) 45%, transparent),
+    0 0 24px color-mix(in srgb, var(--color-teal) 25%, transparent);
+}
+.dark .landing-kicker-glow {
+  text-shadow:
     0 0 10px color-mix(in srgb, var(--color-teal) 75%, transparent),
     0 0 24px color-mix(in srgb, var(--color-teal) 45%, transparent),
     0 0 48px color-mix(in srgb, var(--color-teal) 25%, transparent);
+}
+
+/* Soft teal wash for light landing hero */
+.landing-hero-wash {
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    color-mix(in srgb, var(--splice-teal) 14%, transparent) 0%,
+    color-mix(in srgb, var(--splice-teal) 5%, transparent) 40%,
+    transparent 70%
+  );
+}
+.dark .landing-hero-wash {
+  background: transparent;
 }

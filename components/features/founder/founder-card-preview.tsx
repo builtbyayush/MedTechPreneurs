@@ -34,7 +34,7 @@ export function FounderCardPreview({
       className={cn("w-full cursor-default select-none", className)}
       aria-label={`Example founder profile for ${name}`}
     >
-      <div className="shadow-founder-card overflow-hidden rounded-2xl border border-white/[0.12] bg-ink-elevated ring-1 ring-white/[0.06] ring-inset">
+      <div className="shadow-founder-card overflow-hidden rounded-2xl border border-border bg-card ring-1 ring-border ring-inset">
         <ProfilePhotoPlaceholder
           alt={`Profile photo placeholder for ${name}`}
           className="rounded-none"
@@ -42,7 +42,7 @@ export function FounderCardPreview({
 
         <div className="space-y-5 p-6 pt-5">
           <div className="space-y-3">
-            <h2 className="font-heading text-[1.375rem] leading-tight font-extrabold tracking-tight text-white">
+            <h2 className="font-heading text-[1.375rem] leading-tight font-extrabold tracking-tight text-foreground">
               {name}
             </h2>
             <div className="flex flex-wrap items-center gap-2">
@@ -59,19 +59,19 @@ export function FounderCardPreview({
             ))}
           </div>
 
-          <div className="space-y-1 border-t border-white/[0.08] pt-4">
-            <p className="text-xs leading-relaxed text-white/55">{location}</p>
-            <p className="text-xs leading-relaxed text-white/70">
-              <span className="text-white/45">Looking for:</span>{" "}
+          <div className="space-y-1 border-t border-border pt-4">
+            <p className="text-xs leading-relaxed text-muted-foreground">{location}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              <span className="text-muted-foreground">Looking for:</span>{" "}
               {lookingFor.join(", ")}
             </p>
           </div>
 
           <div
-            className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3"
+            className="flex items-center justify-between rounded-lg border border-border bg-muted px-4 py-3"
             aria-hidden
           >
-            <span className="text-xs font-medium tracking-wide text-white/35 uppercase">
+            <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Pass
             </span>
             <span className="font-heading text-xs font-bold tracking-wide text-coral/75 uppercase">
@@ -82,7 +82,7 @@ export function FounderCardPreview({
       </div>
 
       {exampleCaption ? (
-        <figcaption className="mt-4 text-center text-[11px] tracking-wide text-white/35">
+        <figcaption className="mt-4 text-center text-[11px] tracking-wide text-muted-foreground">
           Example profile
         </figcaption>
       ) : null}

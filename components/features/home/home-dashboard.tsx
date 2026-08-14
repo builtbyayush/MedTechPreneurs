@@ -82,7 +82,7 @@ function formatMatchDate(isoDate: string): string {
 function AnimatedPercent({ value }: { value: number }) {
   return (
     <motion.span
-      className="font-heading text-3xl font-black tabular-nums tracking-tight text-white"
+      className="font-heading text-3xl font-black tabular-nums tracking-tight text-foreground"
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -146,11 +146,11 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
         </p>
         <h1
           id="home-greeting"
-          className="mt-2 font-heading text-3xl font-extrabold tracking-tight text-white sm:text-4xl"
+          className="mt-2 font-heading text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl"
         >
           {welcome.firstName}
         </h1>
-        <p className="mt-2 text-sm leading-relaxed text-white/60">
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {welcome.founderRoleLabel} · {startupLabel}
         </p>
       </motion.section>
@@ -166,7 +166,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
           title="Profile completion"
           description="Stronger profiles unlock better matches"
         />
-        <div className="founder-card-glass rounded-2xl border border-white/10 p-5 shadow-founder-card">
+        <div className="founder-card-glass rounded-2xl border border-border p-5 shadow-founder-card">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal">
@@ -178,7 +178,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
                   %
                 </span>
               </div>
-              <p className="mt-1 text-sm text-white/55">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {profileCompletion.completedCount} of {profileCompletion.totalCount}{" "}
                 essentials complete
               </p>
@@ -197,7 +197,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
           </div>
 
           <div
-            className="mt-4 h-2 overflow-hidden rounded-full bg-white/[0.06]"
+            className="mt-4 h-2 overflow-hidden rounded-full bg-muted"
             role="progressbar"
             aria-valuenow={profileCompletion.percent}
             aria-valuemin={0}
@@ -213,9 +213,9 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
           </div>
 
           {profileCompletion.missingItems.length > 0 ? (
-            <p className="mt-4 text-sm text-white/55">
+            <p className="mt-4 text-sm text-muted-foreground">
               Missing:{" "}
-              <span className="text-white/75">
+              <span className="text-muted-foreground">
                 {profileCompletion.missingItems.join(", ")}
               </span>
             </p>
@@ -238,11 +238,11 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
           title="Compatibility insights"
           description="Based on your founder profile"
         />
-        <div className="founder-card-glass rounded-2xl border border-white/10 p-5 shadow-founder-card">
-          <p className="font-heading text-lg font-bold text-white">
+        <div className="founder-card-glass rounded-2xl border border-border p-5 shadow-founder-card">
+          <p className="font-heading text-lg font-bold text-foreground">
             {compatibilityInsight.headline}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-white/60">
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {compatibilityInsight.detail}
           </p>
           {compatibilityInsight.topScore !== undefined ? (
@@ -301,7 +301,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
                   href={ROUTES.app.messages}
                   className={cn(
                     buttonVariants({ variant: "outline", size: "sm" }),
-                    "border-white/15 bg-white/[0.03] text-white hover:bg-white/[0.06]",
+                    "border-border bg-muted text-foreground hover:bg-muted",
                   )}
                 >
                   Open messages
@@ -398,15 +398,15 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
               >
                 <Link
                   href={action.href}
-                  className="founder-card-glass block h-full rounded-2xl border border-white/10 p-4 shadow-founder-card transition-colors hover:bg-white/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                  className="founder-card-glass block h-full rounded-2xl border border-border p-4 shadow-founder-card transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
                 >
                   <div className="mb-3 inline-flex size-9 items-center justify-center rounded-xl border border-teal/20 bg-teal/10 text-teal">
                     <Icon className="size-4" aria-hidden />
                   </div>
-                  <p className="font-heading text-sm font-bold text-white">
+                  <p className="font-heading text-sm font-bold text-foreground">
                     {action.label}
                   </p>
-                  <p className="mt-1 text-xs leading-relaxed text-white/55">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {action.description}
                   </p>
                 </Link>
@@ -468,7 +468,7 @@ function RecentMatchRow({
       animate="visible"
       variants={fadeUp}
       transition={fadeUpTransition(reducedMotion, 0.04 * index)}
-      className="founder-card-glass rounded-2xl border border-white/10 p-4 shadow-founder-card"
+      className="founder-card-glass rounded-2xl border border-border p-4 shadow-founder-card"
     >
       <div className="flex items-start gap-3">
         <Avatar
@@ -480,7 +480,7 @@ function RecentMatchRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="truncate font-heading text-base font-extrabold text-white">
+              <h3 className="truncate font-heading text-base font-extrabold text-foreground">
                 {match.partner.name}
               </h3>
               <p className="text-xs text-teal/85">{match.partner.founderRoleLabel}</p>
@@ -490,7 +490,7 @@ function RecentMatchRow({
                 {match.compatibilityScore}%
               </p>
               <time
-                className="text-[11px] text-white/45"
+                className="text-[11px] text-muted-foreground"
                 dateTime={match.matchedAt}
               >
                 {formatMatchDate(match.matchedAt)}
@@ -501,7 +501,7 @@ function RecentMatchRow({
             href={chatHref}
             className={cn(
               buttonVariants({ size: "sm" }),
-              "mt-3 inline-flex items-center gap-1.5 border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08]",
+              "mt-3 inline-flex items-center gap-1.5 border-border bg-muted text-foreground hover:bg-muted",
             )}
           >
             Open chat
@@ -531,7 +531,7 @@ function UnreadMessageRow({
     >
       <Link
         href={conversationRoute(message.conversationId)}
-        className="founder-card-glass block rounded-2xl border border-white/10 p-4 shadow-founder-card transition-colors hover:bg-white/[0.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+        className="founder-card-glass block rounded-2xl border border-border p-4 shadow-founder-card transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
       >
         <div className="flex items-start gap-3">
           <Avatar
@@ -542,14 +542,14 @@ function UnreadMessageRow({
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="truncate font-heading text-base font-extrabold text-white">
+              <h3 className="truncate font-heading text-base font-extrabold text-foreground">
                 {message.partner.name}
               </h3>
               <span className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full bg-teal px-1.5 py-0.5 text-[10px] font-bold text-ink">
                 {message.unreadCount > 99 ? "99+" : message.unreadCount}
               </span>
             </div>
-            <p className="mt-1 line-clamp-2 text-sm text-white/60">
+            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
               {message.lastMessage}
             </p>
             <p className="mt-2 text-xs font-medium text-teal/85">
@@ -577,7 +577,7 @@ function SuggestedFounderRow({
       animate="visible"
       variants={fadeUp}
       transition={fadeUpTransition(reducedMotion, 0.04 * index)}
-      className="founder-card-glass rounded-2xl border border-white/10 p-4 shadow-founder-card"
+      className="founder-card-glass rounded-2xl border border-border p-4 shadow-founder-card"
     >
       <div className="flex items-start gap-3">
         <Avatar
@@ -589,12 +589,12 @@ function SuggestedFounderRow({
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="truncate font-heading text-base font-extrabold text-white">
+              <h3 className="truncate font-heading text-base font-extrabold text-foreground">
                 {founder.name}
               </h3>
               <p className="text-xs text-teal/85">{founder.founderRoleLabel}</p>
               {founder.headline ? (
-                <p className="mt-1 line-clamp-2 text-sm text-white/60">
+                <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
                   {founder.headline}
                 </p>
               ) : null}
@@ -634,7 +634,7 @@ function ActivityRow({
 }) {
   const reducedMotion = usePrefersReducedMotion();
   const content = (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted p-3">
       <div className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-teal/20 bg-teal/10 text-teal">
         {createElement(ACTIVITY_ICONS[item.type] ?? Sparkles, {
           className: "size-4",
@@ -642,13 +642,13 @@ function ActivityRow({
         })}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-white">{item.message}</p>
-        <time className="text-xs text-white/45" dateTime={item.occurredAt}>
+        <p className="text-sm font-medium text-foreground">{item.message}</p>
+        <time className="text-xs text-muted-foreground" dateTime={item.occurredAt}>
           {formatRelativeTime(item.occurredAt)}
         </time>
       </div>
       {item.href ? (
-        <ArrowRight className="size-4 shrink-0 text-white/35" aria-hidden />
+        <ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
       ) : null}
     </div>
   );
@@ -663,7 +663,7 @@ function ActivityRow({
       {item.href ? (
         <Link
           href={item.href}
-          className="block transition-colors hover:bg-white/[0.02] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal rounded-2xl"
+          className="block transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal rounded-2xl"
         >
           {content}
         </Link>
@@ -678,14 +678,14 @@ export function HomeDashboardSkeleton() {
   return (
     <PageContainer className="mx-auto max-w-2xl space-y-8 pb-10">
       <div className="space-y-3">
-        <div className="h-3 w-24 animate-pulse rounded bg-white/10" />
-        <div className="h-9 w-48 animate-pulse rounded-lg bg-white/10" />
-        <div className="h-4 w-full max-w-sm animate-pulse rounded bg-white/10" />
+        <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+        <div className="h-9 w-48 animate-pulse rounded-lg bg-muted" />
+        <div className="h-4 w-full max-w-sm animate-pulse rounded bg-muted" />
       </div>
       {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className="space-y-3">
-          <div className="h-5 w-40 animate-pulse rounded bg-white/10" />
-          <div className="h-32 animate-pulse rounded-2xl border border-white/10 bg-white/[0.03]" />
+          <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+          <div className="h-32 animate-pulse rounded-2xl border border-border bg-muted" />
         </div>
       ))}
     </PageContainer>

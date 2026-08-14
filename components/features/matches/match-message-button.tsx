@@ -35,7 +35,7 @@ export function MatchMessageButton({
         fullWidth && "w-full",
         conversationId
           ? "bg-teal text-ink hover:bg-teal/90"
-          : "border-white/15 bg-white/[0.04] text-white hover:bg-white/[0.08]",
+          : "border-border bg-muted text-foreground hover:bg-muted",
         className,
       )}
     >

@@ -188,7 +188,7 @@ export function RegisterForm() {
                   })
                 }
                 aria-invalid={!!form.formState.errors.acceptTerms}
-                className="mt-0.5 border-white/20 data-checked:border-teal data-checked:bg-teal data-checked:text-ink"
+                className="mt-0.5 border-border data-checked:border-teal data-checked:bg-teal data-checked:text-ink"
               />
               <FieldContent>
                 <FieldLabel
@@ -224,7 +224,7 @@ export function RegisterForm() {
 
         <Button
           type="submit"
-          className="h-11 w-full bg-teal text-base font-extrabold text-ink shadow-brutal-teal hover:bg-[#33d6d6] disabled:opacity-60"
+          className="h-11 w-full bg-teal text-base font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
           disabled={isSubmitting}
           aria-busy={isSubmitting}
         >

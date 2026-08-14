@@ -10,6 +10,7 @@ import {
   LandingCtaLink,
   LandingCtaPrimary,
 } from "@/components/features/landing/landing-cta";
+import { ThemeToggle } from "@/components/features/theme/theme-toggle";
 import { useScrollY } from "@/hooks/use-scroll-y";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,7 @@ export function LandingNav() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-200",
         scrolled
-          ? "border-b border-white/10 bg-ink-elevated/90 shadow-[0_8px_24px_-12px_rgb(0_0_0/0.45)] backdrop-blur-md"
+          ? "border-b border-border bg-background/90 shadow-[0_8px_24px_-12px_rgb(15_42_71/0.12)] backdrop-blur-md dark:border-border dark:bg-card/90 dark:shadow-[0_8px_24px_-12px_rgb(0_0_0/0.45)]"
           : "border-b border-transparent bg-transparent"
       )}
     >
@@ -48,19 +49,20 @@ export function LandingNav() {
               <a
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-3.5 py-2 text-[13px] font-medium tracking-wide text-white/65 transition-colors hover:bg-white/[0.04] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                className="rounded-md px-3.5 py-2 text-[13px] font-medium tracking-wide text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          <span className="mx-3 h-5 w-px bg-white/12" aria-hidden />
+          <span className="mx-3 h-5 w-px bg-border" aria-hidden />
 
-          <div className="flex items-center gap-5 pl-1">
+          <div className="flex items-center gap-3 pl-1">
+            <ThemeToggle />
             <LandingCtaLink
               href="/login"
-              className="px-1 text-[13px] text-white/70 hover:text-white"
+              className="px-1 text-[13px] text-muted-foreground hover:text-foreground"
             >
               Log in
             </LandingCtaLink>
@@ -70,16 +72,19 @@ export function LandingNav() {
           </div>
         </nav>
 
-        <button
-          type="button"
-          className="flex size-11 items-center justify-center rounded-lg text-white/80 transition-colors hover:bg-white/[0.06] md:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="landing-mobile-menu"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="flex size-11 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            aria-expanded={menuOpen}
+            aria-controls="landing-mobile-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {menuOpen ? (
@@ -88,7 +93,7 @@ export function LandingNav() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2 }}
-          className="border-b border-white/10 bg-ink-elevated px-5 py-5 md:hidden"
+          className="border-b border-border bg-card px-5 py-5 md:hidden"
           aria-label="Mobile navigation"
         >
           <ul className="flex flex-col gap-1">
@@ -96,18 +101,18 @@ export function LandingNav() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className="block rounded-md px-3 py-2.5 text-base text-white/75 hover:bg-white/[0.04] hover:text-white"
+                  className="block rounded-md px-3 py-2.5 text-base text-muted-foreground hover:bg-muted hover:text-foreground"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
                 </a>
               </li>
             ))}
-            <li className="my-2 h-px bg-white/10" aria-hidden />
+            <li className="my-2 h-px bg-border" aria-hidden />
             <li>
               <Link
                 href="/login"
-                className="block rounded-md px-3 py-2.5 text-base text-white/75 hover:text-white"
+                className="block rounded-md px-3 py-2.5 text-base text-muted-foreground hover:text-foreground"
                 onClick={() => setMenuOpen(false)}
               >
                 Log in

@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
 import {
+  AccountAccessError,
+  assertActiveAccount,
+} from "@/lib/auth/account";
+import {
   getFounderProfile,
   updateFounderProfile,
 } from "@/lib/profile/queries";
@@ -39,6 +43,8 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    await assertActiveAccount(session.user.id);
+
     const body = await request.json();
     const parsed = profileUpdateSchema.safeParse(body);
 
@@ -57,6 +63,14 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: true, profile });
   } catch (error) {
     console.error("[profile/PATCH]", error);
+
+    if (error instanceof AccountAccessError) {
+      return NextResponse.json(
+        { error: error.message },
+        { status: error.status },
+      );
+    }
+
     return NextResponse.json(
       { error: "Unable to save profile" },
       { status: 500 },

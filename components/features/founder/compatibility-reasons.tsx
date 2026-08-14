@@ -19,8 +19,8 @@ export function CompatibilityReasons({
     <ul
       className={cn(
         compact
-          ? "space-y-1 text-[13px] leading-snug text-white/65"
-          : "space-y-1.5 text-sm leading-relaxed text-white/65",
+          ? "space-y-1 text-[13px] leading-snug text-muted-foreground"
+          : "space-y-1.5 text-sm leading-relaxed text-muted-foreground",
         className,
       )}
       aria-label="Top compatibility reasons"

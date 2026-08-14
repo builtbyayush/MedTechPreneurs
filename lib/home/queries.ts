@@ -8,6 +8,7 @@ import {
   toCompatibilityProfile,
 } from "@/lib/compatibility";
 import { connectDB } from "@/lib/db";
+import { getBlockedRelationshipUserIds } from "@/lib/blocks/queries";
 import {
   buildEligibleFounderFilter,
   getExcludedTargetIds,
@@ -45,6 +46,7 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
     viewer,
     matchedUserIds,
     excludedTargetIds,
+    blockedUserIds,
     recentMatches,
     recentActions,
     conversations,
@@ -56,6 +58,7 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
       .lean(),
     getActiveMatchedUserIds(userId),
     getExcludedTargetIds(userId),
+    getBlockedRelationshipUserIds(userId),
     Match.find({
       status: "matched",
       $or: [{ userA: viewerObjectId }, { userB: viewerObjectId }],
@@ -98,16 +101,31 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
     throw new Error("User not found");
   }
 
-  const matchPartnerIds = recentMatches.map((match) =>
+  const blockedPartnerIds = new Set(blockedUserIds);
+
+  const visibleRecentMatches = recentMatches.filter(
+    (match) => !blockedPartnerIds.has(getMatchPartnerId(match, userId)),
+  );
+  const visibleConversations = conversations.filter((conversation) => {
+    const partnerId = getConversationPartnerId(conversation, userId);
+    return !blockedPartnerIds.has(partnerId);
+  });
+  const visibleRecentActions = recentActions.filter(
+    (action) => !blockedPartnerIds.has(action.targetUserId.toString()),
+  );
+
+  const matchPartnerIds = visibleRecentMatches.map((match) =>
     getMatchPartnerId(match, userId),
   );
-  const conversationIds = conversations.map((conversation) => conversation._id);
-  const matchIds = recentMatches.map((match) => match._id);
-  const conversationPartnerIds = conversations.map((conversation) =>
+  const conversationIds = visibleConversations.map(
+    (conversation) => conversation._id,
+  );
+  const matchIds = visibleRecentMatches.map((match) => match._id);
+  const conversationPartnerIds = visibleConversations.map((conversation) =>
     getConversationPartnerId(conversation, userId),
   );
 
-  const connectActions = recentActions.filter(
+  const connectActions = visibleRecentActions.filter(
     (action) => action.action === "connect",
   );
   const connectTargetIds = connectActions.map((action) =>
@@ -199,7 +217,7 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
     conversationPartners.map((partner) => [partner._id.toString(), partner]),
   );
 
-  const recentMatchesData = recentMatches.flatMap((match) => {
+  const recentMatchesData = visibleRecentMatches.flatMap((match) => {
     const partnerId = getMatchPartnerId(match, userId);
     const partner = partnerMap.get(partnerId);
 
@@ -233,7 +251,7 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
     ];
   });
 
-  const unreadMessages = conversations
+  const unreadMessages = visibleConversations
     .flatMap((conversation) => {
       const unreadCount = unreadMap.get(conversation._id.toString()) ?? 0;
 
@@ -305,7 +323,7 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
   const matchedPartnerIdSet = new Set(matchedUserIds);
   const activityEvents: HomeActivityItem[] = [];
 
-  for (const match of recentMatches.slice(0, 5)) {
+  for (const match of visibleRecentMatches.slice(0, 5)) {
     const partnerId = getMatchPartnerId(match, userId);
     const partner = partnerMap.get(partnerId);
 
