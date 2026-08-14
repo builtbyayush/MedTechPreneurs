@@ -12,8 +12,16 @@ export default auth((request) => {
   const { pathname } = request.nextUrl;
 
   if (isPublicRoute(pathname)) {
+    // Logged-in users hitting marketing/auth entry points go to the app —
+    // except when recovering a bad session (logout already cleared, or
+    // login/register was opened with an explicit error from recovery).
+    const isAuthRecovery =
+      (pathname === ROUTES.login || pathname === ROUTES.register) &&
+      request.nextUrl.searchParams.has("error");
+
     if (
       isLoggedIn &&
+      !isAuthRecovery &&
       (pathname === ROUTES.home ||
         pathname === ROUTES.login ||
         pathname === ROUTES.register)

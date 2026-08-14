@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { AppShell } from "@/components/features/app/app-shell";
 import AppLoading from "@/app/(app)/loading";
 import { ROUTES } from "@/constants/routes";
@@ -22,14 +22,16 @@ type OnboardingStatus = NonNullable<
 
 const LAYOUT_DB_BUDGET_MS = 12_000;
 
-function isNextRedirect(error: unknown): boolean {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "digest" in error &&
-    typeof (error as { digest: unknown }).digest === "string" &&
-    (error as { digest: string }).digest.startsWith("NEXT_REDIRECT")
-  );
+/**
+ * Clear the session via /logout, then land on a public page.
+ *
+ * NEVER send a still-authenticated browser to /login or /register directly —
+ * middleware redirects logged-in users from those routes back to /home and
+ * creates an infinite reload loop (see Network: register 307 → home canceled).
+ */
+function recoverSession(reason: string): never {
+  const to = `${ROUTES.login}?error=${encodeURIComponent(reason)}`;
+  redirect(`${ROUTES.logout}?to=${encodeURIComponent(to)}`);
 }
 
 async function withTimeout<T>(
@@ -55,23 +57,12 @@ async function withTimeout<T>(
   }
 }
 
-/** signOut({ redirectTo }) throws a redirect — treat other failures as soft clears. */
-async function signOutTo(redirectTo: string): Promise<never> {
-  try {
-    await signOut({ redirectTo });
-  } catch (error) {
-    if (isNextRedirect(error)) {
-      throw error;
-    }
-    console.error("[app-layout] signOut failed; forcing redirect", error);
-  }
-  redirect(redirectTo);
-}
-
 async function AppLayoutContent({ children }: AppLayoutProps) {
   const session = await auth();
 
   if (!session?.user?.id) {
+    // Unauthenticated on an app route — go to login (middleware usually
+    // handles this first; this is a safe fallback).
     redirect(ROUTES.login);
   }
 
@@ -100,19 +91,20 @@ async function AppLayoutContent({ children }: AppLayoutProps) {
     profilePhotoUrl = photoResult ?? null;
   } catch (error) {
     console.error("[app-layout] bootstrap failed", error);
-    return signOutTo(`${ROUTES.login}?error=session_recovery`);
+    recoverSession("session_recovery");
   }
 
+  // Stale JWT / deleted account — must clear cookie via /logout (not /register).
   if (!access) {
-    return signOutTo(ROUTES.register);
+    recoverSession("stale_session");
   }
 
   if (!access.allowed) {
-    return signOutTo(`${ROUTES.login}?error=account_restricted`);
+    recoverSession("account_restricted");
   }
 
   if (!onboarding) {
-    return signOutTo(ROUTES.register);
+    recoverSession("stale_session");
   }
 
   if (!onboarding.onboardingCompleted) {

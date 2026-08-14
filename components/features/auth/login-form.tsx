@@ -36,8 +36,20 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
+  const recoveryError = searchParams.get("error");
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    if (recoveryError === "account_restricted") {
+      return "This account is restricted. Contact support if you believe this is a mistake.";
+    }
+    if (
+      recoveryError === "stale_session" ||
+      recoveryError === "session_recovery"
+    ) {
+      return "Your session expired or is no longer valid. Please sign in again.";
+    }
+    return null;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<LoginValues>({
