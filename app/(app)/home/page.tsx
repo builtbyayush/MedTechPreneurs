@@ -16,7 +16,11 @@ export default async function AppHomePage() {
     redirect(ROUTES.login);
   }
 
-  const data = await getHomeDashboard(session.user.id);
-
-  return <HomeDashboard data={data} />;
+  try {
+    const data = await getHomeDashboard(session.user.id);
+    return <HomeDashboard data={data} />;
+  } catch (error) {
+    console.error("[home] getHomeDashboard failed", error);
+    throw error;
+  }
 }

@@ -2,8 +2,6 @@
 
 import { useEffect } from "react";
 
-import Link from "next/link";
-
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
@@ -28,19 +26,24 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           We hit an unexpected error
         </h1>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
-          Try again. If the problem continues, check your connection, clear site
-          data if assets look stale, or return home.
+          Try again. If the problem continues, return home — that clears a stuck
+          session so you are not looped back into the error.
         </p>
+        {error.digest ? (
+          <p className="text-[11px] text-muted-foreground/80">
+            Ref: {error.digest}
+          </p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button onClick={reset}>Try again</Button>
-        <Link
-          href={ROUTES.home}
+        <a
+          href={`${ROUTES.logout}?to=${encodeURIComponent(ROUTES.home)}`}
           className={cn(buttonVariants({ variant: "outline" }))}
         >
           Back home
-        </Link>
+        </a>
       </div>
     </main>
   );
