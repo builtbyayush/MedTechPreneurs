@@ -20,3 +20,13 @@ export const PROFILE_PHOTO_UPLOAD = {
     "image/heif",
   ] as const,
 } as const;
+
+/** Profile editor and placeholder use 3:4 portrait framing. */
+export const PROFILE_PHOTO_CROP = {
+  aspect: 3 / 4,
+  outputWidth: 600,
+  outputHeight: 800,
+  minZoom: 1,
+  maxZoom: 3,
+  defaultZoom: 1,
+} as const;

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 
 import {
@@ -9,8 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { EMAIL_VERIFICATION } from "@/config/email";
+import { ROUTES } from "@/constants/routes";
+
+const SESSION_EXPIRED_MESSAGE =
+  "Your session expired. Please sign in again to verify your email.";
 
 type EmailVerificationStepProps = {
+  accountEmail?: string;
   onVerifiedChange: (verified: boolean) => void;
   onError: (message: string | null) => void;
 };
@@ -25,11 +31,17 @@ function maskEmail(email: string): string {
   return `${visible}${"*".repeat(Math.max(local.length - visible.length, 2))}@${domain}`;
 }
 
+function handleUnauthorized(onError: (message: string | null) => void) {
+  onError(SESSION_EXPIRED_MESSAGE);
+}
+
 export function EmailVerificationStep({
+  accountEmail,
   onVerifiedChange,
   onError,
 }: EmailVerificationStepProps) {
-  const [email, setEmail] = useState<string | null>(null);
+  const { status: sessionStatus } = useSession();
+  const [email, setEmail] = useState<string | null>(accountEmail ?? null);
   const [code, setCode] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -39,12 +51,17 @@ export function EmailVerificationStep({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const sendCode = useCallback(async () => {
+    if (sessionStatus !== "authenticated") {
+      return;
+    }
+
     setIsSending(true);
     onError(null);
 
     try {
       const response = await fetch("/api/auth/verify-email", {
         method: "POST",
+        credentials: "include",
       });
 
       const payload = (await response.json().catch(() => null)) as {
@@ -54,6 +71,12 @@ export function EmailVerificationStep({
         message?: string;
         error?: string;
       } | null;
+
+      if (response.status === 401) {
+        handleUnauthorized(onError);
+        setIsSending(false);
+        return;
+      }
 
       if (!response.ok) {
         if (payload?.email) {
@@ -72,7 +95,7 @@ export function EmailVerificationStep({
         return;
       }
 
-      setEmail(payload?.email ?? null);
+      setEmail(payload?.email ?? accountEmail ?? null);
       setCooldownSeconds(payload?.cooldownSeconds ?? 0);
       setDevCode(payload?.devCode ?? null);
       setStatusMessage(
@@ -85,20 +108,42 @@ export function EmailVerificationStep({
     } finally {
       setIsSending(false);
     }
-  }, [onError]);
+  }, [accountEmail, onError, sessionStatus]);
 
   useEffect(() => {
+    if (sessionStatus !== "authenticated") {
+      if (sessionStatus === "unauthenticated") {
+        onError(SESSION_EXPIRED_MESSAGE);
+      }
+      return;
+    }
+
     let cancelled = false;
 
     async function loadStatus() {
+      onError(null);
+
       try {
-        const response = await fetch("/api/auth/verify-email");
+        const response = await fetch("/api/auth/verify-email", {
+          credentials: "include",
+        });
         const payload = (await response.json().catch(() => null)) as {
           emailVerified?: boolean;
           email?: string | null;
+          error?: string;
         } | null;
 
-        if (cancelled || !payload) {
+        if (cancelled) {
+          return;
+        }
+
+        if (response.status === 401) {
+          handleUnauthorized(onError);
+          return;
+        }
+
+        if (!payload) {
+          onError("Unable to load verification status.");
           return;
         }
 
@@ -115,7 +160,9 @@ export function EmailVerificationStep({
 
         void sendCode();
       } catch {
-        onError("Unable to load verification status.");
+        if (!cancelled) {
+          onError("Unable to load verification status.");
+        }
       }
     }
 
@@ -124,7 +171,7 @@ export function EmailVerificationStep({
     return () => {
       cancelled = true;
     };
-  }, [onError, onVerifiedChange, sendCode]);
+  }, [onError, onVerifiedChange, sendCode, sessionStatus]);
 
   useEffect(() => {
     if (cooldownSeconds <= 0) {
@@ -139,6 +186,11 @@ export function EmailVerificationStep({
   }, [cooldownSeconds]);
 
   async function handleConfirm() {
+    if (sessionStatus !== "authenticated") {
+      handleUnauthorized(onError);
+      return;
+    }
+
     if (code.length !== EMAIL_VERIFICATION.codeLength) {
       onError(`Enter the ${EMAIL_VERIFICATION.codeLength}-digit code.`);
       return;
@@ -150,6 +202,7 @@ export function EmailVerificationStep({
     try {
       const response = await fetch("/api/auth/verify-email/confirm", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code }),
       });
@@ -157,6 +210,12 @@ export function EmailVerificationStep({
       const payload = (await response.json().catch(() => null)) as {
         error?: string;
       } | null;
+
+      if (response.status === 401) {
+        handleUnauthorized(onError);
+        setIsConfirming(false);
+        return;
+      }
 
       if (!response.ok) {
         onError(payload?.error ?? "Incorrect code. Try again.");
@@ -174,6 +233,10 @@ export function EmailVerificationStep({
       setIsConfirming(false);
     }
   }
+
+  const showSessionRecovery =
+    sessionStatus === "unauthenticated" ||
+    (sessionStatus === "authenticated" && !email && !isVerified);
 
   return (
     <div className="founder-card-glass space-y-5 rounded-3xl border border-border p-5 shadow-founder-card sm:p-6">
@@ -195,6 +258,15 @@ export function EmailVerificationStep({
         ) : null}
       </div>
 
+      {showSessionRecovery ? (
+        <p className="text-sm text-muted-foreground">
+          <a href={ROUTES.login} className="font-semibold text-teal hover:underline">
+            Sign in
+          </a>{" "}
+          to continue email verification.
+        </p>
+      ) : null}
+
       {!isVerified ? (
         <>
           <div className="space-y-2">
@@ -214,6 +286,7 @@ export function EmailVerificationStep({
               }}
               placeholder="000000"
               className={authFieldClassName}
+              disabled={sessionStatus !== "authenticated"}
             />
           </div>
 
@@ -221,7 +294,11 @@ export function EmailVerificationStep({
             <Button
               type="button"
               className="h-11 bg-teal font-extrabold text-ink shadow-brutal-teal hover:bg-teal/80 disabled:opacity-60"
-              disabled={isConfirming || code.length !== EMAIL_VERIFICATION.codeLength}
+              disabled={
+                sessionStatus !== "authenticated" ||
+                isConfirming ||
+                code.length !== EMAIL_VERIFICATION.codeLength
+              }
               aria-busy={isConfirming}
               onClick={() => void handleConfirm()}
             >
@@ -232,7 +309,9 @@ export function EmailVerificationStep({
               type="button"
               variant="ghost"
               className="text-muted-foreground hover:bg-muted hover:text-foreground"
-              disabled={isSending || cooldownSeconds > 0}
+              disabled={
+                sessionStatus !== "authenticated" || isSending || cooldownSeconds > 0
+              }
               onClick={() => void sendCode()}
             >
               {isSending

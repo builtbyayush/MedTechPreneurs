@@ -1,5 +1,6 @@
 import { ROUTES } from "@/constants/routes";
 
+/** Static resource data — retained for future Toolkit re-enable (see TOOLKIT_ENABLED). */
 export type ToolkitCategory =
   | "regulatory"
   | "fundraising"

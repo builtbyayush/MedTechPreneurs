@@ -26,11 +26,25 @@ export const authConfig = {
           SESSION_MAX_AGE.default;
         token.exp = Math.floor(Date.now() / 1000) + sessionMaxAge;
       }
+
+      // Preserve identity across refreshes when older tokens only populated `sub`.
+      if (!token.id && typeof token.sub === "string") {
+        token.id = token.sub;
+      }
+
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id;
+      if (session.user) {
+        const userId =
+          (typeof token.id === "string" && token.id) ||
+          (typeof token.sub === "string" && token.sub) ||
+          undefined;
+
+        if (userId) {
+          session.user.id = userId;
+        }
+
         session.user.role = (token.role as UserRole | undefined) ?? "user";
       }
       return session;

@@ -27,7 +27,7 @@ export function SceneFourFounderCard() {
   return (
     <section
       ref={sectionRef}
-      id="founder-card"
+      id="trust"
       aria-labelledby="scene-four-heading"
       className="relative overflow-x-clip overflow-y-visible bg-muted/40 text-foreground dark:bg-background"
     >

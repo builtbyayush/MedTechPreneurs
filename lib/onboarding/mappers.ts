@@ -41,6 +41,17 @@ export function mapLookingForRolesToCategories(
   return [...new Set(roles.map((role) => LOOKING_ROLE_TO_CATEGORY[role]))];
 }
 
+/** Legacy `lookingFor` categories with own-category exclusion (PRD onboarding rule). */
+export function buildLegacyLookingForCategories(
+  lookingForRoles: LookingForRole[],
+  ownFounderRole: FounderRole,
+): UserCategory[] {
+  const ownCategory = mapFounderRoleToCategory(ownFounderRole);
+  const mapped = mapLookingForRolesToCategories(lookingForRoles);
+  const excludingOwn = mapped.filter((category) => category !== ownCategory);
+  return excludingOwn.length > 0 ? excludingOwn : mapped;
+}
+
 export function isValidFounderRole(value: string): value is FounderRole {
   return FOUNDER_ROLES.includes(value as FounderRole);
 }

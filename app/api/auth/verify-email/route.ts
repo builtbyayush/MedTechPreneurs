@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
+import { getSessionUserId } from "@/lib/auth/session-user";
 import {
   getEmailVerificationStatus,
   issueEmailVerificationCode,
 } from "@/lib/email/verification-code";
 
-export async function GET() {
+export const GET = auth(async (request) => {
   try {
-    const session = await auth();
+    const userId = getSessionUserId(request.auth);
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const status = await getEmailVerificationStatus(session.user.id);
+    const status = await getEmailVerificationStatus(userId);
 
     return NextResponse.json(status);
   } catch (error) {
@@ -24,17 +25,17 @@ export async function GET() {
       { status: 500 },
     );
   }
-}
+});
 
-export async function POST() {
+export const POST = auth(async (request) => {
   try {
-    const session = await auth();
+    const userId = getSessionUserId(request.auth);
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const result = await issueEmailVerificationCode(session.user.id);
+    const result = await issueEmailVerificationCode(userId);
 
     if (result.cooldownSeconds > 0 && !result.devCode) {
       return NextResponse.json(
@@ -63,4 +64,4 @@ export async function POST() {
       { status: 500 },
     );
   }
-}
+});

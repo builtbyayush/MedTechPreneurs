@@ -5,7 +5,7 @@ import { CompatibilityScore } from "@/components/features/founder/compatibility-
 import { CompatibilityReasons } from "@/components/features/founder/compatibility-reasons";
 import { ProfilePhotoPlaceholder } from "@/components/features/founder/profile-photo-placeholder";
 import { SkillTag } from "@/components/features/founder/skill-tag";
-import { VerifiedBadge } from "@/components/features/founder/verified-badge";
+import { EmailVerifiedBadge } from "@/components/features/founder/verified-badge";
 import { DISCOVERY_CARD_PHOTO_ASPECT } from "@/constants/discovery";
 import { resolveProfilePhotoSrc } from "@/lib/cloudinary/profile-photo";
 import {
@@ -81,13 +81,7 @@ export const DiscoveryFounderCard = memo(function DiscoveryFounderCard({
             ) : null}
             <div className="flex flex-wrap items-center gap-1.5">
               <SkillTag label={FOUNDER_ROLE_LABELS[founder.founderRole]} />
-              {founder.verified ? (
-                <VerifiedBadge />
-              ) : (
-                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-1 text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
-                  Verification pending
-                </span>
-              )}
+              {founder.verified ? <EmailVerifiedBadge /> : null}
             </div>
           </div>
 

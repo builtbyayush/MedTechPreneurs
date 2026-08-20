@@ -7,7 +7,21 @@ import type {
 
 export type DiscoveryActionType = "pass" | "connect";
 
-export type DiscoveryFeedStatus = "founder" | "empty" | "no-more";
+export type DiscoveryFeedStatus =
+  | "founder"
+  | "empty"
+  | "no-more"
+  | "no-results";
+
+export type DiscoveryProfessionOption = {
+  value: import("@/types/onboarding").FounderRole;
+  label: string;
+};
+
+export type DiscoveryAppliedFilters = {
+  query?: string;
+  professions: import("@/types/onboarding").FounderRole[];
+};
 
 export type DiscoveryFounder = {
   id: string;
@@ -26,6 +40,7 @@ export type DiscoveryFounder = {
   compatibilityScore: number;
   compatibilityReasons: string[];
   compatibilityExplanation: string;
+  /** Email verified — the current MVP trust signal. */
   verified: boolean;
 };
 
@@ -34,6 +49,9 @@ export type DiscoveryFeedResponse = {
   founder?: DiscoveryFounder;
   remainingCount?: number;
   passedCount?: number;
+  filtersApplied?: boolean;
+  appliedFilters?: DiscoveryAppliedFilters;
+  professionOptions?: DiscoveryProfessionOption[];
 };
 
 export type DiscoveryActionResponse = {

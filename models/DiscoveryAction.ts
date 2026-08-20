@@ -35,6 +35,8 @@ DiscoveryActionSchema.index(
   { unique: true },
 );
 
+DiscoveryActionSchema.index({ viewerId: 1, action: 1 });
+
 export type DiscoveryActionDocument = InferSchemaType<
   typeof DiscoveryActionSchema
 > & {

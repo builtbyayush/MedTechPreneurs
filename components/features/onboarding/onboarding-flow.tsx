@@ -60,11 +60,13 @@ const STEP = {
 
 type OnboardingFlowProps = {
   userName?: string | null;
+  accountEmail?: string;
   initialEmailVerified?: boolean;
 };
 
 export function OnboardingFlow({
   userName,
+  accountEmail,
   initialEmailVerified = false,
 }: OnboardingFlowProps) {
   const router = useRouter();
@@ -395,6 +397,7 @@ export function OnboardingFlow({
           >
             {step === STEP.verifyEmail ? (
               <EmailVerificationStep
+                accountEmail={accountEmail}
                 onVerifiedChange={setEmailVerified}
                 onError={setError}
               />

@@ -1,15 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Compass, RefreshCw, Users } from "lucide-react";
+import { Compass, RefreshCw, RotateCcw, Search, Users } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PageContainer } from "@/components/features/app/page-container";
 import { SectionHeader } from "@/components/features/app/section-header";
 import { DiscoveryCardSkeleton } from "@/components/features/discovery/discovery-card-skeleton";
 import { DiscoveryEmptyState } from "@/components/features/discovery/discovery-empty-state";
-import { DiscoverySearch } from "@/components/features/discovery/discovery-search";
-import { DISCOVERY_SEARCH_ENABLED } from "@/constants/discovery";
+import { DiscoveryFilterOverlay } from "@/components/features/discovery/discovery-filter-overlay";
+import { DiscoveryResetDialog } from "@/components/features/discovery/discovery-reset-dialog";
+import { DiscoverySearchTrigger } from "@/components/features/discovery/discovery-search-trigger";
 import { DiscoverySwipeStack } from "@/components/features/discovery/discovery-swipe-stack";
 import type { SwipeAction } from "@/components/features/discovery/discovery-swipe-card";
 import {
@@ -21,13 +22,48 @@ import { useToast } from "@/hooks/use-toast";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import { springPress } from "@/lib/motion";
 import type {
+  DiscoveryAppliedFilters,
   DiscoveryFeedResponse,
   DiscoveryFounder,
+  DiscoveryProfessionOption,
 } from "@/types/discovery";
 import type { DiscoveryActionResult } from "@/types/match";
 import { cn } from "@/lib/utils";
 
-type FeedState = "loading" | "founder" | "empty" | "no-more" | "error";
+type FeedState =
+  | "loading"
+  | "founder"
+  | "empty"
+  | "no-more"
+  | "no-results"
+  | "error";
+
+const EMPTY_FILTERS: DiscoveryAppliedFilters = {
+  query: "",
+  professions: [],
+};
+
+function buildDiscoveryUrl(filters: DiscoveryAppliedFilters): string {
+  const params = new URLSearchParams();
+  const query = filters.query?.trim();
+
+  if (query && query.length >= 2) {
+    params.set("q", query);
+  }
+
+  for (const profession of filters.professions) {
+    params.append("profession", profession);
+  }
+
+  const queryString = params.toString();
+  return queryString ? `/api/discovery?${queryString}` : "/api/discovery";
+}
+
+function hasActiveFilters(filters: DiscoveryAppliedFilters): boolean {
+  return (
+    (filters.query?.trim().length ?? 0) >= 2 || filters.professions.length > 0
+  );
+}
 
 export function DiscoverFeed() {
   const reducedMotion = usePrefersReducedMotion();
@@ -41,32 +77,54 @@ export function DiscoverFeed() {
   const [restoreSignal, setRestoreSignal] = useState(0);
   const [passedCount, setPassedCount] = useState(0);
   const [isResettingPasses, setIsResettingPasses] = useState(false);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
+  const [appliedFilters, setAppliedFilters] =
+    useState<DiscoveryAppliedFilters>(EMPTY_FILTERS);
+  const [draftFilters, setDraftFilters] =
+    useState<DiscoveryAppliedFilters>(EMPTY_FILTERS);
+  const [professionOptions, setProfessionOptions] = useState<
+    DiscoveryProfessionOption[]
+  >([]);
   const pendingActionRef = useRef<SwipeAction | null>(null);
   const pendingFounderIdRef = useRef<string | null>(null);
+  const appliedFiltersRef = useRef(appliedFilters);
 
-  const fetchFeed = useCallback(async (): Promise<DiscoveryFeedResponse | null> => {
-    try {
-      const response = await fetch("/api/discovery", { cache: "no-store" });
-      const payload = (await response.json().catch(() => null)) as
-        | DiscoveryFeedResponse
-        | { error?: string }
-        | null;
+  useEffect(() => {
+    appliedFiltersRef.current = appliedFilters;
+  }, [appliedFilters]);
 
-      if (!response.ok) {
-        setErrorMessage(
-          payload && "error" in payload && payload.error
-            ? payload.error
-            : "Unable to load founders right now.",
-        );
+  const fetchFeed = useCallback(
+    async (
+      filters: DiscoveryAppliedFilters = appliedFiltersRef.current,
+    ): Promise<DiscoveryFeedResponse | null> => {
+      try {
+        const response = await fetch(buildDiscoveryUrl(filters), {
+          cache: "no-store",
+        });
+        const payload = (await response.json().catch(() => null)) as
+          | DiscoveryFeedResponse
+          | { error?: string; message?: string }
+          | null;
+
+        if (!response.ok) {
+          setErrorMessage(
+            payload && "error" in payload && payload.error
+              ? payload.message ?? payload.error
+              : "Unable to load founders right now.",
+          );
+          return null;
+        }
+
+        return payload as DiscoveryFeedResponse;
+      } catch {
+        setErrorMessage("Unable to load founders right now.");
         return null;
       }
-
-      return payload as DiscoveryFeedResponse;
-    } catch {
-      setErrorMessage("Unable to load founders right now.");
-      return null;
-    }
-  }, []);
+    },
+    [],
+  );
 
   const applyFeed = useCallback((feed: DiscoveryFeedResponse | null) => {
     if (!feed) {
@@ -75,23 +133,71 @@ export function DiscoverFeed() {
       return;
     }
 
+    if (feed.professionOptions) {
+      setProfessionOptions(feed.professionOptions);
+    }
+
     if (feed.status === "founder" && feed.founder) {
       setFounder(feed.founder);
       setFeedState("founder");
-      setPassedCount(0);
+      setPassedCount(feed.passedCount ?? 0);
       return;
     }
 
     setFounder(null);
     setPassedCount(feed.passedCount ?? 0);
-    setFeedState(feed.status === "empty" ? "empty" : "no-more");
+    setFeedState(
+      feed.status === "empty"
+        ? "empty"
+        : feed.status === "no-results"
+          ? "no-results"
+          : "no-more",
+    );
   }, []);
 
-  const loadFounder = useCallback(async () => {
-    setFeedState("loading");
-    setErrorMessage(null);
-    applyFeed(await fetchFeed());
-  }, [applyFeed, fetchFeed]);
+  const loadFounder = useCallback(
+    async (filters: DiscoveryAppliedFilters = appliedFiltersRef.current) => {
+      setFeedState("loading");
+      setErrorMessage(null);
+      applyFeed(await fetchFeed(filters));
+    },
+    [applyFeed, fetchFeed],
+  );
+
+  const clearFilters = useCallback(async () => {
+    setAppliedFilters(EMPTY_FILTERS);
+    setDraftFilters(EMPTY_FILTERS);
+    appliedFiltersRef.current = EMPTY_FILTERS;
+    await loadFounder(EMPTY_FILTERS);
+  }, [loadFounder]);
+
+  const applyFilters = useCallback(async () => {
+    const nextFilters: DiscoveryAppliedFilters = {
+      query: draftFilters.query?.trim() ?? "",
+      professions: [...draftFilters.professions],
+    };
+
+    const query = nextFilters.query?.trim() ?? "";
+    if (query.length > 0 && query.length < 2) {
+      toast({
+        title: "Search too short",
+        description: "Enter at least 2 characters to search.",
+        variant: "error",
+      });
+      return;
+    }
+
+    setIsApplyingFilters(true);
+    setAppliedFilters(nextFilters);
+    appliedFiltersRef.current = nextFilters;
+    setOverlayOpen(false);
+
+    try {
+      await loadFounder(nextFilters);
+    } finally {
+      setIsApplyingFilters(false);
+    }
+  }, [draftFilters, loadFounder, toast]);
 
   const resetPassedFounders = useCallback(async () => {
     if (isResettingPasses) {
@@ -110,34 +216,54 @@ export function DiscoverFeed() {
         | null;
 
       if (!response.ok) {
-        setErrorMessage(
-          payload?.error ?? "Unable to reset passed founders right now.",
-        );
+        const message =
+          payload?.error ?? "Unable to reset passed founders right now.";
+        setErrorMessage(message);
+        toast({
+          title: "Reset failed",
+          description: message,
+          variant: "error",
+        });
         return;
       }
 
       const resetCount = payload?.resetCount ?? 0;
+      setResetDialogOpen(false);
       toast({
-        title: resetCount > 0 ? "Passed founders restored" : "Nothing to reset",
+        title:
+          resetCount > 0 ? "Passed profiles restored" : "Nothing to restore",
         description:
           resetCount > 0
-            ? `${resetCount} ${resetCount === 1 ? "founder is" : "founders are"} back in your Discover feed.`
+            ? `${resetCount} passed ${
+                resetCount === 1 ? "profile is" : "profiles are"
+              } available in Discovery again.`
             : "You haven't passed on anyone yet.",
+        variant: resetCount > 0 ? "success" : "default",
       });
 
       await loadFounder();
     } catch {
-      setErrorMessage("Unable to reset passed founders right now.");
+      const message = "Unable to reset passed founders right now.";
+      setErrorMessage(message);
+      toast({
+        title: "Reset failed",
+        description: message,
+        variant: "error",
+      });
     } finally {
       setIsResettingPasses(false);
     }
   }, [isResettingPasses, loadFounder, toast]);
 
+  const openResetDialog = useCallback(() => {
+    setResetDialogOpen(true);
+  }, []);
+
   useEffect(() => {
     let active = true;
 
     void (async () => {
-      const feed = await fetchFeed();
+      const feed = await fetchFeed(EMPTY_FILTERS);
       if (!active) {
         return;
       }
@@ -234,6 +360,10 @@ export function DiscoverFeed() {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      if (overlayOpen || resetDialogOpen) {
+        return;
+      }
+
       if (feedState !== "founder" || isSubmitting || isLoadingNext) {
         return;
       }
@@ -261,17 +391,80 @@ export function DiscoverFeed() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [beginAction, feedState, isLoadingNext, isSubmitting]);
+  }, [
+    beginAction,
+    feedState,
+    isLoadingNext,
+    isSubmitting,
+    overlayOpen,
+    resetDialogOpen,
+  ]);
+
+  const filtersActive = hasActiveFilters(appliedFilters);
 
   return (
-    <PageContainer className="pb-4 pt-1">
+    <PageContainer className="relative pb-4 pt-1">
       <SectionHeader
         className="mb-2"
         title="Discover"
         description="Swipe left to pass, right to connect — or use the buttons below."
+        action={
+          passedCount > 0 ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0 border-border bg-muted text-foreground hover:bg-muted"
+              disabled={isResettingPasses || feedState === "loading"}
+              onClick={openResetDialog}
+            >
+              <RotateCcw className="size-3.5" aria-hidden />
+              Reset passed
+            </Button>
+          ) : null
+        }
       />
 
-      {DISCOVERY_SEARCH_ENABLED ? <DiscoverySearch className="mb-4" /> : null}
+      {filtersActive ? (
+        <p className="mb-2 flex items-center gap-2 text-xs text-teal">
+          <Search className="size-3.5" aria-hidden />
+          Search and filters are active.
+        </p>
+      ) : null}
+
+      <DiscoverySearchTrigger
+        active={filtersActive}
+        disabled={isApplyingFilters || feedState === "loading"}
+        onClick={() => {
+          setDraftFilters(appliedFilters);
+          setOverlayOpen(true);
+        }}
+      />
+
+      <DiscoveryFilterOverlay
+        open={overlayOpen}
+        draftFilters={draftFilters}
+        professionOptions={professionOptions}
+        isApplying={isApplyingFilters}
+        onDraftChange={setDraftFilters}
+        onApply={() => void applyFilters()}
+        onClear={() => {
+          setDraftFilters(EMPTY_FILTERS);
+        }}
+        onClose={() => setOverlayOpen(false)}
+      />
+
+      <DiscoveryResetDialog
+        open={resetDialogOpen}
+        passedCount={passedCount}
+        isResetting={isResettingPasses}
+        onCancel={() => {
+          if (!isResettingPasses) {
+            setResetDialogOpen(false);
+          }
+        }}
+        onConfirm={() => void resetPassedFounders()}
+      />
 
       <div className="mt-2">
         {feedState === "loading" ? <DiscoveryCardSkeleton /> : null}
@@ -283,6 +476,16 @@ export function DiscoverFeed() {
             description="There aren't any completed founder profiles to browse right now. Check back soon as more founders join Splice+."
             actionLabel="Refresh"
             onAction={() => void loadFounder()}
+          />
+        ) : null}
+
+        {feedState === "no-results" ? (
+          <DiscoveryEmptyState
+            icon={Search}
+            title="No people found"
+            description="No founders match your current search and profession filters. Try broadening your search or clearing filters to return to the full Discover feed."
+            actionLabel="Clear filters"
+            onAction={() => void clearFilters()}
           />
         ) : null}
 
@@ -307,7 +510,7 @@ export function DiscoverFeed() {
                 : undefined
             }
             onSecondaryAction={
-              passedCount > 0 ? () => void resetPassedFounders() : undefined
+              passedCount > 0 ? () => openResetDialog() : undefined
             }
             secondaryActionDisabled={isResettingPasses}
           />

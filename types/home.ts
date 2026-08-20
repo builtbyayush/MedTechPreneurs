@@ -70,10 +70,24 @@ export type HomeCompatibilityInsight = {
   topScore?: number;
 };
 
+export type HomeQuickActionId =
+  | "discover"
+  | "matches"
+  | "messages"
+  | "profile";
+
 export type HomeQuickAction = {
+  id: HomeQuickActionId;
   label: string;
   description: string;
   href: string;
+};
+
+export type HomeUpcomingEventCategoryId = "networking" | "fundraising";
+
+export type HomeUpcomingEventCategory = {
+  id: HomeUpcomingEventCategoryId;
+  label: string;
 };
 
 export type HomeDashboardData = {

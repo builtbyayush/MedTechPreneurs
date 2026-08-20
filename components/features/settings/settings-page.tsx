@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Bell,
-  Bookmark,
   Lock,
   LogOut,
   Palette,
@@ -17,7 +16,9 @@ import {
 
 import { Avatar } from "@/components/features/app/avatar";
 import { PageContainer } from "@/components/features/app/page-container";
+import { ChangePasswordForm } from "@/components/features/settings/change-password-form";
 import { DesktopNotificationsSetting } from "@/components/features/settings/desktop-notifications-setting";
+import { EmailVerificationRow } from "@/components/features/settings/email-verification-row";
 import { SectionHeader } from "@/components/features/app/section-header";
 import { ThemeToggle } from "@/components/features/theme/theme-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -32,10 +33,15 @@ type SettingsPageProps = {
     name?: string | null;
     email?: string | null;
   };
+  emailVerified: boolean;
   isAdmin?: boolean;
 };
 
-export function SettingsPage({ user, isAdmin = false }: SettingsPageProps) {
+export function SettingsPage({
+  user,
+  emailVerified,
+  isAdmin = false,
+}: SettingsPageProps) {
   const { toast } = useToast();
   const displayName = getGreetingName(user.name, "Founder");
   const [blockedUsers, setBlockedUsers] = useState<BlockedUserListItem[]>([]);
@@ -137,12 +143,11 @@ export function SettingsPage({ user, isAdmin = false }: SettingsPageProps) {
 
       <SettingsSection title="Account" icon={User}>
         <SettingsRow label="Name" value={displayName} />
-        <SettingsRow label="Email" value={user.email ?? "—"} />
-        <SettingsAction
-          label="Change password"
-          description="Password reset flow arrives before GA."
-          onClick={() => showPlaceholder("Change password")}
-        />
+        {user.email ? (
+          <EmailVerificationRow email={user.email} emailVerified={emailVerified} />
+        ) : (
+          <SettingsRow label="Email" value="—" />
+        )}
         <Link
           href={ROUTES.logout}
           className={cn(
@@ -153,6 +158,17 @@ export function SettingsPage({ user, isAdmin = false }: SettingsPageProps) {
           <LogOut className="size-4" aria-hidden />
           Log out
         </Link>
+      </SettingsSection>
+
+      <SettingsSection title="Security" icon={Lock}>
+        <ChangePasswordForm />
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Forgot your password while logged out? Use{" "}
+          <Link href={ROUTES.forgotPassword} className="text-teal hover:underline">
+            Forgot password
+          </Link>{" "}
+          from the login screen instead.
+        </p>
       </SettingsSection>
 
       <SettingsSection title="Appearance" icon={Palette}>
@@ -190,16 +206,7 @@ export function SettingsPage({ user, isAdmin = false }: SettingsPageProps) {
         </div>
       </SettingsSection>
 
-      <SettingsSection title="Toolkit bookmarks" icon={Bookmark}>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Saved toolkit resources will appear here. Bookmarking is a placeholder
-          in private beta — browse the{" "}
-          <Link href={ROUTES.app.toolkit} className="text-teal hover:underline">
-            Founder&apos;s Toolkit
-          </Link>
-          .
-        </p>
-      </SettingsSection>
+      {/* Toolkit bookmarks deferred until content-management workflow exists — see TOOLKIT_ENABLED. */}
 
       <SettingsSection title="Safety" icon={Bell}>
         {isAdmin ? (
@@ -314,11 +321,13 @@ function SettingsAction({
   label,
   description,
   onClick,
+  href,
   destructive = false,
 }: {
   label: string;
   description: string;
-  onClick: () => void;
+  onClick?: () => void;
+  href?: string;
   destructive?: boolean;
 }) {
   return (
@@ -337,19 +346,31 @@ function SettingsAction({
             {description}
           </p>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className={cn(
-            "shrink-0 border-border bg-transparent text-muted-foreground",
-            destructive && "border-coral/30 text-coral hover:bg-coral/10",
-          )}
-          onClick={onClick}
-        >
-          <Lock className="size-3.5" aria-hidden />
-          Soon
-        </Button>
+        {href ? (
+          <Link
+            href={href}
+            className={cn(
+              buttonVariants({ size: "sm", variant: "outline" }),
+              "shrink-0 border-border bg-transparent text-foreground hover:bg-muted",
+            )}
+          >
+            Open
+          </Link>
+        ) : (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className={cn(
+              "shrink-0 border-border bg-transparent text-muted-foreground",
+              destructive && "border-coral/30 text-coral hover:bg-coral/10",
+            )}
+            onClick={onClick}
+          >
+            <Lock className="size-3.5" aria-hidden />
+            Soon
+          </Button>
+        )}
       </div>
     </div>
   );

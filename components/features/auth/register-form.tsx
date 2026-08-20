@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
@@ -33,7 +32,6 @@ import { cn } from "@/lib/utils";
 type RegisterValues = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -88,8 +86,8 @@ export function RegisterForm() {
       return;
     }
 
-    router.push(ROUTES.onboarding);
-    router.refresh();
+    // Hard navigation so the new session cookie is applied before onboarding APIs run.
+    window.location.assign(ROUTES.onboarding);
   }
 
   return (

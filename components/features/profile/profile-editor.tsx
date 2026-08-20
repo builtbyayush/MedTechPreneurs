@@ -331,7 +331,11 @@ export function ProfileEditor({
         >
           <div className="space-y-3">
             <div className="flex gap-2">
+              <label className="sr-only" htmlFor="profile-skill-input">
+                Add a skill
+              </label>
               <Input
+                id="profile-skill-input"
                 value={skillInput}
                 onChange={(event) => setSkillInput(event.target.value)}
                 onKeyDown={(event) => {
@@ -457,12 +461,7 @@ export function ProfileEditor({
             >
               Account settings
             </Link>
-            <Link
-              href={ROUTES.app.toolkit}
-              className="flex w-full items-center rounded-xl border border-border bg-muted px-3 py-3 font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
-            >
-              Founder&apos;s Toolkit
-            </Link>
+            {/* Founder's Toolkit deferred — see TOOLKIT_ENABLED in constants/features.ts */}
             <Link
               href={ROUTES.logout}
               className="flex w-full items-center rounded-xl border border-border bg-muted px-3 py-3 font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"

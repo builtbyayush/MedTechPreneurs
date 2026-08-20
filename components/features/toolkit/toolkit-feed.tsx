@@ -112,6 +112,7 @@ function CategoryChip({
   return (
     <button
       type="button"
+      aria-pressed={active}
       onClick={onClick}
       className={cn(
         "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
@@ -177,6 +178,7 @@ function ToolkitResourceCard({
           href={resource.href}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`${resource.title} (opens in new tab)`}
           className="block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
         >
           {content}

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+import { HOME_QUICK_ACTIONS } from "@/constants/home";
 import { conversationRoute, ROUTES } from "@/constants/routes";
 import { isProfilePhotoPlaceholder } from "@/constants/profile";
 import {
@@ -437,32 +438,6 @@ export async function getHomeDashboard(userId: string): Promise<HomeDashboardDat
     unreadMessages,
     suggestedFounders,
     recentActivity,
-    quickActions: [
-      {
-        label: "Discover founders",
-        description: "Browse your next co-founder match",
-        href: ROUTES.app.discover,
-      },
-      {
-        label: "View matches",
-        description: "See who connected back",
-        href: ROUTES.app.matches,
-      },
-      {
-        label: "Open messages",
-        description: "Continue matched conversations",
-        href: ROUTES.app.messages,
-      },
-      {
-        label: "Edit profile",
-        description: "Improve compatibility accuracy",
-        href: ROUTES.app.profile,
-      },
-      {
-        label: "Founder's toolkit",
-        description: "Regulatory, fundraising, and ops resources",
-        href: ROUTES.app.toolkit,
-      },
-    ],
+    quickActions: HOME_QUICK_ACTIONS,
   };
 }

@@ -22,6 +22,8 @@ export function createSignedUploadParams(
     options.publicId?.trim() ||
     (options.userId ? options.userId : `upload-${timestamp}`);
   const overwrite = options.overwrite ?? true;
+  const uploadType = options.type ?? "upload";
+  const resourceType = options.resourceType ?? "image";
 
   const paramsToSign: Record<string, string | number | boolean> = {
     timestamp,
@@ -29,6 +31,14 @@ export function createSignedUploadParams(
     public_id: publicId,
     overwrite,
   };
+
+  if (uploadType === "authenticated") {
+    paramsToSign.type = "authenticated";
+  }
+
+  if (resourceType !== "image") {
+    paramsToSign.resource_type = resourceType;
+  }
 
   const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
 
@@ -40,5 +50,7 @@ export function createSignedUploadParams(
     folder,
     publicId,
     overwrite,
+    type: uploadType,
+    resourceType,
   };
 }

@@ -32,6 +32,7 @@ export default async function OnboardingPage() {
   return (
     <OnboardingFlow
       userName={session.user.name}
+      accountEmail={session.user.email ?? undefined}
       initialEmailVerified={Boolean(onboarding.emailVerified)}
     />
   );

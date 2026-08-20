@@ -5,7 +5,6 @@ import { createElement } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  BookOpen,
   Compass,
   Heart,
   MessageCircle,
@@ -21,6 +20,7 @@ import { PageContainer } from "@/components/features/app/page-container";
 import { SectionHeader } from "@/components/features/app/section-header";
 import { CompatibilityScore } from "@/components/features/founder/compatibility-score";
 import { CompatibilityReasons } from "@/components/features/founder/compatibility-reasons";
+import { UpcomingEventsSection } from "@/components/features/home/upcoming-events-section";
 import { buttonVariants } from "@/components/ui/button";
 import { conversationRoute, ROUTES } from "@/constants/routes";
 import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
@@ -44,7 +44,6 @@ const QUICK_ACTION_ICONS = {
   matches: Heart,
   messages: MessageCircle,
   profile: UserPen,
-  toolkit: BookOpen,
 } as const;
 
 function formatRelativeTime(isoDate: string): string {
@@ -100,19 +99,7 @@ const ACTIVITY_ICONS = {
 } as const;
 
 function getQuickActionIcon(action: HomeQuickAction) {
-  if (action.href === ROUTES.app.discover) {
-    return QUICK_ACTION_ICONS.discover;
-  }
-  if (action.href === ROUTES.app.matches) {
-    return QUICK_ACTION_ICONS.matches;
-  }
-  if (action.href === ROUTES.app.messages) {
-    return QUICK_ACTION_ICONS.messages;
-  }
-  if (action.href === ROUTES.app.toolkit) {
-    return QUICK_ACTION_ICONS.toolkit;
-  }
-  return QUICK_ACTION_ICONS.profile;
+  return QUICK_ACTION_ICONS[action.id] ?? QUICK_ACTION_ICONS.profile;
 }
 
 export function HomeDashboard({ data }: HomeDashboardProps) {
@@ -165,6 +152,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
         <SectionHeader
           title="Profile completion"
           description="Stronger profiles unlock better matches"
+          titleId="profile-completion-heading"
         />
         <div className="founder-card-glass rounded-2xl border border-border p-5 shadow-founder-card">
           <div className="flex items-end justify-between gap-4">
@@ -237,6 +225,7 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
         <SectionHeader
           title="Compatibility insights"
           description="Based on your founder profile"
+          titleId="compatibility-insight-heading"
         />
         <div className="founder-card-glass rounded-2xl border border-border p-5 shadow-founder-card">
           <p className="font-heading text-lg font-bold text-foreground">
@@ -383,14 +372,14 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
         transition={fadeUpTransition(reducedMotion, 0.28)}
         aria-labelledby="quick-actions-heading"
       >
-        <SectionHeader title="Quick actions" />
-        <div className="grid grid-cols-2 gap-3">
+        <SectionHeader title="Quick actions" titleId="quick-actions-heading" />
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {quickActions.map((action, index) => {
             const Icon = getQuickActionIcon(action);
 
             return (
               <motion.div
-                key={action.href}
+                key={action.id}
                 initial="hidden"
                 animate="visible"
                 variants={fadeUp}
@@ -398,7 +387,8 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
               >
                 <Link
                   href={action.href}
-                  className="founder-card-glass block h-full rounded-2xl border border-border p-4 shadow-founder-card transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
+                  aria-label={action.label}
+                  className="founder-card-glass block h-full min-h-[7.5rem] rounded-2xl border border-border p-4 shadow-founder-card transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
                 >
                   <div className="mb-3 inline-flex size-9 items-center justify-center rounded-xl border border-teal/20 bg-teal/10 text-teal">
                     <Icon className="size-4" aria-hidden />
@@ -415,6 +405,8 @@ export function HomeDashboard({ data }: HomeDashboardProps) {
           })}
         </div>
       </motion.section>
+
+      <UpcomingEventsSection />
     </PageContainer>
   );
 }
@@ -435,6 +427,7 @@ function DashboardSection({
   empty,
 }: DashboardSectionProps) {
   const reducedMotion = usePrefersReducedMotion();
+  const headingId = `${title.replace(/\s+/g, "-").toLowerCase()}-heading`;
 
   return (
     <motion.section
@@ -442,9 +435,9 @@ function DashboardSection({
       animate="visible"
       variants={fadeUp}
       transition={fadeUpTransition(reducedMotion, delay)}
-      aria-labelledby={`${title.replace(/\s+/g, "-").toLowerCase()}-heading`}
+      aria-labelledby={headingId}
     >
-      <SectionHeader title={title} description={description} />
+      <SectionHeader title={title} description={description} titleId={headingId} />
       {empty ?? <div className="space-y-3">{children}</div>}
     </motion.section>
   );
@@ -545,7 +538,10 @@ function UnreadMessageRow({
               <h3 className="truncate font-heading text-base font-extrabold text-foreground">
                 {message.partner.name}
               </h3>
-              <span className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full bg-teal px-1.5 py-0.5 text-[10px] font-bold text-ink">
+              <span
+                className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-full bg-teal px-1.5 py-0.5 text-[10px] font-bold text-ink"
+                aria-label={`${message.unreadCount} unread messages`}
+              >
                 {message.unreadCount > 99 ? "99+" : message.unreadCount}
               </span>
             </div>

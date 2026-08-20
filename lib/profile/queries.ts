@@ -1,7 +1,7 @@
 import { connectDB } from "@/lib/db";
 import {
+  buildLegacyLookingForCategories,
   mapFounderRoleToCategory,
-  mapLookingForRolesToCategories,
 } from "@/lib/onboarding/mappers";
 import {
   normalizeProfileInput,
@@ -78,6 +78,14 @@ export async function updateFounderProfile(
 
   const data = normalizeProfileInput(input);
 
+  const existingUser = await User.findById(userId)
+    .select("founderRole lookingForRoles")
+    .lean<{ founderRole?: FounderProfile["founderRole"]; lookingForRoles?: FounderProfile["lookingForRoles"] } | null>();
+
+  if (!existingUser) {
+    throw new Error("User not found");
+  }
+
   const updatePayload: Record<string, unknown> = {
     profilePhotoUrl: data.profilePhotoUrl,
     headline: data.headline,
@@ -104,8 +112,22 @@ export async function updateFounderProfile(
 
   if (data.lookingForRoles && data.lookingForRoles.length > 0) {
     updatePayload.lookingForRoles = data.lookingForRoles;
-    updatePayload.lookingFor = mapLookingForRolesToCategories(
-      data.lookingForRoles,
+  }
+
+  const effectiveFounderRole = data.founderRole ?? existingUser.founderRole;
+  const effectiveLookingForRoles =
+    data.lookingForRoles && data.lookingForRoles.length > 0
+      ? data.lookingForRoles
+      : (existingUser.lookingForRoles ?? []);
+
+  if (
+    (data.founderRole || (data.lookingForRoles && data.lookingForRoles.length > 0)) &&
+    effectiveFounderRole &&
+    effectiveLookingForRoles.length > 0
+  ) {
+    updatePayload.lookingFor = buildLegacyLookingForCategories(
+      effectiveLookingForRoles,
+      effectiveFounderRole,
     );
   }
 

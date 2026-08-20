@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/db";
 import {
+  buildLegacyLookingForCategories,
   mapFounderRoleToCategory,
-  mapLookingForRolesToCategories,
 } from "@/lib/onboarding/mappers";
 import { completeOnboardingSchema } from "@/lib/validations/onboarding";
 import { User } from "@/models/User";
@@ -37,9 +37,9 @@ export async function PATCH(request: Request) {
     const uniqueLookingForRoles = [...new Set(data.lookingForRoles)];
     const uniquePartnershipGoals = [...new Set(data.partnershipGoals)];
     const legacyCategory = mapFounderRoleToCategory(data.founderRole);
-    const mappedLookingFor = mapLookingForRolesToCategories(uniqueLookingForRoles);
-    const legacyLookingFor = mappedLookingFor.filter(
-      (category) => category !== legacyCategory,
+    const legacyLookingFor = buildLegacyLookingForCategories(
+      uniqueLookingForRoles,
+      data.founderRole,
     );
 
     await connectDB();
@@ -74,8 +74,7 @@ export async function PATCH(request: Request) {
         state,
         city,
         category: legacyCategory,
-        lookingFor:
-          legacyLookingFor.length > 0 ? legacyLookingFor : mappedLookingFor,
+        lookingFor: legacyLookingFor,
         onboardingCompleted: true,
         onboardingCompletedAt: new Date(),
       },

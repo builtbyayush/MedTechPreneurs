@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { auth } from "@/auth";
+import { getSessionUserId } from "@/lib/auth/session-user";
 import { confirmEmailVerificationCode } from "@/lib/email/verification-code";
 import { verifyEmailCodeSchema } from "@/lib/validations/email-verification";
 
-export async function POST(request: Request) {
+export const POST = auth(async (request) => {
   try {
-    const session = await auth();
+    const userId = getSessionUserId(request.auth);
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -25,10 +26,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await confirmEmailVerificationCode(
-      session.user.id,
-      parsed.data.code,
-    );
+    const result = await confirmEmailVerificationCode(userId, parsed.data.code);
 
     if (!result.verified) {
       return NextResponse.json(
@@ -45,4 +43,4 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
-}
+});
