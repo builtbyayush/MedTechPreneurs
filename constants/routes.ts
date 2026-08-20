@@ -3,6 +3,8 @@ export const ROUTES = {
   home: "/",
   login: "/login",
   register: "/register",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
   logout: "/logout",
   onboarding: "/onboarding",
   /** @deprecated Redirects to app home — use ROUTES.app.home */

@@ -24,6 +24,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ROUTES } from "@/constants/routes";
 import { AUTH_ERROR_MESSAGES, getAuthErrorMessage } from "@/lib/auth/errors";
 import { registerSchema } from "@/lib/validations/auth";
@@ -148,9 +149,8 @@ export function RegisterForm() {
             >
               Password
             </FieldLabel>
-            <Input
+            <PasswordInput
               id="register-password"
-              type="password"
               autoComplete="new-password"
               aria-invalid={!!form.formState.errors.password}
               className={authFieldClassName}
@@ -166,9 +166,8 @@ export function RegisterForm() {
             >
               Confirm password
             </FieldLabel>
-            <Input
+            <PasswordInput
               id="register-confirm-password"
-              type="password"
               autoComplete="new-password"
               aria-invalid={!!form.formState.errors.confirmPassword}
               className={authFieldClassName}

@@ -32,6 +32,8 @@ export const PUBLIC_ROUTES = [
   ROUTES.home,
   ROUTES.login,
   ROUTES.register,
+  ROUTES.forgotPassword,
+  ROUTES.resetPassword,
   ROUTES.offline,
   ROUTES.logout,
   ROUTES.terms,

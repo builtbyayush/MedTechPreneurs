@@ -24,6 +24,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { ROUTES } from "@/constants/routes";
 import { getSafeCallbackUrl } from "@/lib/auth/callback-url";
 import { getAuthErrorMessage } from "@/lib/auth/errors";
@@ -174,18 +175,14 @@ export function LoginForm() {
                 Password
               </FieldLabel>
               <Link
-                href="#forgot-password"
+                href={ROUTES.forgotPassword}
                 className="text-xs text-muted-foreground transition-colors hover:text-teal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal"
-                aria-disabled="true"
-                tabIndex={-1}
-                onClick={(event) => event.preventDefault()}
               >
                 Forgot password?
               </Link>
             </div>
-            <Input
+            <PasswordInput
               id="login-password"
-              type="password"
               autoComplete="current-password"
               aria-invalid={!!form.formState.errors.password}
               className={authFieldClassName}
